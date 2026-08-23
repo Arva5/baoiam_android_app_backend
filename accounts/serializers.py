@@ -9,14 +9,15 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'name', 'email')
-        read_only_fields = ('id',)
+        fields = ('id', 'name', 'email', 'email_verified')
+        read_only_fields = ('id', 'email_verified')
 
 
 class SignupSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, min_length=8)
     confirm_password = serializers.CharField(write_only=True, required=True)
-    agree_to_terms = serializers.BooleanField(required=True)
+    agree_to_terms = serializers.BooleanField(required=False, default=True)
+
     class Meta:
         model = User
         fields = ('name', 'email', 'password', 'confirm_password', 'agree_to_terms')
@@ -30,16 +31,42 @@ class SignupSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['confirm_password']:
             raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
-        if not attrs['agree_to_terms']:
+        if not attrs.get('agree_to_terms', True):
             raise serializers.ValidationError({
                 "agree_to_terms": "You must agree to the Terms of Use and Privacy Policy."
             })
         return attrs
 
     def create(self, validated_data):
-        validated_data.pop('confirm_password')
-        validated_data.pop('agree_to_terms')
+        validated_data.pop('confirm_password', None)
+        validated_data.pop('agree_to_terms', None)
         return User.objects.create_user(**validated_data)
+
+
+class VerifyEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    otp = serializers.CharField(required=True, min_length=6, max_length=6)
+
+    def validate(self, attrs):
+        email = attrs.get('email', '').strip().lower()
+        otp = attrs.get('otp', '').strip()
+
+        try:
+            user = User.objects.get(email__iexact=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError({"email": "User with this email does not exist."})
+
+        if user.email_verified:
+            raise serializers.ValidationError({"detail": "Email is already verified."})
+
+        if not user.email_otp or user.email_otp != otp:
+            raise serializers.ValidationError({"otp": "Invalid OTP."})
+
+        if not user.email_otp_expires_at or user.email_otp_expires_at < timezone.now():
+            raise serializers.ValidationError({"otp": "OTP has expired. Please request a new one."})
+
+        attrs['user'] = user
+        return attrs
 
 
 class LoginSerializer(serializers.Serializer):
@@ -69,6 +96,9 @@ class LoginSerializer(serializers.Serializer):
 
         if not user.is_active:
             raise serializers.ValidationError("User account is disabled.")
+
+        if not user.email_verified:
+            raise serializers.ValidationError("Please verify your email before logging in.")
 
         attrs['user'] = user
         return attrs

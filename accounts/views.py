@@ -1,7 +1,10 @@
+import logging
 import secrets
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -15,8 +18,10 @@ from .serializers import (
     ResetPasswordSerializer,
     SignupSerializer,
     UserSerializer,
+    VerifyEmailSerializer,
 )
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
@@ -27,7 +32,51 @@ class SignupView(APIView):
         serializer = SignupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+
+        # Generate 6-digit OTP and set 10-minute expiration
+        otp = f"{secrets.randbelow(900000) + 100000}"
+        user.email_verified = False
+        user.email_otp = otp
+        user.email_otp_expires_at = timezone.now() + timedelta(minutes=10)
+        user.save(update_fields=['email_verified', 'email_otp', 'email_otp_expires_at'])
+
+        # Send OTP email via Django email / Gmail SMTP
+        try:
+            send_mail(
+                subject='Verify Your Email - OTP',
+                message=(
+                    f"Hello {user.name},\n\n"
+                    f"Your 6-digit email verification OTP is: {otp}\n\n"
+                    "This code will expire in 10 minutes.\n\n"
+                    "Thank you!"
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            logger.error(f"Failed to send verification email: {e}")
+
         return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+
+
+class VerifyEmailView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = VerifyEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        # Verify email and clear OTP fields
+        user.email_verified = True
+        user.email_otp = None
+        user.email_otp_expires_at = None
+        user.save(update_fields=['email_verified', 'email_otp', 'email_otp_expires_at'])
+
+        return Response({
+            'detail': 'Email verified successfully.'
+        }, status=status.HTTP_200_OK)
 
 
 class LoginView(APIView):

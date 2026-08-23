@@ -1,5 +1,6 @@
 from datetime import timedelta
 from django.contrib.auth import get_user_model
+from django.core import mail
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
@@ -11,6 +12,7 @@ User = get_user_model()
 class AuthenticationAPITests(APITestCase):
     def setUp(self):
         self.signup_url = reverse('signup')
+        self.verify_email_url = reverse('verify_email')
         self.login_url = reverse('login')
         self.me_url = reverse('current_user')
         self.forgot_password_url = reverse('forgot_password')
@@ -25,16 +27,23 @@ class AuthenticationAPITests(APITestCase):
         self.user = User.objects.create_user(
             name='Jane Doe',
             email='jane@example.com',
-            password='JanePassword123!'
+            password='JanePassword123!',
+            email_verified=True
         )
 
-    def test_signup_success(self):
+    def test_signup_success_and_generates_otp(self):
         response = self.client.post(self.signup_url, self.user_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['email'], self.user_data['email'])
         self.assertEqual(response.data['name'], self.user_data['name'])
         self.assertNotIn('password', response.data)
-        self.assertTrue(User.objects.filter(email=self.user_data['email']).exists())
+
+        user = User.objects.get(email=self.user_data['email'])
+        self.assertFalse(user.email_verified)
+        self.assertIsNotNone(user.email_otp)
+        self.assertEqual(len(user.email_otp), 6)
+        self.assertIsNotNone(user.email_otp_expires_at)
+        self.assertTrue(user.email_otp_expires_at > timezone.now())
 
     def test_signup_password_mismatch(self):
         data = self.user_data.copy()
@@ -49,7 +58,62 @@ class AuthenticationAPITests(APITestCase):
         response = self.client.post(self.signup_url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_login_success(self):
+    def test_verify_email_success(self):
+        # Create unverified user with OTP
+        unverified_user = User.objects.create_user(
+            name='Unverified User',
+            email='unverified@example.com',
+            password='Password123!',
+            email_verified=False,
+            email_otp='654321',
+            email_otp_expires_at=timezone.now() + timedelta(minutes=10)
+        )
+
+        response = self.client.post(self.verify_email_url, {
+            'email': 'unverified@example.com',
+            'otp': '654321'
+        })
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['detail'], 'Email verified successfully.')
+
+        unverified_user.refresh_from_db()
+        self.assertTrue(unverified_user.email_verified)
+        self.assertIsNone(unverified_user.email_otp)
+        self.assertIsNone(unverified_user.email_otp_expires_at)
+
+    def test_verify_email_invalid_otp(self):
+        User.objects.create_user(
+            name='Unverified User 2',
+            email='unverified2@example.com',
+            password='Password123!',
+            email_verified=False,
+            email_otp='112233',
+            email_otp_expires_at=timezone.now() + timedelta(minutes=10)
+        )
+
+        response = self.client.post(self.verify_email_url, {
+            'email': 'unverified2@example.com',
+            'otp': '999999'
+        })
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_verify_email_expired_otp(self):
+        User.objects.create_user(
+            name='Unverified User 3',
+            email='unverified3@example.com',
+            password='Password123!',
+            email_verified=False,
+            email_otp='123456',
+            email_otp_expires_at=timezone.now() - timedelta(minutes=1)
+        )
+
+        response = self.client.post(self.verify_email_url, {
+            'email': 'unverified3@example.com',
+            'otp': '123456'
+        })
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_success_when_verified(self):
         payload = {
             'email': 'jane@example.com',
             'password': 'JanePassword123!',
@@ -59,6 +123,25 @@ class AuthenticationAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access', response.data)
         self.assertIn('refresh', response.data)
+
+    def test_login_fails_when_email_not_verified(self):
+        User.objects.create_user(
+            name='Not Verified',
+            email='notverified@example.com',
+            password='Password123!',
+            email_verified=False
+        )
+
+        payload = {
+            'email': 'notverified@example.com',
+            'password': 'Password123!'
+        }
+        response = self.client.post(self.login_url, payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.data['non_field_errors'][0],
+            "Please verify your email before logging in."
+        )
 
     def test_login_remember_me(self):
         payload = {
