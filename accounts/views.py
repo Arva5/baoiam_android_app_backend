@@ -124,6 +124,24 @@ class ForgotPasswordView(APIView):
             user.reset_password_token = token
             user.reset_password_token_expires_at = timezone.now() + timedelta(hours=1)
             user.save(update_fields=['reset_password_token', 'reset_password_token_expires_at'])
+
+            # Send password reset email via Django send_mail (Anymail / Resend backend)
+            try:
+                send_mail(
+                    subject='Password Reset Token',
+                    message=(
+                        f"Hello {user.name},\n\n"
+                        "Your password reset token is:\n\n"
+                        f"{token}\n\n"
+                        "This token will expire in 1 hour.\n\n"
+                        "Use this token with the /api/auth/reset-password/ endpoint."
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[user.email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                logger.error(f"Failed to send password reset email: {e}")
         except User.DoesNotExist:
             pass
 
