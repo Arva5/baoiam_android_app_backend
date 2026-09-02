@@ -111,6 +111,13 @@ class ForgotPasswordSerializer(serializers.Serializer):
         return value.strip().lower()
 
 
+class ResendOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate_email(self, value):
+        return value.strip().lower()
+
+
 class ResetPasswordSerializer(serializers.Serializer):
     reset_token = serializers.CharField(required=True)
     new_password = serializers.CharField(write_only=True, required=True, min_length=8)

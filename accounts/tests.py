@@ -13,6 +13,7 @@ class AuthenticationAPITests(APITestCase):
     def setUp(self):
         self.signup_url = reverse('signup')
         self.verify_email_url = reverse('verify_email')
+        self.resend_otp_url = reverse('resend_otp')
         self.login_url = reverse('login')
         self.me_url = reverse('current_user')
         self.forgot_password_url = reverse('forgot_password')
@@ -228,3 +229,57 @@ class AuthenticationAPITests(APITestCase):
         }
         response = self.client.post(self.reset_password_url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_resend_otp_success_and_sends_email(self):
+        mail.outbox.clear()
+        unverified_user = User.objects.create_user(
+            name='Test Unverified',
+            email='unverified_resend@example.com',
+            password='Password123!',
+            email_verified=False,
+            email_otp='111111',
+            email_otp_expires_at=timezone.now() + timedelta(minutes=5),
+            email_otp_last_sent_at=timezone.now() - timedelta(seconds=70)
+        )
+
+        response = self.client.post(self.resend_otp_url, {'email': 'unverified_resend@example.com'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        unverified_user.refresh_from_db()
+        self.assertNotEqual(unverified_user.email_otp, '111111')
+        self.assertEqual(len(unverified_user.email_otp), 6)
+        self.assertTrue(unverified_user.email_otp_expires_at > timezone.now())
+
+        # Verify email was dispatched
+        self.assertEqual(len(mail.outbox), 1)
+        sent_mail = mail.outbox[0]
+        self.assertEqual(sent_mail.subject, 'Verify Your Email - OTP')
+        self.assertIn(unverified_user.name, sent_mail.body)
+        self.assertIn(unverified_user.email_otp, sent_mail.body)
+        self.assertEqual(sent_mail.to, ['unverified_resend@example.com'])
+
+    def test_resend_otp_already_verified(self):
+        response = self.client.post(self.resend_otp_url, {'email': 'jane@example.com'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Email is already verified.')
+
+    def test_resend_otp_rate_limited(self):
+        unverified_user = User.objects.create_user(
+            name='Rate Limited',
+            email='ratelimited@example.com',
+            password='Password123!',
+            email_verified=False,
+            email_otp='222222',
+            email_otp_expires_at=timezone.now() + timedelta(minutes=10),
+            email_otp_last_sent_at=timezone.now() - timedelta(seconds=20)
+        )
+
+        response = self.client.post(self.resend_otp_url, {'email': 'ratelimited@example.com'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Please wait', response.data['detail'])
+
+    def test_resend_otp_nonexistent_email_generic_response(self):
+        mail.outbox.clear()
+        response = self.client.post(self.resend_otp_url, {'email': 'nonexistent@example.com'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 0)
