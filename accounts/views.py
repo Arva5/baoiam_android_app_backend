@@ -190,12 +190,15 @@ class ForgotPasswordView(APIView):
             user.save(update_fields=['reset_password_token', 'reset_password_token_expires_at'])
 
             # Send password reset email via Django send_mail (Anymail / Resend backend)
+            deep_link = f"baoiam://reset-password/{token}"
             try:
                 send_mail(
                     subject='Password Reset Token',
                     message=(
                         f"Hello {user.name},\n\n"
-                        "Your password reset token is:\n\n"
+                        "To reset your password, click the link below:\n\n"
+                        f"{deep_link}\n\n"
+                        "Alternatively, your password reset token is:\n\n"
                         f"{token}\n\n"
                         "This token will expire in 1 hour.\n\n"
                         "Use this token with the /api/auth/reset-password/ endpoint."

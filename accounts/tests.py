@@ -181,15 +181,27 @@ class AuthenticationAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_forgot_password_generates_token(self):
+        mail.outbox.clear()
         response = self.client.post(self.forgot_password_url, {'email': 'jane@example.com'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user.refresh_from_db()
         self.assertIsNotNone(self.user.reset_password_token)
         self.assertIsNotNone(self.user.reset_password_token_expires_at)
 
+        # Verify email was dispatched with deep link and fallback raw token
+        self.assertEqual(len(mail.outbox), 1)
+        sent_mail = mail.outbox[0]
+        self.assertEqual(sent_mail.subject, 'Password Reset Token')
+        self.assertIn(f"baoiam://reset-password/{self.user.reset_password_token}", sent_mail.body)
+        self.assertIn(self.user.reset_password_token, sent_mail.body)
+        self.assertIn('This token will expire in 1 hour.', sent_mail.body)
+        self.assertEqual(sent_mail.to, ['jane@example.com'])
+
     def test_forgot_password_nonexistent_email_generic_response(self):
+        mail.outbox.clear()
         response = self.client.post(self.forgot_password_url, {'email': 'unknown@example.com'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_reset_password_success(self):
         # Generate token
