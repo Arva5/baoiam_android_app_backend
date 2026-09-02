@@ -16,6 +16,7 @@ class AuthenticationAPITests(APITestCase):
         self.resend_otp_url = reverse('resend_otp')
         self.login_url = reverse('login')
         self.me_url = reverse('current_user')
+        self.delete_account_url = reverse('delete_account')
         self.forgot_password_url = reverse('forgot_password')
         self.reset_password_url = reverse('reset_password')
 
@@ -295,3 +296,33 @@ class AuthenticationAPITests(APITestCase):
         response = self.client.post(self.resend_otp_url, {'email': 'nonexistent@example.com'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 0)
+
+    def test_delete_account_success(self):
+        login_res = self.client.post(self.login_url, {
+            'email': 'jane@example.com',
+            'password': 'JanePassword123!'
+        })
+        access_token = login_res.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        response = self.client.delete(self.delete_account_url, {'password': 'JanePassword123!'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['detail'], 'Account deleted successfully.')
+        self.assertFalse(User.objects.filter(email='jane@example.com').exists())
+
+    def test_delete_account_incorrect_password(self):
+        login_res = self.client.post(self.login_url, {
+            'email': 'jane@example.com',
+            'password': 'JanePassword123!'
+        })
+        access_token = login_res.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        response = self.client.delete(self.delete_account_url, {'password': 'WrongPassword123!'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Incorrect password.')
+        self.assertTrue(User.objects.filter(email='jane@example.com').exists())
+
+    def test_delete_account_unauthenticated(self):
+        response = self.client.delete(self.delete_account_url, {'password': 'JanePassword123!'})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

@@ -138,3 +138,7 @@ class ResetPasswordSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+
+class DeleteAccountSerializer(serializers.Serializer):
+    password = serializers.CharField(write_only=True, required=True)

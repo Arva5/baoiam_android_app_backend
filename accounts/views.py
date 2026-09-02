@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import (
+    DeleteAccountSerializer,
     ForgotPasswordSerializer,
     LoginSerializer,
     ResendOTPSerializer,
@@ -172,6 +173,27 @@ class CurrentUserView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class DeleteAccountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        serializer = DeleteAccountSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        password = serializer.validated_data['password']
+
+        if not request.user.check_password(password):
+            return Response(
+                {'detail': 'Incorrect password.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        request.user.delete()
+
+        return Response({
+            'detail': 'Account deleted successfully.'
+        }, status=status.HTTP_200_OK)
 
 
 class ForgotPasswordView(APIView):
