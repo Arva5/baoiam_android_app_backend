@@ -13,10 +13,15 @@ class AuthenticationAPITests(APITestCase):
     def setUp(self):
         self.signup_url = reverse('signup')
         self.verify_email_url = reverse('verify_email')
+        self.resend_otp_url = reverse('resend_otp')
         self.login_url = reverse('login')
         self.me_url = reverse('current_user')
+        self.profile_url = reverse('user_profile')
+        self.delete_account_url = reverse('delete_account')
+
         self.forgot_password_url = reverse('forgot_password')
         self.reset_password_url = reverse('reset_password')
+
 
         self.user_data = {
             'name': 'John Doe',
@@ -228,3 +233,135 @@ class AuthenticationAPITests(APITestCase):
         }
         response = self.client.post(self.reset_password_url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_resend_otp_success_and_sends_email(self):
+        mail.outbox.clear()
+        unverified_user = User.objects.create_user(
+            name='Test Unverified',
+            email='unverified_resend@example.com',
+            password='Password123!',
+            email_verified=False,
+            email_otp='111111',
+            email_otp_expires_at=timezone.now() + timedelta(minutes=5),
+            email_otp_last_sent_at=timezone.now() - timedelta(seconds=70)
+        )
+
+        response = self.client.post(self.resend_otp_url, {'email': 'unverified_resend@example.com'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        unverified_user.refresh_from_db()
+        self.assertNotEqual(unverified_user.email_otp, '111111')
+        self.assertEqual(len(unverified_user.email_otp), 6)
+        self.assertTrue(unverified_user.email_otp_expires_at > timezone.now())
+
+        # Verify email was dispatched
+        self.assertEqual(len(mail.outbox), 1)
+        sent_mail = mail.outbox[0]
+        self.assertEqual(sent_mail.subject, 'Verify Your Email - OTP')
+        self.assertIn(unverified_user.name, sent_mail.body)
+        self.assertIn(unverified_user.email_otp, sent_mail.body)
+        self.assertEqual(sent_mail.to, ['unverified_resend@example.com'])
+
+    def test_resend_otp_already_verified(self):
+        response = self.client.post(self.resend_otp_url, {'email': 'jane@example.com'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Email is already verified.')
+
+    def test_resend_otp_rate_limited(self):
+        unverified_user = User.objects.create_user(
+            name='Rate Limited',
+            email='ratelimited@example.com',
+            password='Password123!',
+            email_verified=False,
+            email_otp='222222',
+            email_otp_expires_at=timezone.now() + timedelta(minutes=10),
+            email_otp_last_sent_at=timezone.now() - timedelta(seconds=20)
+        )
+
+        response = self.client.post(self.resend_otp_url, {'email': 'ratelimited@example.com'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Please wait', response.data['detail'])
+
+    def test_resend_otp_nonexistent_email_generic_response(self):
+        mail.outbox.clear()
+        response = self.client.post(self.resend_otp_url, {'email': 'nonexistent@example.com'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_delete_account_success(self):
+        login_res = self.client.post(self.login_url, {
+            'email': 'jane@example.com',
+            'password': 'JanePassword123!'
+        })
+        access_token = login_res.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        response = self.client.delete(self.delete_account_url, {'password': 'JanePassword123!'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['detail'], 'Account deleted successfully.')
+        self.assertFalse(User.objects.filter(email='jane@example.com').exists())
+
+    def test_delete_account_incorrect_password(self):
+        login_res = self.client.post(self.login_url, {
+            'email': 'jane@example.com',
+            'password': 'JanePassword123!'
+        })
+        access_token = login_res.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
+
+        response = self.client.delete(self.delete_account_url, {'password': 'WrongPassword123!'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data['detail'], 'Incorrect password.')
+        self.assertTrue(User.objects.filter(email='jane@example.com').exists())
+
+    def test_delete_account_unauthenticated(self):
+        response = self.client.delete(self.delete_account_url, {'password': 'JanePassword123!'})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_get_profile_auto_creates_and_returns_data(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.profile_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['user_email'], 'jane@example.com')
+        self.assertEqual(response.data['user_name'], 'Jane Doe')
+        self.assertFalse(response.data['is_profile_completed'])
+
+    def test_patch_profile_updates_allowed_fields(self):
+        self.client.force_authenticate(user=self.user)
+        payload = {
+            'avatar_url': 'https://example.com/avatar.jpg',
+            'headline': 'Full Stack Developer',
+            'bio': 'Passionate about coding.',
+            'phone_number': '+1234567890',
+            'target_role': 'Software Engineer',
+            'interests': ['Web Development', 'AI'],
+            'skills': ['Python', 'Django', 'React'],
+            'is_profile_completed': True,
+        }
+        response = self.client.patch(self.profile_url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['headline'], 'Full Stack Developer')
+        self.assertEqual(response.data['target_role'], 'Software Engineer')
+        self.assertEqual(response.data['interests'], ['Web Development', 'AI'])
+        self.assertTrue(response.data['is_profile_completed'])
+
+    def test_patch_profile_does_not_change_email_or_auth(self):
+        self.client.force_authenticate(user=self.user)
+        payload = {
+            'user_email': 'hacker@example.com',
+            'email': 'hacker@example.com',
+            'password': 'HackedPassword123!',
+            'headline': 'Security Researcher',
+        }
+        response = self.client.patch(self.profile_url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, 'jane@example.com')
+        self.assertTrue(self.user.check_password('JanePassword123!'))
+
+    def test_profile_unauthenticated(self):
+        res_get = self.client.get(self.profile_url)
+        self.assertEqual(res_get.status_code, status.HTTP_401_UNAUTHORIZED)
+        res_patch = self.client.patch(self.profile_url, {'headline': 'Test'})
+        self.assertEqual(res_patch.status_code, status.HTTP_401_UNAUTHORIZED)
+

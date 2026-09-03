@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User
+from .models import User, UserProfile
 
 
 @admin.register(User)
@@ -23,3 +23,11 @@ class UserAdmin(BaseUserAdmin):
     )
     search_fields = ('email', 'name')
     ordering = ('email',)
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'target_role', 'is_profile_completed', 'created_at')
+    list_filter = ('is_profile_completed', 'created_at')
+    search_fields = ('user__email', 'user__name', 'target_role', 'headline')
+

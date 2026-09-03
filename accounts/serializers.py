@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.utils import timezone
 from rest_framework import serializers
 
-User = get_user_model()
+from .models import User, UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -111,6 +111,14 @@ class ForgotPasswordSerializer(serializers.Serializer):
         return value.strip().lower()
 
 
+class ResendOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate_email(self, value):
+        return value.strip().lower()
+
+
+
 class ResetPasswordSerializer(serializers.Serializer):
     reset_token = serializers.CharField(required=True)
     new_password = serializers.CharField(write_only=True, required=True, min_length=8)
@@ -131,3 +139,32 @@ class ResetPasswordSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+
+class DeleteAccountSerializer(serializers.Serializer):
+    password = serializers.CharField(write_only=True, required=True)
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source='user.name', read_only=True)
+    user_email = serializers.CharField(source='user.email', read_only=True)
+
+    class Meta:
+        model = UserProfile
+        fields = (
+            'id',
+            'user_name',
+            'user_email',
+            'avatar_url',
+            'headline',
+            'bio',
+            'phone_number',
+            'target_role',
+            'interests',
+            'skills',
+            'is_profile_completed',
+            'created_at',
+            'updated_at',
+        )
+        read_only_fields = ('id', 'created_at', 'updated_at')
+

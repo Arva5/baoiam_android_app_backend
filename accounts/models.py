@@ -41,6 +41,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email_verified = models.BooleanField(default=False)
     email_otp = models.CharField(max_length=6, blank=True, null=True)
     email_otp_expires_at = models.DateTimeField(blank=True, null=True)
+    email_otp_last_sent_at = models.DateTimeField(blank=True, null=True)
+
 
     # Password reset fields
     reset_password_token = models.CharField(max_length=255, blank=True, null=True)
@@ -53,3 +55,21 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    avatar_url = models.URLField(max_length=500, blank=True, null=True)
+    headline = models.CharField(max_length=255, blank=True)
+    bio = models.TextField(blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
+    target_role = models.CharField(max_length=150, blank=True)
+    interests = models.JSONField(default=list, blank=True)
+    skills = models.JSONField(default=list, blank=True)
+    is_profile_completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Profile<{self.user.email}>"
+

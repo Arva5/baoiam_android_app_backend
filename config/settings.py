@@ -36,11 +36,16 @@ INSTALLED_APPS = [
 
     # Local apps
     'accounts',
-    'my_google_auth_code.users',
-    'legal',
     'courses',
     'enrollments',
+    'assessments',
+    'certificates',
+    'home',
+    'legal',
+    'my_google_auth_code.users',
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

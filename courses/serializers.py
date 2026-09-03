@@ -1,6 +1,16 @@
 from rest_framework import serializers
 
-from .models import ContentItem, Course, CourseModule, Lesson
+from .models import (
+    Category,
+    ContentItem,
+    Course,
+    CourseEnrollment,
+    CourseModule,
+    Lesson,
+    PromotionalBanner,
+    TipOfTheDay,
+    WhyChooseUsItem,
+)
 
 
 class ContentItemSerializer(serializers.ModelSerializer):
@@ -17,7 +27,7 @@ class ContentItemSerializer(serializers.ModelSerializer):
 
 class LessonSerializer(serializers.ModelSerializer):
     """
-    Nested inside CourseModuleSerializer. `content_items` is only populated
+    Nested inside CourseModuleSerializer. content_items is only populated
     when the requesting user has active access to the course (see
     CourseDetailView) - otherwise lessons show as locked previews.
     """
@@ -46,56 +56,120 @@ class CourseModuleSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "order", "lessons"]
 
 
-class CourseListSerializer(serializers.ModelSerializer):
-    """Used for GET /api/courses/ - the course catalogue / Home screen list."""
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('id', 'name', 'slug', 'icon_url', 'description', 'order', 'is_active')
 
-    instructor_name = serializers.CharField(source="instructor.name", read_only=True, default=None)
+
+class CourseSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    instructor_name = serializers.CharField(read_only=True)
     total_lectures = serializers.ReadOnlyField()
     is_enrolled = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
-        fields = [
-            "id", "title", "slug", "short_code", "thumbnail_url",
-            "instructor_name", "total_lectures", "is_published",
-            "is_enrolled", "created_at",
-        ]
+        fields = (
+            'id',
+            'title',
+            'slug',
+            'short_code',
+            'subtitle',
+            'description',
+            'thumbnail_url',
+            'cover_image_url',
+            'instructor',
+            'instructor_name',
+            'category',
+            'category_name',
+            'level',
+            'rating',
+            'reviews_count',
+            'duration_hours',
+            'lessons_count',
+            'total_lectures',
+            'price',
+            'discounted_price',
+            'is_featured',
+            'is_popular',
+            'is_published',
+            'is_enrolled',
+            'created_at',
+            'updated_at',
+        )
 
     def get_is_enrolled(self, obj):
-        user = self.context.get("request").user if self.context.get("request") else None
+        request = self.context.get("request")
+        user = request.user if request else None
         if not user or not user.is_authenticated:
             return False
-        return obj.enrollments.filter(user=user).exists()
+        if obj.course_enrollments.filter(user=user).exists():
+            return True
+        if hasattr(obj, 'enrollments') and obj.enrollments.filter(user=user).exists():
+            return True
+        return False
+
+
+
+CourseListSerializer = CourseSerializer
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):
-    """
-    Used for GET /api/courses/<slug>/ - full Course Player payload.
-    `has_active_access` tells the app whether to render locked or unlocked
-    lesson content; `modules` is always present so the curriculum outline
-    (module/lecture titles + counts) is visible even before enrolling.
-    """
-
-    instructor_name = serializers.CharField(source="instructor.name", read_only=True, default=None)
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    instructor_name = serializers.CharField(read_only=True)
     total_lectures = serializers.ReadOnlyField()
     modules = serializers.SerializerMethodField()
     has_active_access = serializers.SerializerMethodField()
+    is_enrolled = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
-        fields = [
-            "id", "title", "slug", "short_code", "description", "thumbnail_url",
-            "instructor_name", "total_lectures", "is_published",
-            "has_active_access", "modules", "created_at",
-        ]
+        fields = (
+            'id',
+            'title',
+            'slug',
+            'short_code',
+            'subtitle',
+            'description',
+            'thumbnail_url',
+            'cover_image_url',
+            'instructor',
+            'instructor_name',
+            'category',
+            'category_name',
+            'level',
+            'rating',
+            'reviews_count',
+            'duration_hours',
+            'lessons_count',
+            'total_lectures',
+            'price',
+            'discounted_price',
+            'is_featured',
+            'is_popular',
+            'is_published',
+            'is_enrolled',
+            'has_active_access',
+            'modules',
+            'created_at',
+            'updated_at',
+        )
 
     def _has_access(self, obj):
         request = self.context.get("request")
         user = request.user if request else None
         if not user or not user.is_authenticated:
             return False
-        enrollment = obj.enrollments.filter(user=user).first()
-        return bool(enrollment and enrollment.has_active_access)
+        if obj.course_enrollments.filter(user=user).exists():
+            return True
+        if hasattr(obj, 'enrollments') and obj.enrollments.filter(user=user).exists():
+            enrollment = obj.enrollments.filter(user=user).first()
+            return bool(getattr(enrollment, 'has_active_access', True))
+        return False
+
+    def get_is_enrolled(self, obj):
+        return self._has_access(obj)
 
     def get_has_active_access(self, obj):
         return self._has_access(obj)
@@ -105,3 +179,76 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         return CourseModuleSerializer(
             obj.modules.all(), many=True, context=ctx
         ).data
+
+
+class CourseEnrollmentSerializer(serializers.ModelSerializer):
+    course = CourseSerializer(read_only=True)
+
+    class Meta:
+        model = CourseEnrollment
+        fields = (
+            'id',
+            'course',
+            'progress_percentage',
+            'completed_lessons',
+            'total_lessons',
+            'current_lesson_title',
+            'is_completed',
+            'last_accessed_at',
+            'enrolled_at',
+        )
+
+
+class PromotionalBannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PromotionalBanner
+        fields = (
+            'id',
+            'title',
+            'subtitle',
+            'tagline',
+            'image_url',
+            'badge_text',
+            'discount_code',
+            'discount_percentage',
+            'target_type',
+            'target_id',
+            'target_url',
+            'button_text',
+            'start_date',
+            'end_date',
+            'order',
+            'is_active',
+        )
+
+
+class TipOfTheDaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipOfTheDay
+        fields = (
+            'id',
+            'title',
+            'content',
+            'category',
+            'author_name',
+            'author_avatar_url',
+            'icon_name',
+            'publish_date',
+            'likes_count',
+            'is_active',
+        )
+
+
+class WhyChooseUsItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WhyChooseUsItem
+        fields = (
+            'id',
+            'title',
+            'description',
+            'icon_url',
+            'icon_name',
+            'highlight_stat',
+            'order',
+            'is_active',
+        )
