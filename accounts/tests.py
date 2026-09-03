@@ -13,10 +13,8 @@ class AuthenticationAPITests(APITestCase):
     def setUp(self):
         self.signup_url = reverse('signup')
         self.verify_email_url = reverse('verify_email')
-        self.resend_otp_url = reverse('resend_otp')
         self.login_url = reverse('login')
         self.me_url = reverse('current_user')
-        self.delete_account_url = reverse('delete_account')
         self.forgot_password_url = reverse('forgot_password')
         self.reset_password_url = reverse('reset_password')
 
@@ -182,27 +180,15 @@ class AuthenticationAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_forgot_password_generates_token(self):
-        mail.outbox.clear()
         response = self.client.post(self.forgot_password_url, {'email': 'jane@example.com'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user.refresh_from_db()
         self.assertIsNotNone(self.user.reset_password_token)
         self.assertIsNotNone(self.user.reset_password_token_expires_at)
 
-        # Verify email was dispatched with deep link and fallback raw token
-        self.assertEqual(len(mail.outbox), 1)
-        sent_mail = mail.outbox[0]
-        self.assertEqual(sent_mail.subject, 'Password Reset Token')
-        self.assertIn(f"baoiam://reset-password/{self.user.reset_password_token}", sent_mail.body)
-        self.assertIn(self.user.reset_password_token, sent_mail.body)
-        self.assertIn('This token will expire in 1 hour.', sent_mail.body)
-        self.assertEqual(sent_mail.to, ['jane@example.com'])
-
     def test_forgot_password_nonexistent_email_generic_response(self):
-        mail.outbox.clear()
         response = self.client.post(self.forgot_password_url, {'email': 'unknown@example.com'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(mail.outbox), 0)
 
     def test_reset_password_success(self):
         # Generate token
@@ -242,87 +228,3 @@ class AuthenticationAPITests(APITestCase):
         }
         response = self.client.post(self.reset_password_url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_resend_otp_success_and_sends_email(self):
-        mail.outbox.clear()
-        unverified_user = User.objects.create_user(
-            name='Test Unverified',
-            email='unverified_resend@example.com',
-            password='Password123!',
-            email_verified=False,
-            email_otp='111111',
-            email_otp_expires_at=timezone.now() + timedelta(minutes=5),
-            email_otp_last_sent_at=timezone.now() - timedelta(seconds=70)
-        )
-
-        response = self.client.post(self.resend_otp_url, {'email': 'unverified_resend@example.com'})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        unverified_user.refresh_from_db()
-        self.assertNotEqual(unverified_user.email_otp, '111111')
-        self.assertEqual(len(unverified_user.email_otp), 6)
-        self.assertTrue(unverified_user.email_otp_expires_at > timezone.now())
-
-        # Verify email was dispatched
-        self.assertEqual(len(mail.outbox), 1)
-        sent_mail = mail.outbox[0]
-        self.assertEqual(sent_mail.subject, 'Verify Your Email - OTP')
-        self.assertIn(unverified_user.name, sent_mail.body)
-        self.assertIn(unverified_user.email_otp, sent_mail.body)
-        self.assertEqual(sent_mail.to, ['unverified_resend@example.com'])
-
-    def test_resend_otp_already_verified(self):
-        response = self.client.post(self.resend_otp_url, {'email': 'jane@example.com'})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['detail'], 'Email is already verified.')
-
-    def test_resend_otp_rate_limited(self):
-        unverified_user = User.objects.create_user(
-            name='Rate Limited',
-            email='ratelimited@example.com',
-            password='Password123!',
-            email_verified=False,
-            email_otp='222222',
-            email_otp_expires_at=timezone.now() + timedelta(minutes=10),
-            email_otp_last_sent_at=timezone.now() - timedelta(seconds=20)
-        )
-
-        response = self.client.post(self.resend_otp_url, {'email': 'ratelimited@example.com'})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('Please wait', response.data['detail'])
-
-    def test_resend_otp_nonexistent_email_generic_response(self):
-        mail.outbox.clear()
-        response = self.client.post(self.resend_otp_url, {'email': 'nonexistent@example.com'})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(mail.outbox), 0)
-
-    def test_delete_account_success(self):
-        login_res = self.client.post(self.login_url, {
-            'email': 'jane@example.com',
-            'password': 'JanePassword123!'
-        })
-        access_token = login_res.data['access']
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
-
-        response = self.client.delete(self.delete_account_url, {'password': 'JanePassword123!'})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['detail'], 'Account deleted successfully.')
-        self.assertFalse(User.objects.filter(email='jane@example.com').exists())
-
-    def test_delete_account_incorrect_password(self):
-        login_res = self.client.post(self.login_url, {
-            'email': 'jane@example.com',
-            'password': 'JanePassword123!'
-        })
-        access_token = login_res.data['access']
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
-
-        response = self.client.delete(self.delete_account_url, {'password': 'WrongPassword123!'})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['detail'], 'Incorrect password.')
-        self.assertTrue(User.objects.filter(email='jane@example.com').exists())
-
-    def test_delete_account_unauthenticated(self):
-        response = self.client.delete(self.delete_account_url, {'password': 'JanePassword123!'})
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

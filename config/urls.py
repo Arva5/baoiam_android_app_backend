@@ -6,4 +6,6 @@ urlpatterns = [
     path('api/auth/', include('accounts.urls')),
   path('api/', include('my_google_auth_code.users.urls')),   
     path('api/', include('legal.urls')),
+    path('api/', include('courses.urls')),
+    path('api/', include('enrollments.urls')),
 ]

@@ -13,10 +13,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import (
-    DeleteAccountSerializer,
     ForgotPasswordSerializer,
     LoginSerializer,
-    ResendOTPSerializer,
     ResetPasswordSerializer,
     SignupSerializer,
     UserSerializer,
@@ -81,69 +79,6 @@ class VerifyEmailView(APIView):
         }, status=status.HTTP_200_OK)
 
 
-class ResendOTPView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        serializer = ResendOTPSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data['email']
-
-        try:
-            user = User.objects.get(email__iexact=email)
-
-            if user.email_verified:
-                return Response(
-                    {'detail': 'Email is already verified.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            now = timezone.now()
-            last_sent = user.email_otp_last_sent_at
-            if not last_sent and user.email_otp_expires_at:
-                inferred_sent = user.email_otp_expires_at - timedelta(minutes=10)
-                if inferred_sent <= now:
-                    last_sent = inferred_sent
-
-            if last_sent and (now - last_sent) < timedelta(seconds=60):
-                seconds_remaining = 60 - int((now - last_sent).total_seconds())
-                return Response(
-                    {'detail': f'Please wait {seconds_remaining} seconds before requesting a new OTP.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            # Generate 6-digit OTP and set 10-minute expiration
-            otp = f"{secrets.randbelow(900000) + 100000}"
-            user.email_otp = otp
-            user.email_otp_expires_at = now + timedelta(minutes=10)
-            user.email_otp_last_sent_at = now
-            user.save(update_fields=['email_otp', 'email_otp_expires_at', 'email_otp_last_sent_at'])
-
-            # Send OTP email
-            try:
-                send_mail(
-                    subject='Verify Your Email - OTP',
-                    message=(
-                        f"Hello {user.name},\n\n"
-                        f"Your 6-digit email verification OTP is: {otp}\n\n"
-                        "This code will expire in 10 minutes.\n\n"
-                        "Thank you!"
-                    ),
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[user.email],
-                    fail_silently=False,
-                )
-            except Exception as e:
-                logger.error(f"Failed to send verification email: {e}")
-
-        except User.DoesNotExist:
-            pass
-
-        return Response({
-            'detail': 'If the email is registered and unverified, a new verification code has been sent.'
-        }, status=status.HTTP_200_OK)
-
-
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -175,27 +110,6 @@ class CurrentUserView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class DeleteAccountView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request):
-        serializer = DeleteAccountSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        password = serializer.validated_data['password']
-
-        if not request.user.check_password(password):
-            return Response(
-                {'detail': 'Incorrect password.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        request.user.delete()
-
-        return Response({
-            'detail': 'Account deleted successfully.'
-        }, status=status.HTTP_200_OK)
-
-
 class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
 
@@ -210,27 +124,6 @@ class ForgotPasswordView(APIView):
             user.reset_password_token = token
             user.reset_password_token_expires_at = timezone.now() + timedelta(hours=1)
             user.save(update_fields=['reset_password_token', 'reset_password_token_expires_at'])
-
-            # Send password reset email via Django send_mail (Anymail / Resend backend)
-            deep_link = f"baoiam://reset-password/{token}"
-            try:
-                send_mail(
-                    subject='Password Reset Token',
-                    message=(
-                        f"Hello {user.name},\n\n"
-                        "To reset your password, click the link below:\n\n"
-                        f"{deep_link}\n\n"
-                        "Alternatively, your password reset token is:\n\n"
-                        f"{token}\n\n"
-                        "This token will expire in 1 hour.\n\n"
-                        "Use this token with the /api/auth/reset-password/ endpoint."
-                    ),
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[user.email],
-                    fail_silently=False,
-                )
-            except Exception as e:
-                logger.error(f"Failed to send password reset email: {e}")
         except User.DoesNotExist:
             pass
 

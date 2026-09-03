@@ -41,7 +41,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     email_verified = models.BooleanField(default=False)
     email_otp = models.CharField(max_length=6, blank=True, null=True)
     email_otp_expires_at = models.DateTimeField(blank=True, null=True)
-    email_otp_last_sent_at = models.DateTimeField(blank=True, null=True)
 
     # Password reset fields
     reset_password_token = models.CharField(max_length=255, blank=True, null=True)
