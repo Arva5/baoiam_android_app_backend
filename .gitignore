@@ -1,0 +1,23 @@
+# Environment variables / secrets
+.env
+
+# Python virtual environments
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# SQLite database
+db.sqlite3
+
+# Django generated files
+*.log
+
+# IDE settings
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
