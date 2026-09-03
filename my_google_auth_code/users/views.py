@@ -139,12 +139,14 @@ def _verify_google_id_token(token):
     return idinfo
 
 
-class GoogleSignupView(APIView):
-    """POST /api/auth/google/signup/  { "id_token": "..." }
-    Creates a brand-new account from a Google sign-in. Every account is a
-    plain "student" (no role selection on signup). If an account with this
-    email already exists, this fails on purpose and tells the app to use
-    the login endpoint instead - signup should only ever happen once."""
+class GoogleAuthView(APIView):
+    """POST /api/auth/google/  { "id_token": "..." }
+    Single unified "Continue with Google" endpoint - handles BOTH new and
+    existing users with one call, one button on the app side. If no account
+    exists for this email, one is created on the fly (as a "student", no
+    role selection). If it already exists, we just log them in. The
+    response's "is_new_user" flag tells the app whether to route to the
+    profile-setup screen or straight to home."""
     permission_classes = [AllowAny]
     throttle_scope = "google_auth"
 
@@ -162,65 +164,19 @@ class GoogleSignupView(APIView):
         name = idinfo.get("name", "")
         picture = idinfo.get("picture", "")
 
-        if User.objects.filter(email=email).exists():
-            return Response(
-                {"success": False, "errors": ["An account with this email already exists. Please login instead."]},
-                status=409,
-            )
-
-        user = User.objects.create(
+        user, created = User.objects.get_or_create(
             email=email,
-            full_name=name,
-            profile_photo_url=picture,
-            auth_provider="google",
-            is_verified=True,
-            role="student",  # every signup is a student, no role choice for now
-        )
-        user.set_unusable_password()
-        user.save(update_fields=["password"])
-        OAuthAccount.objects.get_or_create(
-            provider="google", provider_user_id=google_uid, defaults={"user": user}
-        )
-        UserProfile.objects.get_or_create(user=user)
-
-        tokens = issue_tokens_for(user)
-        return Response({
-            "success": True,
-            "data": {
-                "tokens": tokens,
-                "is_new_user": True,
-                "profile_complete": user.profile_complete,
-                "user": UserSerializer(user).data,
+            defaults={
+                "full_name": name,
+                "profile_photo_url": picture,
+                "auth_provider": "google",
+                "is_verified": True,
+                "role": "student",  # every signup is a student, no role choice for now
             },
-        }, status=status.HTTP_201_CREATED)
-
-
-class GoogleLoginView(APIView):
-    """POST /api/auth/google/login/  { "id_token": "..." }
-    Logs in an EXISTING account only. If no account with this email has
-    signed up before, this fails on purpose - the app should send the user
-    to signup instead of silently creating an account here."""
-    permission_classes = [AllowAny]
-    throttle_scope = "google_auth"
-
-    def post(self, request):
-        serializer = GoogleAuthSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        try:
-            idinfo = _verify_google_id_token(serializer.validated_data["id_token"])
-        except Exception as e:
-            return Response({"success": False, "errors": [f"Invalid Google token: {e}"]}, status=400)
-
-        email = idinfo.get("email", "").lower()
-        google_uid = idinfo.get("sub")
-
-        user = User.objects.filter(email=email).first()
-        if user is None:
-            return Response(
-                {"success": False, "errors": ["No account found for this Google email. Please sign up first."]},
-                status=404,
-            )
+        )
+        if created:
+            user.set_unusable_password()
+            user.save(update_fields=["password"])
 
         OAuthAccount.objects.get_or_create(
             provider="google", provider_user_id=google_uid, defaults={"user": user}
@@ -232,11 +188,11 @@ class GoogleLoginView(APIView):
             "success": True,
             "data": {
                 "tokens": tokens,
-                "is_new_user": False,
+                "is_new_user": created,
                 "profile_complete": user.profile_complete,
                 "user": UserSerializer(user).data,
             },
-        })
+        }, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
 class ProfileSetupView(generics.UpdateAPIView):
