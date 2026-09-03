@@ -118,7 +118,7 @@ else:
 
 
 # Custom User Model
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'users.User'
 
 
 # Django REST Framework Configuration
