@@ -356,6 +356,27 @@ class ForgotPasswordView(APIView):
             user.reset_password_token = token
             user.reset_password_token_expires_at = timezone.now() + timedelta(hours=1)
             user.save(update_fields=['reset_password_token', 'reset_password_token_expires_at'])
+
+            try:
+                send_mail(
+                    subject='Reset Your Password',
+                    message=(
+                        f"Hello {user.name},\n\n"
+                        "Use the following token to reset your password:\n"
+                        f"{token}\n\n"
+                        "Or open this link in the BAOIAM app:\n"
+                        f"baoiam://reset-password/{token}\n\n"
+                        "This token will expire in 1 hour.\n\n"
+                        "Thank you!"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[user.email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                error_message = f"Failed to send password reset email: {e}"
+                logger.error(error_message)
+                print(error_message)
         except User.DoesNotExist:
             pass
 
