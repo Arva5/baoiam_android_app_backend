@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'certificates',
     'home',
     'legal',
-    'my_google_auth_code.users',
 ]
 
 
@@ -119,7 +118,7 @@ else:
 
 
 # Custom User Model
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'accounts.User'
 
 
 # Django REST Framework Configuration

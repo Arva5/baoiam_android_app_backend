@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, UserProfile
+from .models import User, UserProfile, OAuthAccount
 
 
 @admin.register(User)
@@ -30,4 +30,11 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'target_role', 'is_profile_completed', 'created_at')
     list_filter = ('is_profile_completed', 'created_at')
     search_fields = ('user__email', 'user__name', 'target_role', 'headline')
+
+
+@admin.register(OAuthAccount)
+class OAuthAccountAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'provider', 'provider_user_id', 'linked_at')
+    list_filter = ('provider', 'linked_at')
+    search_fields = ('user__email', 'provider_user_id')
 

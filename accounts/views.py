@@ -12,11 +12,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import UserProfile
+from .models import UserProfile, OAuthAccount
 from .serializers import (
     DeleteAccountSerializer,
     ForgotPasswordSerializer,
+    GoogleAuthSerializer,
     LoginSerializer,
+    LogoutSerializer,
+    ProfileSetupSerializer,
     ResendOTPSerializer,
     ResetPasswordSerializer,
     SignupSerializer,
@@ -28,6 +31,44 @@ from .serializers import (
 logger = logging.getLogger(__name__)
 User = get_user_model()
 
+
+def _verify_google_id_token(token):
+    """
+    Verifies a Google id_token server-side and returns decoded payload.
+    Validates token audience against settings.GOOGLE_CLIENT_IDS.
+    """
+    client_ids = getattr(settings, 'GOOGLE_CLIENT_IDS', [])
+    if not client_ids:
+        single_cid = getattr(settings, 'GOOGLE_CLIENT_ID', '')
+        if single_cid:
+            client_ids = [single_cid]
+
+    if not client_ids:
+        raise ValueError("Google Sign-In is not configured on the server.")
+
+    from google.oauth2 import id_token as google_id_token
+    from google.auth.transport import requests as google_requests
+
+    idinfo = None
+    last_error = None
+    for client_id in client_ids:
+        try:
+            idinfo = google_id_token.verify_oauth2_token(
+                token, google_requests.Request(), client_id
+            )
+            break
+        except ValueError as e:
+            last_error = e
+            continue
+
+    if idinfo is None:
+        raise last_error or ValueError("Invalid token audience")
+
+    if idinfo.get("iss") not in ("accounts.google.com", "https://accounts.google.com"):
+        raise ValueError("Invalid issuer")
+    if not idinfo.get("email_verified", False):
+        raise ValueError("Google account email is not verified.")
+    return idinfo
 
 
 class SignupView(APIView):
@@ -45,7 +86,7 @@ class SignupView(APIView):
         user.email_otp_expires_at = timezone.now() + timedelta(minutes=10)
         user.save(update_fields=['email_verified', 'email_otp', 'email_otp_expires_at'])
 
-        # Send OTP email via Django email / Gmail SMTP
+        # Send OTP email via configured email backend (Resend Anymail)
         try:
             send_mail(
                 subject='Verify Your Email - OTP',
@@ -170,11 +211,113 @@ class LoginView(APIView):
         }, status=status.HTTP_200_OK)
 
 
+class GoogleAuthView(APIView):
+    """
+    POST /api/auth/google/ { "id_token": "..." }
+    Unified Google Sign-In / Sign-Up endpoint using authoritative accounts.User model.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = GoogleAuthSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            idinfo = _verify_google_id_token(serializer.validated_data["id_token"])
+        except Exception as e:
+            return Response(
+                {"success": False, "errors": [f"Invalid Google token: {e}"], "detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        email = idinfo.get("email", "").lower().strip()
+        google_uid = idinfo.get("sub")
+        name = idinfo.get("name", "").strip()
+        picture = idinfo.get("picture", "")
+
+        user = User.objects.filter(email__iexact=email).first()
+        created = False
+
+        if not user:
+            user = User.objects.create_user(
+                email=email,
+                name=name or email.split('@')[0],
+                email_verified=True,
+            )
+            user.set_unusable_password()
+            user.save()
+            created = True
+        else:
+            if not user.email_verified:
+                user.email_verified = True
+                user.save(update_fields=["email_verified"])
+            if not user.name and name:
+                user.name = name
+                user.save(update_fields=["name"])
+
+        # Link OAuthAccount
+        OAuthAccount.objects.get_or_create(
+            provider="google",
+            provider_user_id=google_uid,
+            defaults={"user": user}
+        )
+
+        # Ensure profile exists
+        profile, _ = UserProfile.objects.get_or_create(user=user)
+        if picture and not profile.avatar_url:
+            profile.avatar_url = picture
+            profile.save(update_fields=["avatar_url"])
+
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+
+        return Response({
+            "success": True,
+            "access": str(access),
+            "refresh": str(refresh),
+            "data": {
+                "access": str(access),
+                "refresh": str(refresh),
+                "tokens": {
+                    "access": str(access),
+                    "refresh": str(refresh)
+                },
+                "is_new_user": created,
+                "profile_complete": profile.is_profile_completed,
+                "user": UserSerializer(user).data,
+            }
+        }, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+
+class LogoutView(APIView):
+    """
+    POST /api/auth/logout/ { "refresh": "<refresh_token>" }
+    Blacklists the refresh token.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = LogoutSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            token = RefreshToken(serializer.validated_data["refresh"])
+            token.blacklist()
+        except Exception as e:
+            return Response({"success": False, "detail": str(e), "errors": [str(e)]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"success": True, "message": "Logged out successfully.", "detail": "Logged out successfully."}, status=status.HTTP_200_OK)
+
+
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         serializer = UserSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -197,7 +340,6 @@ class DeleteAccountView(APIView):
         return Response({
             'detail': 'Account deleted successfully.'
         }, status=status.HTTP_200_OK)
-
 
 
 class ForgotPasswordView(APIView):
@@ -255,4 +397,23 @@ class UserProfileView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ProfileSetupView(APIView):
+    """
+    PATCH /api/auth/profile-setup/
+    Dedicated endpoint for profile setup flow.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
+        serializer = ProfileSetupSerializer(profile, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+            "success": True,
+            "data": UserProfileSerializer(profile).data,
+            "profile_complete": profile.is_profile_completed,
+        }, status=status.HTTP_200_OK)
 

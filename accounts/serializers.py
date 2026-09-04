@@ -168,3 +168,26 @@ class UserProfileSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('id', 'created_at', 'updated_at')
 
+
+class GoogleAuthSerializer(serializers.Serializer):
+    id_token = serializers.CharField(required=True, trim_whitespace=True)
+
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField(required=True)
+
+
+class ProfileSetupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = (
+            'avatar_url',
+            'headline',
+            'bio',
+            'phone_number',
+            'target_role',
+            'interests',
+            'skills',
+            'is_profile_completed',
+        )
+

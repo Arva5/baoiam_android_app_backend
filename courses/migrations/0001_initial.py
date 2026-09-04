@@ -2,6 +2,7 @@
 
 import django.db.models.deletion
 import django.utils.timezone
+from django.conf import settings
 from django.db import migrations, models
 
 
@@ -10,6 +11,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -31,6 +33,66 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='Course',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('title', models.CharField(max_length=255)),
+                ('slug', models.SlugField(blank=True, max_length=280, unique=True)),
+                ('short_code', models.CharField(blank=True, help_text="Short badge text shown in the app, e.g. 'UI/UX', 'WD', 'DA', 'PM'.", max_length=10)),
+                ('subtitle', models.CharField(blank=True, max_length=300)),
+                ('description', models.TextField(blank=True)),
+                ('thumbnail_url', models.URLField(blank=True, max_length=500, null=True)),
+                ('cover_image_url', models.URLField(blank=True, max_length=500, null=True)),
+                ('instructor_name', models.CharField(blank=True, default='Baoiam Instructor', max_length=150)),
+                ('level', models.CharField(choices=[('beginner', 'Beginner'), ('intermediate', 'Intermediate'), ('advanced', 'Advanced'), ('all_levels', 'All Levels')], default='all_levels', max_length=20)),
+                ('rating', models.DecimalField(decimal_places=2, default=4.8, max_digits=3)),
+                ('reviews_count', models.PositiveIntegerField(default=0)),
+                ('duration_hours', models.DecimalField(decimal_places=1, default=10.0, max_digits=5)),
+                ('lessons_count', models.PositiveIntegerField(default=12)),
+                ('price', models.DecimalField(decimal_places=2, default=0.0, max_digits=8)),
+                ('discounted_price', models.DecimalField(blank=True, decimal_places=2, max_digits=8, null=True)),
+                ('is_featured', models.BooleanField(default=False)),
+                ('is_popular', models.BooleanField(default=False)),
+                ('is_published', models.BooleanField(default=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('category', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='courses', to='courses.category')),
+                ('instructor', models.ForeignKey(blank=True, help_text='Left nullable for now — a dedicated Instructor role/model can replace this later.', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='courses_taught', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'ordering': ['-created_at'],
+            },
+        ),
+        migrations.CreateModel(
+            name='CourseModule',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('title', models.CharField(max_length=255)),
+                ('order', models.PositiveIntegerField(default=0, help_text='Display order within the course (Module 1, 2, 3...).')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='modules', to='courses.course')),
+            ],
+            options={
+                'ordering': ['order', 'id'],
+                'unique_together': {('course', 'order')},
+            },
+        ),
+        migrations.CreateModel(
+            name='Lesson',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('title', models.CharField(max_length=255)),
+                ('order', models.PositiveIntegerField(default=0, help_text='Lecture number within the module (Lecture 1, 2, 3...).')),
+                ('published_at', models.DateField(blank=True, help_text="Date shown in the app, e.g. '12 May 2025'.", null=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('module', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lessons', to='courses.coursemodule')),
+            ],
+            options={
+                'ordering': ['order', 'id'],
+                'unique_together': {('module', 'order')},
+            },
+        ),
+        migrations.CreateModel(
             name='ContentItem',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -41,6 +103,7 @@ class Migration(migrations.Migration):
                 ('file_size_bytes', models.PositiveBigIntegerField(blank=True, help_text="For PDF/file items — used to show '2.4 MB' style sizes in the app.", null=True)),
                 ('order', models.PositiveIntegerField(default=0)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('lesson', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='content_items', to='courses.lesson')),
             ],
             options={
                 'ordering': ['order', 'id'],
@@ -57,34 +120,12 @@ class Migration(migrations.Migration):
                 ('is_completed', models.BooleanField(default=False)),
                 ('last_accessed_at', models.DateTimeField(auto_now=True)),
                 ('enrolled_at', models.DateTimeField(auto_now_add=True)),
+                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='course_enrollments', to='courses.course')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='course_enrollments', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'ordering': ['-last_accessed_at'],
-            },
-        ),
-        migrations.CreateModel(
-            name='CourseModule',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('order', models.PositiveIntegerField(default=0, help_text='Display order within the course (Module 1, 2, 3...).')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-            ],
-            options={
-                'ordering': ['order', 'id'],
-            },
-        ),
-        migrations.CreateModel(
-            name='Lesson',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('order', models.PositiveIntegerField(default=0, help_text='Lecture number within the module (Lecture 1, 2, 3...).')),
-                ('published_at', models.DateField(blank=True, help_text="Date shown in the app, e.g. '12 May 2025'.", null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-            ],
-            options={
-                'ordering': ['order', 'id'],
+                'unique_together': {('user', 'course')},
             },
         ),
         migrations.CreateModel(
@@ -153,36 +194,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Why Choose Us Item',
                 'verbose_name_plural': 'Why Choose Us Items',
                 'ordering': ['order', 'created_at'],
-            },
-        ),
-        migrations.CreateModel(
-            name='Course',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('slug', models.SlugField(blank=True, max_length=280, unique=True)),
-                ('short_code', models.CharField(blank=True, help_text="Short badge text shown in the app, e.g. 'UI/UX', 'WD', 'DA', 'PM'.", max_length=10)),
-                ('subtitle', models.CharField(blank=True, max_length=300)),
-                ('description', models.TextField(blank=True)),
-                ('thumbnail_url', models.URLField(blank=True, max_length=500, null=True)),
-                ('cover_image_url', models.URLField(blank=True, max_length=500, null=True)),
-                ('instructor_name', models.CharField(blank=True, default='Baoiam Instructor', max_length=150)),
-                ('level', models.CharField(choices=[('beginner', 'Beginner'), ('intermediate', 'Intermediate'), ('advanced', 'Advanced'), ('all_levels', 'All Levels')], default='all_levels', max_length=20)),
-                ('rating', models.DecimalField(decimal_places=2, default=4.8, max_digits=3)),
-                ('reviews_count', models.PositiveIntegerField(default=0)),
-                ('duration_hours', models.DecimalField(decimal_places=1, default=10.0, max_digits=5)),
-                ('lessons_count', models.PositiveIntegerField(default=12)),
-                ('price', models.DecimalField(decimal_places=2, default=0.0, max_digits=8)),
-                ('discounted_price', models.DecimalField(blank=True, decimal_places=2, max_digits=8, null=True)),
-                ('is_featured', models.BooleanField(default=False)),
-                ('is_popular', models.BooleanField(default=False)),
-                ('is_published', models.BooleanField(default=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('category', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='courses', to='courses.category')),
-            ],
-            options={
-                'ordering': ['-created_at'],
             },
         ),
     ]

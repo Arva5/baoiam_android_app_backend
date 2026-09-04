@@ -73,3 +73,16 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"Profile<{self.user.email}>"
 
+
+class OAuthAccount(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='oauth_accounts')
+    provider = models.CharField(max_length=20, default='google')
+    provider_user_id = models.CharField(max_length=255)
+    linked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('provider', 'provider_user_id')
+
+    def __str__(self):
+        return f"{self.user.email} ({self.provider})"
+

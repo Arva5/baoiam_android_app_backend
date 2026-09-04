@@ -2,6 +2,7 @@
 
 import django.db.models.deletion
 import django.utils.timezone
+from django.conf import settings
 from django.db import migrations, models
 
 
@@ -11,6 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('courses', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -22,9 +24,11 @@ class Migration(migrations.Migration):
                 ('enrolled_at', models.DateTimeField(default=django.utils.timezone.now)),
                 ('access_expires_at', models.DateTimeField(blank=True, help_text='Null = lifetime access. Set this for time-limited course access.', null=True)),
                 ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='enrollments', to='courses.course')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='enrollments', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'ordering': ['-enrolled_at'],
+                'unique_together': {('user', 'course')},
             },
         ),
     ]
