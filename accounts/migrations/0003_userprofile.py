@@ -7,10 +7,25 @@ from django.db import migrations, models
 
 def create_userprofile_table(apps, schema_editor):
     from django.apps import apps as global_apps
-    UserProfile = global_apps.get_model('accounts', 'UserProfile')
-    table_name = UserProfile._meta.db_table
-    if table_name not in schema_editor.connection.introspection.table_names():
-        schema_editor.create_model(UserProfile)
+    app_config = global_apps.get_app_config('accounts')
+    conn = schema_editor.connection
+    existing_tables = set(conn.introspection.table_names())
+
+    for model in app_config.get_models():
+        table_name = model._meta.db_table
+        if table_name not in existing_tables:
+            schema_editor.create_model(model)
+            existing_tables.add(table_name)
+
+    for model in app_config.get_models():
+        table_name = model._meta.db_table
+        with conn.cursor() as cursor:
+            existing_columns = {col.name for col in conn.introspection.get_table_description(cursor, table_name)}
+        for field in model._meta.local_fields:
+            column_name = field.column
+            if column_name and column_name not in existing_columns:
+                schema_editor.add_field(model, field)
+                existing_columns.add(column_name)
 
 
 def drop_userprofile_table(apps, schema_editor):
