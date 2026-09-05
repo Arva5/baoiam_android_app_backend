@@ -26,13 +26,48 @@ class CoursesAppTests(APITestCase):
             name='Student',
             password='Password123!',
         )
-        self.category = Category.objects.create(name='Design', slug='design')
+        self.category, _ = Category.objects.get_or_create(
+            slug='design',
+            defaults={'name': 'Design', 'order': 2, 'is_active': True}
+        )
+        self.business_category, _ = Category.objects.get_or_create(
+            slug='business',
+            defaults={'name': 'Business', 'order': 1, 'is_active': True}
+        )
+        self.tech_category, _ = Category.objects.get_or_create(
+            slug='technology',
+            defaults={'name': 'Technology', 'order': 3, 'is_active': True}
+        )
+        self.dev_category, _ = Category.objects.get_or_create(
+            slug='development',
+            defaults={'name': 'Development', 'order': 4, 'is_active': True}
+        )
+
         self.course = Course.objects.create(
             title='UI/UX Design Masterclass',
             slug='ui-ux-design',
             short_code='UI/UX',
             category=self.category,
             price=Decimal('29.99'),
+            level='beginner',
+            is_published=True,
+        )
+        self.business_course = Course.objects.create(
+            title='Business Strategy 101',
+            slug='business-strategy-101',
+            short_code='BS101',
+            category=self.business_category,
+            price=Decimal('49.99'),
+            level='intermediate',
+            is_published=True,
+        )
+        self.tech_course = Course.objects.create(
+            title='Applied AI & Machine Learning',
+            slug='applied-ai-ml',
+            short_code='AI-ML',
+            category=self.tech_category,
+            price=Decimal('79.99'),
+            level='advanced',
             is_published=True,
         )
 
@@ -59,13 +94,56 @@ class CoursesAppTests(APITestCase):
         url = reverse('course-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertGreaterEqual(len(response.data), 3)
+
+    def test_filter_courses_by_category_slug(self):
+        url = reverse('course-list')
+
+        # Filter by design
+        res_design = self.client.get(url, {'category': 'design'})
+        self.assertEqual(res_design.status_code, status.HTTP_200_OK)
+        titles = [c['title'] for c in res_design.data]
+        self.assertIn('UI/UX Design Masterclass', titles)
+        self.assertNotIn('Business Strategy 101', titles)
+        self.assertNotIn('Applied AI & Machine Learning', titles)
+
+        # Filter by business (case-insensitive)
+        res_business = self.client.get(url, {'category': 'Business'})
+        self.assertEqual(res_business.status_code, status.HTTP_200_OK)
+        titles_biz = [c['title'] for c in res_business.data]
+        self.assertIn('Business Strategy 101', titles_biz)
+        self.assertNotIn('UI/UX Design Masterclass', titles_biz)
+
+        # Filter by technology
+        res_tech = self.client.get(url, {'category': 'technology'})
+        self.assertEqual(res_tech.status_code, status.HTTP_200_OK)
+        titles_tech = [c['title'] for c in res_tech.data]
+        self.assertIn('Applied AI & Machine Learning', titles_tech)
+
+        # Filter by category with zero courses
+        res_dev = self.client.get(url, {'category': 'development'})
+        self.assertEqual(res_dev.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res_dev.data), 0)
+
+        # Filter by non-existent category
+        res_none = self.client.get(url, {'category': 'non-existent-category'})
+        self.assertEqual(res_none.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res_none.data), 0)
+
+    def test_filter_courses_by_category_and_level(self):
+        url = reverse('course-list')
+        res = self.client.get(url, {'category': 'design', 'level': 'beginner'})
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 1)
+        self.assertEqual(res.data[0]['slug'], 'ui-ux-design')
 
     def test_course_detail_by_id(self):
         url = reverse('course-detail', kwargs={'id': self.course.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], 'UI/UX Design Masterclass')
+        self.assertEqual(response.data['category'], self.category.id)
+        self.assertEqual(response.data['category_name'], 'Design')
         self.assertIn('modules', response.data)
         self.assertEqual(len(response.data['modules']), 1)
 
@@ -74,6 +152,8 @@ class CoursesAppTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], 'UI/UX Design Masterclass')
+        self.assertEqual(response.data['category'], self.category.id)
+        self.assertEqual(response.data['category_name'], 'Design')
 
     def test_course_player_unlocked_with_enrollment(self):
         self.client.force_authenticate(user=self.user)
@@ -95,7 +175,30 @@ class CoursesAppTests(APITestCase):
         url = reverse('category-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertGreaterEqual(len(response.data), 4)
+
+        slugs = [cat['slug'] for cat in response.data]
+        self.assertIn('business', slugs)
+        self.assertIn('design', slugs)
+        self.assertIn('technology', slugs)
+        self.assertIn('development', slugs)
+
+        # Verify fields in category response
+        first_cat = response.data[0]
+        self.assertIn('id', first_cat)
+        self.assertIn('name', first_cat)
+        self.assertIn('slug', first_cat)
+        self.assertIn('description', first_cat)
+        self.assertIn('order', first_cat)
+        self.assertIn('is_active', first_cat)
+
+    def test_inactive_category_excluded_from_list(self):
+        Category.objects.create(name='Archived Cat', slug='archived-cat', is_active=False)
+        url = reverse('category-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        slugs = [cat['slug'] for cat in response.data]
+        self.assertNotIn('archived-cat', slugs)
 
     def test_promotions_and_tips(self):
         PromotionalBanner.objects.create(title='50% Off Flash Sale', is_active=True)

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics, status
@@ -26,7 +27,7 @@ from .serializers import (
 
 
 class CategoryListView(generics.ListAPIView):
-    queryset = Category.objects.filter(is_active=True)
+    queryset = Category.objects.filter(is_active=True).order_by('order', 'name')
     serializer_class = CategorySerializer
     permission_classes = [AllowAny]
 
@@ -42,18 +43,25 @@ class CourseListView(generics.ListAPIView):
         else:
             queryset = Course.objects.filter(is_published=True)
 
-        category_slug = self.request.query_params.get('category')
+        category_param = self.request.query_params.get('category') or self.request.query_params.get('category_id')
         is_featured = self.request.query_params.get('is_featured')
         level = self.request.query_params.get('level')
 
-        if category_slug:
-            queryset = queryset.filter(category__slug=category_slug)
+        if category_param:
+            if str(category_param).isdigit():
+                queryset = queryset.filter(
+                    Q(category_id=int(category_param)) | Q(category__slug__iexact=str(category_param))
+                )
+            else:
+                queryset = queryset.filter(
+                    Q(category__slug__iexact=category_param) | Q(category__name__iexact=category_param)
+                )
         if is_featured is not None:
             queryset = queryset.filter(is_featured=is_featured.lower() == 'true')
         if level:
             queryset = queryset.filter(level=level)
 
-        return queryset
+        return queryset.select_related('category', 'instructor')
 
 
 class CourseDetailView(APIView):
@@ -61,10 +69,11 @@ class CourseDetailView(APIView):
 
     def get(self, request, *args, **kwargs):
         lookup = kwargs.get('slug') or kwargs.get('id')
+        base_qs = Course.objects.select_related('category', 'instructor')
         if isinstance(lookup, int) or (isinstance(lookup, str) and lookup.isdigit()):
-            course = get_object_or_404(Course, id=int(lookup))
+            course = get_object_or_404(base_qs, id=int(lookup))
         else:
-            course = get_object_or_404(Course, slug=lookup)
+            course = get_object_or_404(base_qs, slug=lookup)
 
         if not course.is_published and not (
             request.user and request.user.is_authenticated and request.user.is_staff
