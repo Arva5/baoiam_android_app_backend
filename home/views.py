@@ -1,12 +1,16 @@
-from rest_framework import status
-from rest_framework.permissions import AllowAny
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from rest_framework import generics, status
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .models import Notification
 from .serializers import (
     GettingStartedSerializer,
     HomeScreenEngagementSerializer,
     LearningPathQuizHomeSerializer,
+    NotificationSerializer,
     PromotionalBannerHomeSerializer,
     StartYourJourneyHomeSerializer,
     TipOfTheDayHomeSerializer,
@@ -122,3 +126,108 @@ class StartYourJourneyView(APIView):
         data = get_start_your_journey_data(user)
         serializer = StartYourJourneyHomeSerializer(data)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class NotificationListView(generics.ListAPIView):
+    """
+    Returns list of notifications for the authenticated user.
+    Supports filtering:
+      - ?unread=true (or ?unread=false)
+      - ?type=course (or ?notification_type=general)
+    """
+    permission_classes = [IsAuthenticated]
+    serializer_class = NotificationSerializer
+
+    def get_queryset(self):
+        queryset = Notification.objects.filter(user=self.request.user)
+
+        unread_param = self.request.query_params.get('unread')
+        if unread_param is not None:
+            if unread_param.lower() in ['true', '1', 'yes']:
+                queryset = queryset.filter(is_read=False)
+            elif unread_param.lower() in ['false', '0', 'no']:
+                queryset = queryset.filter(is_read=True)
+
+        is_read_param = self.request.query_params.get('is_read')
+        if is_read_param is not None:
+            if is_read_param.lower() in ['true', '1', 'yes']:
+                queryset = queryset.filter(is_read=True)
+            elif is_read_param.lower() in ['false', '0', 'no']:
+                queryset = queryset.filter(is_read=False)
+
+        notification_type = (
+            self.request.query_params.get('type')
+            or self.request.query_params.get('notification_type')
+        )
+        if notification_type:
+            queryset = queryset.filter(notification_type__iexact=notification_type)
+
+        return queryset
+
+
+class NotificationMarkReadView(APIView):
+    """
+    Marks a single notification as read for the authenticated user.
+    Accessible via POST or PATCH /api/home/notifications/<pk>/read/ (or /api/home/notifications/<pk>/).
+    """
+    permission_classes = [IsAuthenticated]
+
+    def _mark_read(self, request, pk):
+        notification = get_object_or_404(Notification, id=pk, user=request.user)
+        notification.mark_as_read()
+        serializer = NotificationSerializer(notification)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, pk, *args, **kwargs):
+        return self._mark_read(request, pk)
+
+    def patch(self, request, pk, *args, **kwargs):
+        return self._mark_read(request, pk)
+
+    def put(self, request, pk, *args, **kwargs):
+        return self._mark_read(request, pk)
+
+
+class NotificationMarkAllReadView(APIView):
+    """
+    Marks all unread notifications for the authenticated user as read.
+    POST /api/home/notifications/mark-all-read/ or /api/home/notifications/read-all/
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        now = timezone.now()
+        updated_count = Notification.objects.filter(
+            user=request.user,
+            is_read=False,
+        ).update(
+            is_read=True,
+            read_at=now,
+            updated_at=now,
+        )
+        return Response(
+            {
+                "detail": "All notifications marked as read.",
+                "count": updated_count,
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+class NotificationUnreadCountView(APIView):
+    """
+    Returns the count of unread notifications for the notification bell badge.
+    GET /api/home/notifications/unread-count/
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        unread_count = Notification.objects.filter(
+            user=request.user,
+            is_read=False,
+        ).count()
+        return Response(
+            {"unread_count": unread_count},
+            status=status.HTTP_200_OK
+        )
+

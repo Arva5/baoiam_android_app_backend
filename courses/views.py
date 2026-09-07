@@ -43,9 +43,21 @@ class CourseListView(generics.ListAPIView):
         else:
             queryset = Course.objects.filter(is_published=True)
 
+        search_query = self.request.query_params.get('search') or self.request.query_params.get('q')
         category_param = self.request.query_params.get('category') or self.request.query_params.get('category_id')
         is_featured = self.request.query_params.get('is_featured')
         level = self.request.query_params.get('level')
+
+        if search_query:
+            search_query = search_query.strip()
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) |
+                Q(subtitle__icontains=search_query) |
+                Q(short_code__icontains=search_query) |
+                Q(instructor_name__icontains=search_query) |
+                Q(instructor__name__icontains=search_query) |
+                Q(description__icontains=search_query)
+            )
 
         if category_param:
             if str(category_param).isdigit():

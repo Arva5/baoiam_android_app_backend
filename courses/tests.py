@@ -216,3 +216,66 @@ class CoursesAppTests(APITestCase):
         res_why = self.client.get(reverse('why-choose-us-list'))
         self.assertEqual(res_why.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res_why.data), 1)
+
+    def test_search_courses_by_title(self):
+        url = reverse('course-list')
+        response = self.client.get(url, {'search': 'masterclass'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        titles = [c['title'] for c in response.data]
+        self.assertIn('UI/UX Design Masterclass', titles)
+        self.assertNotIn('Business Strategy 101', titles)
+
+    def test_search_courses_by_short_code(self):
+        url = reverse('course-list')
+        response = self.client.get(url, {'search': 'BS101'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        titles = [c['title'] for c in response.data]
+        self.assertIn('Business Strategy 101', titles)
+        self.assertNotIn('UI/UX Design Masterclass', titles)
+
+    def test_search_courses_by_instructor_name(self):
+        instructor = User.objects.create_user(email='prof@example.com', name='Professor John', password='Pass123!')
+        Course.objects.create(
+            title='Advanced Python Frameworks',
+            slug='adv-py-frameworks',
+            short_code='PY-ADV',
+            instructor=instructor,
+            instructor_name='Professor John',
+            price=Decimal('50.00'),
+            is_published=True,
+        )
+        url = reverse('course-list')
+        response = self.client.get(url, {'search': 'Professor John'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        titles = [c['title'] for c in response.data]
+        self.assertIn('Advanced Python Frameworks', titles)
+
+    def test_search_courses_case_insensitive(self):
+        url = reverse('course-list')
+        res_upper = self.client.get(url, {'search': 'DESIGN'})
+        res_lower = self.client.get(url, {'search': 'design'})
+        self.assertEqual(res_upper.status_code, status.HTTP_200_OK)
+        self.assertEqual(res_lower.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res_upper.data), len(res_lower.data))
+        titles = [c['title'] for c in res_upper.data]
+        self.assertIn('UI/UX Design Masterclass', titles)
+
+    def test_search_courses_combined_with_category_and_filters(self):
+        url = reverse('course-list')
+        # Search 'strategy' with category 'business'
+        response = self.client.get(url, {'search': 'strategy', 'category': 'business'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['slug'], 'business-strategy-101')
+
+        # Search 'strategy' with category 'technology' (should return empty)
+        response_wrong_cat = self.client.get(url, {'search': 'strategy', 'category': 'technology'})
+        self.assertEqual(response_wrong_cat.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response_wrong_cat.data), 0)
+
+    def test_search_courses_no_results(self):
+        url = reverse('course-list')
+        response = self.client.get(url, {'search': 'nonexistenttermxyz999'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+

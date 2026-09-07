@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'certificates',
     'home',
     'legal',
+    'feedback',
 ]
 
 

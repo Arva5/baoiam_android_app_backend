@@ -240,3 +240,158 @@ class HomeScreen1EngagementTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['enrolled_courses_count'], 1)
+
+
+class NotificationAPITests(APITestCase):
+    """Tests for /api/notifications/ endpoints (mounted via home.notification_urls)."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='notif_tester@example.com',
+            name='Notif Tester',
+            password='Password123!',
+        )
+        self.other_user = User.objects.create_user(
+            email='other_notif@example.com',
+            name='Other Notif',
+            password='Password123!',
+        )
+
+        from home.models import Notification
+        self.Notification = Notification
+
+        self.notif_unread = Notification.objects.create(
+            user=self.user,
+            title='Welcome to Baoiam!',
+            message='Start your learning journey today.',
+            notification_type='general',
+        )
+        self.notif_read = Notification.objects.create(
+            user=self.user,
+            title='Course Enrolled',
+            message='You enrolled in Python Bootcamp.',
+            notification_type='course',
+            is_read=True,
+        )
+        self.other_notif = Notification.objects.create(
+            user=self.other_user,
+            title='Other User Notif',
+            message='Not visible to self.user.',
+        )
+
+    # ---- Authentication guards ---- #
+
+    def test_list_requires_authentication(self):
+        response = self.client.get(reverse('notification-list'))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_unread_count_requires_authentication(self):
+        response = self.client.get(reverse('notification-unread-count'))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_mark_read_requires_authentication(self):
+        url = reverse('notification-mark-read', kwargs={'pk': self.notif_unread.id})
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_mark_all_read_requires_authentication(self):
+        response = self.client.post(reverse('notification-mark-all-read'))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    # ---- List endpoint ---- #
+
+    def test_list_returns_only_own_notifications(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(reverse('notification-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        ids = [n['id'] for n in response.data]
+        self.assertIn(self.notif_unread.id, ids)
+        self.assertIn(self.notif_read.id, ids)
+        self.assertNotIn(self.other_notif.id, ids)
+
+    def test_list_response_has_required_fields(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(reverse('notification-list'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        first = response.data[0]
+        for field in ('id', 'title', 'message', 'is_read', 'created_at', 'notification_type'):
+            self.assertIn(field, first, msg=f"Field '{field}' missing from notification response")
+
+    def test_filter_unread_only(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(reverse('notification-list'), {'unread': 'true'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        ids = [n['id'] for n in response.data]
+        self.assertIn(self.notif_unread.id, ids)
+        self.assertNotIn(self.notif_read.id, ids)
+        for n in response.data:
+            self.assertFalse(n['is_read'])
+
+    # ---- Unread count ---- #
+
+    def test_unread_count_returns_correct_value(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(reverse('notification-unread-count'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('unread_count', response.data)
+        self.assertEqual(response.data['unread_count'], 1)  # only notif_unread
+
+    def test_unread_count_counts_only_own(self):
+        # other_user has 1 unread; should not affect self.user count
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(reverse('notification-unread-count'))
+        self.assertEqual(response.data['unread_count'], 1)
+
+    # ---- Mark single read ---- #
+
+    def test_mark_notification_as_read(self):
+        self.client.force_authenticate(user=self.user)
+        url = reverse('notification-mark-read', kwargs={'pk': self.notif_unread.id})
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['is_read'])
+        self.assertIsNotNone(response.data['read_at'])
+        self.notif_unread.refresh_from_db()
+        self.assertTrue(self.notif_unread.is_read)
+
+    def test_mark_already_read_is_idempotent(self):
+        self.client.force_authenticate(user=self.user)
+        url = reverse('notification-mark-read', kwargs={'pk': self.notif_read.id})
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['is_read'])
+
+    def test_cannot_mark_other_users_notification_as_read(self):
+        self.client.force_authenticate(user=self.user)
+        url = reverse('notification-mark-read', kwargs={'pk': self.other_notif.id})
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_mark_nonexistent_notification_returns_404(self):
+        self.client.force_authenticate(user=self.user)
+        url = reverse('notification-mark-read', kwargs={'pk': 999999})
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    # ---- Mark all read ---- #
+
+    def test_mark_all_notifications_as_read(self):
+        self.Notification.objects.create(
+            user=self.user,
+            title='Extra Unread',
+            message='Another unread notification.',
+        )
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(reverse('notification-mark-all-read'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('detail', response.data)
+        unread_remaining = self.Notification.objects.filter(
+            user=self.user, is_read=False
+        ).count()
+        self.assertEqual(unread_remaining, 0)
+
+    def test_mark_all_read_does_not_affect_other_users(self):
+        self.client.force_authenticate(user=self.user)
+        self.client.post(reverse('notification-mark-all-read'))
+        self.other_notif.refresh_from_db()
+        self.assertFalse(self.other_notif.is_read)

@@ -141,3 +141,25 @@ class HomeScreenEngagementSerializer(serializers.Serializer):
     why_choose_us = WhyChooseUsHomeSerializer()
     tip_of_the_day = TipOfTheDayHomeSerializer(allow_null=True)
     start_your_journey = StartYourJourneyHomeSerializer()
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    body = serializers.CharField(source='message', read_only=True)
+
+    class Meta:
+        from .models import Notification
+        model = Notification
+        fields = [
+            'id',
+            'title',
+            'message',
+            'body',
+            'notification_type',
+            'action_url',
+            'is_read',
+            'read_at',
+            'created_at',
+            'updated_at',
+        ]
+        read_only_fields = ['id', 'user', 'read_at', 'created_at', 'updated_at']
+
