@@ -191,3 +191,19 @@ class ProfileSetupSerializer(serializers.ModelSerializer):
             'is_profile_completed',
         )
 
+
+class PersonalInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('full_name', 'username', 'professional_headline')
+
+    def validate_username(self, value):
+        if value is None or value == '':
+            return value
+        qs = User.objects.filter(username__iexact=value)
+        # Exclude the current instance on updates
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError("This username is already taken.")
+        return value

@@ -19,6 +19,7 @@ from .serializers import (
     GoogleAuthSerializer,
     LoginSerializer,
     LogoutSerializer,
+    PersonalInfoSerializer,
     ProfileSetupSerializer,
     ResendOTPSerializer,
     ResetPasswordSerializer,
@@ -438,3 +439,22 @@ class ProfileSetupView(APIView):
             "profile_complete": profile.is_profile_completed,
         }, status=status.HTTP_200_OK)
 
+
+class PersonalInfoView(APIView):
+    """
+    GET  /api/auth/personal-info/  — return logged-in user's personal info.
+    PATCH /api/auth/personal-info/ — update logged-in user's personal info.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = PersonalInfoSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        serializer = PersonalInfoSerializer(
+            request.user, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)

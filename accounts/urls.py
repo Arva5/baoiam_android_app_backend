@@ -7,6 +7,7 @@ from .views import (
     GoogleAuthView,
     LoginView,
     LogoutView,
+    PersonalInfoView,
     ProfileSetupView,
     ResendOTPView,
     ResetPasswordView,
@@ -30,5 +31,6 @@ urlpatterns = [
     path('delete-account/', DeleteAccountView.as_view(), name='delete_account'),
     path('forgot-password/', ForgotPasswordView.as_view(), name='forgot_password'),
     path('reset-password/', ResetPasswordView.as_view(), name='reset_password'),
+    path('personal-info/', PersonalInfoView.as_view(), name='personal_info'),
 ]
 

@@ -365,3 +365,90 @@ class AuthenticationAPITests(APITestCase):
         res_patch = self.client.patch(self.profile_url, {'headline': 'Test'})
         self.assertEqual(res_patch.status_code, status.HTTP_401_UNAUTHORIZED)
 
+
+class PersonalInfoAPITests(APITestCase):
+    def setUp(self):
+        from rest_framework_simplejwt.tokens import RefreshToken
+        self.url = reverse('personal_info')
+        self.user = User.objects.create_user(
+            name='Alice',
+            email='alice@example.com',
+            password='AlicePass123!',
+            email_verified=True,
+        )
+        self.other_user = User.objects.create_user(
+            name='Bob',
+            email='bob@example.com',
+            password='BobPass123!',
+            email_verified=True,
+            username='bob_unique',
+        )
+        refresh = RefreshToken.for_user(self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
+
+    # --- Auth guard ---
+    def test_get_requires_authentication(self):
+        self.client.credentials()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_patch_requires_authentication(self):
+        self.client.credentials()
+        response = self.client.patch(self.url, {'full_name': 'Alice Smith'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    # --- GET ---
+    def test_get_returns_personal_info_fields(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for field in ('full_name', 'username', 'professional_headline'):
+            self.assertIn(field, response.data)
+
+    def test_get_returns_only_own_data(self):
+        self.user.full_name = 'Alice Smith'
+        self.user.username = 'alice_s'
+        self.user.professional_headline = 'Mobile Dev'
+        self.user.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.data['full_name'], 'Alice Smith')
+        self.assertEqual(response.data['username'], 'alice_s')
+        self.assertEqual(response.data['professional_headline'], 'Mobile Dev')
+
+    # --- PATCH ---
+    def test_patch_updates_fields(self):
+        payload = {
+            'full_name': 'Alice Smith',
+            'username': 'alice_smith',
+            'professional_headline': 'Senior Android Engineer',
+        }
+        response = self.client.patch(self.url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.full_name, 'Alice Smith')
+        self.assertEqual(self.user.username, 'alice_smith')
+        self.assertEqual(self.user.professional_headline, 'Senior Android Engineer')
+
+    def test_patch_is_partial(self):
+        self.user.full_name = 'Alice'
+        self.user.save()
+        response = self.client.patch(self.url, {'professional_headline': 'Dev'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.full_name, 'Alice')  # unchanged
+
+    # --- Username uniqueness ---
+    def test_duplicate_username_is_rejected(self):
+        response = self.client.patch(self.url, {'username': 'bob_unique'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('username', response.data)
+
+    def test_username_uniqueness_is_case_insensitive(self):
+        response = self.client.patch(self.url, {'username': 'BOB_UNIQUE'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('username', response.data)
+
+    def test_updating_own_username_to_same_value_is_allowed(self):
+        self.user.username = 'alice_own'
+        self.user.save()
+        response = self.client.patch(self.url, {'username': 'alice_own'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

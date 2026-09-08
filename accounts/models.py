@@ -37,6 +37,21 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
 
+    # Personal information fields
+    full_name = models.CharField(max_length=255, blank=True)
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        null=True,
+        blank=True,
+        help_text="Unique public username.",
+    )
+    professional_headline = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Short professional headline, e.g. 'Senior Android Engineer'.",
+    )
+
     # Email verification fields
     email_verified = models.BooleanField(default=False)
     email_otp = models.CharField(max_length=6, blank=True, null=True)
