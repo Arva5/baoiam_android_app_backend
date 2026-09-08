@@ -91,6 +91,20 @@ class UserProfile(models.Model):
     linkedin_url = models.URLField(blank=True)
     github_url = models.URLField(blank=True)
     website_url = models.URLField(blank=True)
+
+    # Preferences
+    language = models.CharField(
+        max_length=10,
+        default='en',
+        help_text='BCP 47 language code, e.g. "en" or "hi".',
+    )
+    notifications_enabled = models.BooleanField(default=True)
+    timezone = models.CharField(
+        max_length=64,
+        default='Asia/Kolkata',
+        help_text='IANA timezone identifier, e.g. "Asia/Kolkata".',
+    )
+
     is_profile_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

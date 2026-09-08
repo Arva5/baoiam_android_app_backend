@@ -420,6 +420,89 @@ class AuthenticationAPITests(APITestCase):
         self.assertEqual(res_patch.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
+class ProfilePreferencesAPITests(APITestCase):
+    def setUp(self):
+        self.profile_url = reverse('user_profile')
+        self.setup_url = reverse('profile_setup')
+        self.user = User.objects.create_user(
+            name='Jane Doe',
+            email='jane@example.com',
+            password='JanePassword123!',
+            email_verified=True,
+        )
+
+    def test_get_profile_preference_defaults(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.profile_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['language'], 'en')
+        self.assertTrue(response.data['notifications_enabled'])
+        self.assertEqual(response.data['timezone'], 'Asia/Kolkata')
+
+    def test_patch_profile_updates_preferences(self):
+        self.client.force_authenticate(user=self.user)
+        payload = {
+            'language': 'hi',
+            'notifications_enabled': False,
+            'timezone': 'America/New_York',
+        }
+        response = self.client.patch(self.profile_url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['language'], 'hi')
+        self.assertFalse(response.data['notifications_enabled'])
+        self.assertEqual(response.data['timezone'], 'America/New_York')
+        profile = self.user.profile
+        profile.refresh_from_db()
+        self.assertEqual(profile.language, 'hi')
+        self.assertFalse(profile.notifications_enabled)
+        self.assertEqual(profile.timezone, 'America/New_York')
+
+    def test_patch_profile_setup_updates_preferences(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch(
+            self.setup_url,
+            {'language': 'en', 'timezone': 'Asia/Kolkata'},
+            format='json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['data']['language'], 'en')
+        self.assertEqual(response.data['data']['timezone'], 'Asia/Kolkata')
+
+    def test_patch_normalizes_language_code(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch(
+            self.profile_url, {'language': 'EN-us'}, format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['language'], 'en-US')
+
+    def test_patch_rejects_invalid_language(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch(
+            self.profile_url, {'language': 'english'}, format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('language', response.data)
+
+    def test_patch_rejects_invalid_timezone(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch(
+            self.profile_url, {'timezone': 'Kolkata'}, format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('timezone', response.data)
+
+    def test_preferences_unauthenticated(self):
+        res_get = self.client.get(self.profile_url)
+        self.assertEqual(res_get.status_code, status.HTTP_401_UNAUTHORIZED)
+        res_patch = self.client.patch(
+            self.profile_url,
+            {'language': 'hi', 'notifications_enabled': False},
+            format='json',
+        )
+        self.assertEqual(res_patch.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
 class PersonalInfoAPITests(APITestCase):
     def setUp(self):
         from rest_framework_simplejwt.tokens import RefreshToken
