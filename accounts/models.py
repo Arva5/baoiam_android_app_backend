@@ -81,6 +81,16 @@ class UserProfile(models.Model):
     target_role = models.CharField(max_length=150, blank=True)
     interests = models.JSONField(default=list, blank=True)
     skills = models.JSONField(default=list, blank=True)
+
+    # Educational Background
+    highest_qualification = models.CharField(max_length=150, blank=True)
+    institution = models.CharField(max_length=255, blank=True)
+    field_of_study = models.CharField(max_length=255, blank=True)
+
+    # Contact Information (phone_number above; email is on User)
+    linkedin_url = models.URLField(blank=True)
+    github_url = models.URLField(blank=True)
+    website_url = models.URLField(blank=True)
     is_profile_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

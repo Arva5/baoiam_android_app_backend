@@ -145,6 +145,21 @@ class DeleteAccountSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True, required=True)
 
 
+def validate_skills_list(value):
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise serializers.ValidationError("Skills must be a list of strings.")
+    cleaned = []
+    for skill in value:
+        if not isinstance(skill, str):
+            raise serializers.ValidationError("Each skill must be a string.")
+        skill = skill.strip()
+        if skill:
+            cleaned.append(skill)
+    return cleaned
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.name', read_only=True)
     user_email = serializers.CharField(source='user.email', read_only=True)
@@ -162,11 +177,20 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'target_role',
             'interests',
             'skills',
+            'highest_qualification',
+            'institution',
+            'field_of_study',
+            'linkedin_url',
+            'github_url',
+            'website_url',
             'is_profile_completed',
             'created_at',
             'updated_at',
         )
         read_only_fields = ('id', 'created_at', 'updated_at')
+
+    def validate_skills(self, value):
+        return validate_skills_list(value)
 
 
 class GoogleAuthSerializer(serializers.Serializer):
@@ -188,8 +212,17 @@ class ProfileSetupSerializer(serializers.ModelSerializer):
             'target_role',
             'interests',
             'skills',
+            'highest_qualification',
+            'institution',
+            'field_of_study',
+            'linkedin_url',
+            'github_url',
+            'website_url',
             'is_profile_completed',
         )
+
+    def validate_skills(self, value):
+        return validate_skills_list(value)
 
 
 class PersonalInfoSerializer(serializers.ModelSerializer):

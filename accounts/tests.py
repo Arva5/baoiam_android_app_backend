@@ -343,7 +343,61 @@ class AuthenticationAPITests(APITestCase):
         self.assertEqual(response.data['headline'], 'Full Stack Developer')
         self.assertEqual(response.data['target_role'], 'Software Engineer')
         self.assertEqual(response.data['interests'], ['Web Development', 'AI'])
+        self.assertEqual(response.data['skills'], ['Python', 'Django', 'React'])
         self.assertTrue(response.data['is_profile_completed'])
+
+    def test_get_profile_includes_education_skills_and_contact_defaults(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.profile_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['highest_qualification'], '')
+        self.assertEqual(response.data['institution'], '')
+        self.assertEqual(response.data['field_of_study'], '')
+        self.assertEqual(response.data['skills'], [])
+        self.assertEqual(response.data['phone_number'], '')
+        self.assertEqual(response.data['linkedin_url'], '')
+        self.assertEqual(response.data['github_url'], '')
+        self.assertEqual(response.data['website_url'], '')
+
+    def test_patch_profile_educational_background(self):
+        self.client.force_authenticate(user=self.user)
+        payload = {
+            'highest_qualification': 'B.Tech',
+            'institution': 'IIT Delhi',
+            'field_of_study': 'Computer Science',
+        }
+        response = self.client.patch(self.profile_url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['highest_qualification'], 'B.Tech')
+        self.assertEqual(response.data['institution'], 'IIT Delhi')
+        self.assertEqual(response.data['field_of_study'], 'Computer Science')
+        profile = self.user.profile
+        profile.refresh_from_db()
+        self.assertEqual(profile.institution, 'IIT Delhi')
+
+    def test_patch_profile_contact_information(self):
+        self.client.force_authenticate(user=self.user)
+        payload = {
+            'phone_number': '+919876543210',
+            'linkedin_url': 'https://linkedin.com/in/jane',
+            'github_url': 'https://github.com/jane',
+            'website_url': 'https://jane.dev',
+        }
+        response = self.client.patch(self.profile_url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['phone_number'], '+919876543210')
+        self.assertEqual(response.data['linkedin_url'], 'https://linkedin.com/in/jane')
+        self.assertEqual(response.data['github_url'], 'https://github.com/jane')
+        self.assertEqual(response.data['website_url'], 'https://jane.dev')
+        self.assertEqual(response.data['user_email'], 'jane@example.com')
+
+    def test_patch_profile_rejects_invalid_skills(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch(
+            self.profile_url, {'skills': 'Python'}, format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('skills', response.data)
 
     def test_patch_profile_does_not_change_email_or_auth(self):
         self.client.force_authenticate(user=self.user)
