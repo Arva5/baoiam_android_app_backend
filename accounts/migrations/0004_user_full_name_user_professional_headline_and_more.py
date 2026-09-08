@@ -23,9 +23,9 @@ def add_columns(apps, schema_editor):
         cursor.execute("ALTER TABLE accounts_user ADD COLUMN username VARCHAR(150) NULL DEFAULT NULL")
         # Unique index as a separate step (works on SQLite & PostgreSQL)
         cursor.execute(
-            "CREATE UNIQUE INDEX IF NOT EXISTS accounts_user_username_uniq ON accounts_user (username) WHERE username IS NOT NULL"
-            if db == "sqlite"
-            else "CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS accounts_user_username_uniq ON accounts_user (username) WHERE username IS NOT NULL"
+            "CREATE UNIQUE INDEX IF NOT EXISTS accounts_user_username_uniq "
+            "ON accounts_user (username) "
+            "WHERE username IS NOT NULL"
         )
 
 
