@@ -15,6 +15,7 @@ urlpatterns = [
     path('api/', include('legal.urls')),
     path('api/notifications/', include('home.notification_urls')),
     path('api/feedback/', include('feedback.urls')),
+    path('api/contact/', include('contact.urls')),
 ]
 
 
