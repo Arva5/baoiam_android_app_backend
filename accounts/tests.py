@@ -589,3 +589,68 @@ class PersonalInfoAPITests(APITestCase):
         self.user.save()
         response = self.client.patch(self.url, {'username': 'alice_own'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TwitterUrlProfileTests(APITestCase):
+    """Tests for twitter_url field on UserProfile."""
+
+    def setUp(self):
+        self.profile_url = reverse('user_profile')
+        self.setup_url = reverse('profile_setup')
+        self.user = User.objects.create_user(
+            name='Twitter Tester',
+            email='twitter@example.com',
+            password='TestPass123!',
+            email_verified=True,
+        )
+        self.client.force_authenticate(user=self.user)
+
+    def test_twitter_url_default_is_empty_string(self):
+        response = self.client.get(self.profile_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('twitter_url', response.data)
+        self.assertEqual(response.data['twitter_url'], '')
+
+    def test_patch_profile_updates_twitter_url(self):
+        payload = {'twitter_url': 'https://twitter.com/twittertester'}
+        response = self.client.patch(self.profile_url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['twitter_url'], 'https://twitter.com/twittertester')
+        self.user.profile.refresh_from_db()
+        self.assertEqual(self.user.profile.twitter_url, 'https://twitter.com/twittertester')
+
+    def test_patch_profile_setup_updates_twitter_url(self):
+        payload = {'twitter_url': 'https://x.com/twittertester'}
+        response = self.client.patch(self.setup_url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['data']['twitter_url'], 'https://x.com/twittertester')
+        self.user.profile.refresh_from_db()
+        self.assertEqual(self.user.profile.twitter_url, 'https://x.com/twittertester')
+
+    def test_patch_profile_clears_twitter_url(self):
+        # Set a value first via the API (profile is auto-created on first request)
+        self.client.patch(
+            self.profile_url,
+            {'twitter_url': 'https://twitter.com/old'},
+            format='json',
+        )
+        # Now clear it
+        response = self.client.patch(self.profile_url, {'twitter_url': ''}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['twitter_url'], '')
+
+    def test_existing_contact_fields_still_present_alongside_twitter(self):
+        """Ensure twitter_url addition doesn't break linkedin/github/website fields."""
+        payload = {
+            'linkedin_url': 'https://linkedin.com/in/tester',
+            'github_url': 'https://github.com/tester',
+            'website_url': 'https://tester.dev',
+            'twitter_url': 'https://twitter.com/tester',
+        }
+        response = self.client.patch(self.profile_url, payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['linkedin_url'], 'https://linkedin.com/in/tester')
+        self.assertEqual(response.data['github_url'], 'https://github.com/tester')
+        self.assertEqual(response.data['website_url'], 'https://tester.dev')
+        self.assertEqual(response.data['twitter_url'], 'https://twitter.com/tester')
+
