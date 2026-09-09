@@ -2,6 +2,7 @@ asgiref==3.12.1
 Django==5.2.9
 django-anymail[resend]==15.1
 djangorestframework==3.18.0
+drf-spectacular==0.29.0
 djangorestframework_simplejwt==5.5.1
 dj-database-url==2.1.0
 psycopg2-binary==2.9.12
