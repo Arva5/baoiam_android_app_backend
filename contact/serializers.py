@@ -40,6 +40,75 @@ class ContactMessageCreateSerializer(serializers.ModelSerializer):
         return value.strip()
 
 
+class ContactMessageListSerializer(serializers.ModelSerializer):
+    user_email = serializers.CharField(source='user.email', read_only=True, default=None)
+
+    class Meta:
+        model = ContactMessage
+        fields = [
+            'id',
+            'name',
+            'email',
+            'subject',
+            'message',
+            'status',
+            'admin_notes',
+            'user',
+            'user_email',
+            'created_at',
+            'updated_at',
+        ]
+        read_only_fields = fields
+
+
+class ContactMessageDetailSerializer(serializers.ModelSerializer):
+    user_email = serializers.CharField(source='user.email', read_only=True, default=None)
+
+    class Meta:
+        model = ContactMessage
+        fields = [
+            'id',
+            'name',
+            'email',
+            'subject',
+            'message',
+            'status',
+            'admin_notes',
+            'user',
+            'user_email',
+            'created_at',
+            'updated_at',
+        ]
+        read_only_fields = [
+            'id',
+            'name',
+            'email',
+            'subject',
+            'message',
+            'user',
+            'user_email',
+            'created_at',
+            'updated_at',
+        ]
+
+
+class ContactMessageStatusUpdateSerializer(serializers.ModelSerializer):
+    status = serializers.CharField(required=False)
+    admin_notes = serializers.CharField(required=False, allow_blank=True)
+
+    class Meta:
+        model = ContactMessage
+        fields = ['status', 'admin_notes']
+
+    def validate_status(self, value):
+        valid_statuses = dict(ContactMessage.STATUS_CHOICES).keys()
+        if value not in valid_statuses:
+            raise serializers.ValidationError(
+                f"Invalid status '{value}'. Choose from: {', '.join(valid_statuses)}"
+            )
+        return value
+
+
 class ContactSupportChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactSupportChannel

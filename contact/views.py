@@ -1,4 +1,5 @@
 import logging
+from django.db.models import Q
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -8,6 +9,9 @@ from .models import ContactMessage, ContactSupportChannel, PopularQuestion
 from .serializers import (
     DEFAULT_SUBJECT_OPTIONS,
     ContactMessageCreateSerializer,
+    ContactMessageDetailSerializer,
+    ContactMessageListSerializer,
+    ContactMessageStatusUpdateSerializer,
     ContactScreenDataSerializer,
     ContactSupportChannelSerializer,
     PopularQuestionSerializer,
@@ -149,6 +153,158 @@ class ContactMessageCreateView(APIView):
                 "data": ContactMessageCreateSerializer(contact_message).data,
             },
             status=status.HTTP_201_CREATED,
+        )
+
+
+class ContactMessageListView(APIView):
+    """
+    GET /api/contact/messages/
+    List all submitted contact inquiries with optional filtering:
+    - ?status=pending|in_progress|resolved|closed
+    - ?email=example@domain.com
+    - ?search=keyword
+
+    POST /api/contact/messages/
+    Submit a new contact message (same payload as /message/).
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        queryset = ContactMessage.objects.all().order_by('-created_at')
+
+        # Filter by status
+        status_filter = request.query_params.get('status')
+        if status_filter:
+            queryset = queryset.filter(status__iexact=status_filter.strip())
+
+        # Filter by email
+        email_filter = request.query_params.get('email')
+        if email_filter:
+            queryset = queryset.filter(email__iexact=email_filter.strip())
+
+        # General search keyword
+        search_query = request.query_params.get('search')
+        if search_query:
+            q = search_query.strip()
+            queryset = queryset.filter(
+                Q(name__icontains=q)
+                | Q(email__icontains=q)
+                | Q(subject__icontains=q)
+                | Q(message__icontains=q)
+            )
+
+        serializer = ContactMessageListSerializer(queryset, many=True)
+        return Response(
+            {
+                "success": True,
+                "count": queryset.count(),
+                "data": serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    def post(self, request):
+        return ContactMessageCreateView().post(request)
+
+
+class UserMyContactMessagesView(APIView):
+    """
+    GET /api/contact/messages/my/
+    Returns inquiries sent by the current authenticated user (or by ?email= for guests).
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            queryset = ContactMessage.objects.filter(
+                Q(user=request.user) | Q(email__iexact=request.user.email)
+            ).order_by('-created_at')
+        else:
+            email = request.query_params.get('email')
+            if not email:
+                return Response(
+                    {
+                        "success": False,
+                        "errors": ["Please log in or provide '?email=' parameter to view your messages."],
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            queryset = ContactMessage.objects.filter(email__iexact=email.strip()).order_by('-created_at')
+
+        serializer = ContactMessageListSerializer(queryset, many=True)
+        return Response(
+            {
+                "success": True,
+                "count": queryset.count(),
+                "data": serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class ContactMessageDetailView(APIView):
+    """
+    GET /api/contact/messages/<int:pk>/
+    Retrieve single inquiry details.
+
+    PATCH /api/contact/messages/<int:pk>/
+    Update inquiry status ('pending', 'in_progress', 'resolved', 'closed') or admin_notes.
+
+    DELETE /api/contact/messages/<int:pk>/
+    Delete inquiry record.
+    """
+    permission_classes = [AllowAny]
+
+    def get_object(self, pk):
+        try:
+            return ContactMessage.objects.get(pk=pk)
+        except ContactMessage.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        message = self.get_object(pk)
+        if not message:
+            return Response(
+                {"success": False, "errors": [f"Contact message with ID {pk} not found."]},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        serializer = ContactMessageDetailSerializer(message)
+        return Response({"success": True, "data": serializer.data}, status=status.HTTP_200_OK)
+
+    def patch(self, request, pk):
+        message = self.get_object(pk)
+        if not message:
+            return Response(
+                {"success": False, "errors": [f"Contact message with ID {pk} not found."]},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        serializer = ContactMessageStatusUpdateSerializer(message, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response(
+                {"success": False, "errors": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        updated_message = serializer.save()
+        return Response(
+            {
+                "success": True,
+                "message": "Contact message updated successfully.",
+                "data": ContactMessageDetailSerializer(updated_message).data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, request, pk):
+        message = self.get_object(pk)
+        if not message:
+            return Response(
+                {"success": False, "errors": [f"Contact message with ID {pk} not found."]},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        message.delete()
+        return Response(
+            {"success": True, "message": f"Contact message {pk} deleted successfully."},
+            status=status.HTTP_200_OK,
         )
 
 

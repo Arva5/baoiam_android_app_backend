@@ -111,3 +111,106 @@ class ContactApiTests(APITestCase):
         detail_resp = self.client.get(detail_url)
         self.assertEqual(detail_resp.status_code, status.HTTP_200_OK)
         self.assertEqual(detail_resp.data['data']['question'], 'How to reset password?')
+
+    def test_get_contact_messages_list_and_filtering(self):
+        # Create 2 messages
+        msg1 = ContactMessage.objects.create(
+            name='Alice',
+            email='alice@example.com',
+            subject='Course question',
+            message='Tell me about React course.',
+            status='pending',
+        )
+        msg2 = ContactMessage.objects.create(
+            name='Bob',
+            email='bob@example.com',
+            subject='Payment failed',
+            message='Payment error on card.',
+            status='resolved',
+        )
+
+        messages_url = reverse('contact-messages-list')
+        response = self.client.get(messages_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 2)
+
+        # Filter by status=resolved
+        res_filter = self.client.get(messages_url, {'status': 'resolved'})
+        self.assertEqual(res_filter.status_code, status.HTTP_200_OK)
+        self.assertEqual(res_filter.data['count'], 1)
+        self.assertEqual(res_filter.data['data'][0]['name'], 'Bob')
+
+        # Filter by email
+        email_filter = self.client.get(messages_url, {'email': 'alice@example.com'})
+        self.assertEqual(email_filter.status_code, status.HTTP_200_OK)
+        self.assertEqual(email_filter.data['count'], 1)
+        self.assertEqual(email_filter.data['data'][0]['name'], 'Alice')
+
+        # Filter by search
+        search_filter = self.client.get(messages_url, {'search': 'React'})
+        self.assertEqual(search_filter.status_code, status.HTTP_200_OK)
+        self.assertEqual(search_filter.data['count'], 1)
+
+    def test_contact_message_detail_and_patch_status(self):
+        msg = ContactMessage.objects.create(
+            name='Charlie',
+            email='charlie@example.com',
+            subject='Login trouble',
+            message='Unable to login.',
+            status='pending',
+        )
+        detail_url = reverse('contact-messages-detail', kwargs={'pk': msg.id})
+
+        # GET detail
+        res = self.client.get(detail_url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data['data']['name'], 'Charlie')
+
+        # PATCH update status to in_progress with admin_notes
+        patch_res = self.client.patch(
+            detail_url,
+            {'status': 'in_progress', 'admin_notes': 'Called customer, investigating.'},
+            format='json',
+        )
+        self.assertEqual(patch_res.status_code, status.HTTP_200_OK)
+        self.assertEqual(patch_res.data['data']['status'], 'in_progress')
+        self.assertEqual(patch_res.data['data']['admin_notes'], 'Called customer, investigating.')
+
+        # Verify in DB
+        msg.refresh_from_db()
+        self.assertEqual(msg.status, 'in_progress')
+
+    def test_get_my_contact_messages(self):
+        # Create message for self.user
+        ContactMessage.objects.create(
+            user=self.user,
+            name='Test User',
+            email=self.user.email,
+            subject='My Inquiry',
+            message='Hello, this is my inquiry.',
+            status='pending',
+        )
+        # Create message for someone else
+        ContactMessage.objects.create(
+            name='Other',
+            email='other@example.com',
+            subject='Other Inquiry',
+            message='Other message.',
+            status='pending',
+        )
+
+        my_url = reverse('contact-messages-my')
+
+        # Authenticated user
+        self.client.force_authenticate(user=self.user)
+        res = self.client.get(my_url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data['count'], 1)
+        self.assertEqual(res.data['data'][0]['subject'], 'My Inquiry')
+
+        # Guest with email query param
+        self.client.force_authenticate(user=None)
+        guest_res = self.client.get(my_url, {'email': 'other@example.com'})
+        self.assertEqual(guest_res.status_code, status.HTTP_200_OK)
+        self.assertEqual(guest_res.data['count'], 1)
+        self.assertEqual(guest_res.data['data'][0]['name'], 'Other')
