@@ -33,6 +33,10 @@ class AssessmentsAppTests(APITestCase):
             order=1,
         )
 
+    def test_attempt_uses_configured_auth_user_model(self):
+        self.assertIs(UserAssessmentAttempt._meta.get_field('user').remote_field.model, User)
+        self.assertEqual(UserAssessmentAttempt._meta.get_field('user').remote_field.model._meta.db_table, 'accounts_user')
+
     def test_featured_quiz(self):
         url = reverse('featured-quiz')
         response = self.client.get(url)
