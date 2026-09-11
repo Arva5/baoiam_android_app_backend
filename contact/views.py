@@ -1,9 +1,9 @@
 import logging
 from django.db.models import Q
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 
 from .models import ContactMessage, ContactSupportChannel, PopularQuestion
 from .serializers import (
@@ -15,6 +15,8 @@ from .serializers import (
     ContactScreenDataSerializer,
     ContactSupportChannelSerializer,
     PopularQuestionSerializer,
+    ContactMessageDetailSerializer,        # yeh naya add karo
+    ContactMessageStatusUpdateSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -167,7 +169,7 @@ class ContactMessageListView(APIView):
     POST /api/contact/messages/
     Submit a new contact message (same payload as /message/).
     """
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
 
     def get(self, request):
         queryset = ContactMessage.objects.all().order_by('-created_at')
@@ -352,3 +354,143 @@ class PopularQuestionDetailView(generics.RetrieveAPIView):
                 {"success": False, "errors": ["Popular question not found."]},
                 status=status.HTTP_404_NOT_FOUND,
             )
+# ============================================================
+# STEP A: Yeh IMPORTS file ke TOP mein already maujood imports
+# ke saath UPDATE/ADD karo
+# ============================================================
+
+# Purana import tha:
+#   from rest_framework.permissions import AllowAny
+# Ise is line se REPLACE karo:
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+
+# Aur serializers import mein yeh 2 naye add karo:
+from .serializers import (
+    DEFAULT_SUBJECT_OPTIONS,
+    ContactMessageCreateSerializer,
+    ContactScreenDataSerializer,
+    ContactSupportChannelSerializer,
+    PopularQuestionSerializer,
+    ContactMessageDetailSerializer,        # <-- NAYA
+    ContactMessageStatusUpdateSerializer,  # <-- NAYA
+)
+
+
+# ============================================================
+# STEP B: Yeh 4 NAYI CLASSES file ke END MEIN ADD KARO
+# (existing classes ko chhedo mat)
+# ============================================================
+
+class ContactMessageListView(generics.ListAPIView):
+    """
+    GET /api/contact/messages/
+    Saare contact messages ki list — SIRF ADMIN/STAFF ke liye.
+    Optional filters: ?status=pending  ya  ?email=someone@gmail.com
+    """
+    permission_classes = [IsAdminUser]   # <-- sirf admin/staff allowed
+    serializer_class = ContactMessageDetailSerializer
+
+    def get_queryset(self):
+        queryset = ContactMessage.objects.all().order_by('-created_at')
+        status_filter = self.request.query_params.get('status')
+        email_filter = self.request.query_params.get('email')
+        if status_filter:
+            queryset = queryset.filter(status=status_filter)
+        if email_filter:
+            queryset = queryset.filter(email__iexact=email_filter)
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(
+            {
+                "success": True,
+                "count": queryset.count(),
+                "data": serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class MyContactMessagesView(generics.ListAPIView):
+    """
+    GET /api/contact/messages/my/
+    Sirf LOGGED-IN user ke apne bheje messages — normal user bhi use kar sakta hai.
+    """
+    permission_classes = [IsAuthenticated]   # <-- login zaroori, admin hona zaroori nahi
+    serializer_class = ContactMessageDetailSerializer
+
+    def get_queryset(self):
+        return ContactMessage.objects.filter(user=self.request.user).order_by('-created_at')
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(
+            {
+                "success": True,
+                "count": queryset.count(),
+                "data": serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class ContactMessageDetailView(APIView):
+    """
+    SAME URL handles BOTH:
+      GET   /api/contact/messages/<id>/   -> poori detail dikhao
+      PATCH /api/contact/messages/<id>/   -> sirf status/admin_notes update karo
+    SIRF ADMIN/STAFF ke liye (dono methods).
+
+    NOTE: GET aur PATCH ko EK hi class mein rakhna zaroori hai, kyunki Django
+    URL routing method (GET/PATCH) ke hisaab se alag view select nahi karta —
+    same path pe do alag classes register karoge toh conflict/wrong-behavior hoga.
+    """
+    permission_classes = [IsAdminUser]   # <-- sirf admin/staff allowed (GET aur PATCH dono)
+
+    def get_object(self, pk):
+        try:
+            return ContactMessage.objects.get(pk=pk)
+        except ContactMessage.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        instance = self.get_object(pk)
+        if instance is None:
+            return Response(
+                {"success": False, "errors": ["Contact message not found."]},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        serializer = ContactMessageDetailSerializer(instance)
+        return Response({"success": True, "data": serializer.data}, status=status.HTTP_200_OK)
+
+    def patch(self, request, pk):
+        instance = self.get_object(pk)
+        if instance is None:
+            return Response(
+                {"success": False, "errors": ["Contact message not found."]},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # partial=True => sirf jo fields request.data mein bheji hain WOHI update hongi,
+        # baaki (name/email/subject/message) UNTOUCHED rahengi. Isse purana bug fix ho jata hai.
+        serializer = ContactMessageStatusUpdateSerializer(instance, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response(
+                {"success": False, "errors": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        serializer.save()
+
+        # Response mein FULL detail bhejo (sirf status/admin_notes nahi)
+        full_serializer = ContactMessageDetailSerializer(instance)
+        return Response(
+            {
+                "success": True,
+                "message": "Contact message updated successfully.",
+                "data": full_serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
