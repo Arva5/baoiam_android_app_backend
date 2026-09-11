@@ -139,46 +139,4 @@ class ContactScreenDataSerializer(serializers.Serializer):
     popular_questions = PopularQuestionSerializer(many=True)
     support_badge = SupportBadgeSerializer()
 
-# ============================================================
-# YEH CODE contact/serializers.py FILE KE END MEIN ADD KARO
-# (existing content ko chhedo mat, bas neeche yeh naya add karo)
-# ============================================================
 
-class ContactMessageDetailSerializer(serializers.ModelSerializer):
-    """
-    Used for: GET /messages/, GET /messages/my/, GET /messages/<id>/
-    Shows full detail of a contact message (admin/owner view).
-    """
-    user_email = serializers.SerializerMethodField()
-
-    class Meta:
-        model = ContactMessage
-        fields = [
-            'id', 'name', 'email', 'subject', 'message',
-            'status', 'admin_notes', 'user', 'user_email',
-            'created_at', 'updated_at',
-        ]
-        read_only_fields = fields  # sab read-only hain is serializer mein
-
-    def get_user_email(self, obj):
-        return obj.user.email if obj.user else None
-
-
-class ContactMessageStatusUpdateSerializer(serializers.ModelSerializer):
-    """
-    Used for: PATCH /messages/<id>/
-    ONLY allows updating 'status' and 'admin_notes' — baaki fields
-    (name/email/subject/message) ko chhuta nahi jaata, taaki purana
-    bug (fields overwrite ho jaana "This field is required." se) dobara na ho.
-    """
-    class Meta:
-        model = ContactMessage
-        fields = ['status', 'admin_notes']
-
-    def validate_status(self, value):
-        valid_statuses = [choice[0] for choice in ContactMessage.STATUS_CHOICES]
-        if value not in valid_statuses:
-            raise serializers.ValidationError(
-                f"Invalid status. Must be one of: {valid_statuses}"
-            )
-        return value
