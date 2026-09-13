@@ -37,10 +37,13 @@ INSTALLED_APPS = [
     # Local apps
     'accounts',
     'courses',
+    'enrollments',
     'assessments',
     'certificates',
     'home',
     'legal',
+    'feedback',
+    'contact',
 ]
 
 

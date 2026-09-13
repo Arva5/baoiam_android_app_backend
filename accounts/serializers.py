@@ -1,9 +1,14 @@
 from datetime import timedelta
+import re
+from zoneinfo import available_timezones
 from django.contrib.auth import authenticate, get_user_model
 from django.utils import timezone
 from rest_framework import serializers
 
 from .models import User, UserProfile
+
+LANGUAGE_CODE_RE = re.compile(r'^[a-z]{2,3}(?:-[A-Za-z]{2,8})?$')
+_VALID_TIMEZONES = available_timezones()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -104,6 +109,14 @@ class LoginSerializer(serializers.Serializer):
         return attrs
 
 
+class GoogleAuthSerializer(serializers.Serializer):
+    id_token = serializers.CharField(required=True, allow_blank=False, trim_whitespace=True)
+
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField(required=True)
+
+
 class ForgotPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
 
@@ -137,6 +150,107 @@ class DeleteAccountSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True, required=True)
 
 
+class ResendOTPSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate_email(self, value):
+        return value.strip().lower()
+
+
+def validate_skills_list(value):
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise serializers.ValidationError('Skills must be a list of strings.')
+    cleaned = []
+    for skill in value:
+        if not isinstance(skill, str):
+            raise serializers.ValidationError('Each skill must be a string.')
+        skill = skill.strip()
+        if skill:
+            cleaned.append(skill)
+    return cleaned
+
+
+def validate_language_code(value):
+    if value is None or not str(value).strip():
+        raise serializers.ValidationError('Language code is required.')
+    raw = str(value).strip()
+    parts = raw.split('-')
+    if len(parts) > 2:
+        raise serializers.ValidationError('Enter a language code such as "en" or "hi".')
+    primary = parts[0].lower()
+    if len(parts) == 2:
+        region = parts[1].upper() if len(parts[1]) == 2 else parts[1].capitalize()
+        normalized = f'{primary}-{region}'
+    else:
+        normalized = primary
+    if not LANGUAGE_CODE_RE.fullmatch(normalized):
+        raise serializers.ValidationError('Enter a language code such as "en" or "hi".')
+    return normalized
+
+
+def validate_iana_timezone(value):
+    if value is None or not str(value).strip():
+        raise serializers.ValidationError('Timezone is required.')
+    timezone_name = str(value).strip()
+    if timezone_name not in _VALID_TIMEZONES:
+        raise serializers.ValidationError(
+            'Enter a valid IANA timezone identifier such as "Asia/Kolkata".'
+        )
+    return timezone_name
+
+
+class ProfileSetupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = (
+            'avatar_url',
+            'headline',
+            'bio',
+            'phone_number',
+            'target_role',
+            'interests',
+            'skills',
+            'highest_qualification',
+            'institution',
+            'field_of_study',
+            'linkedin_url',
+            'github_url',
+            'website_url',
+            'twitter_url',
+            'language',
+            'notifications_enabled',
+            'timezone',
+            'is_profile_completed',
+        )
+
+    def validate_skills(self, value):
+        return validate_skills_list(value)
+
+    def validate_language(self, value):
+        return validate_language_code(value)
+
+    def validate_timezone(self, value):
+        return validate_iana_timezone(value)
+
+
+class PersonalInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('full_name', 'username', 'professional_headline')
+
+    def validate_username(self, value):
+        if value is None or value == '':
+            return value
+        queryset = User.objects.filter(username__iexact=value)
+        if self.instance:
+            queryset = queryset.exclude(pk=self.instance.pk)
+        if queryset.exists():
+            raise serializers.ValidationError('This username is already taken.')
+        return value
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.name', read_only=True)
     user_email = serializers.CharField(source='user.email', read_only=True)
@@ -154,9 +268,28 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'target_role',
             'interests',
             'skills',
+            'highest_qualification',
+            'institution',
+            'field_of_study',
+            'linkedin_url',
+            'github_url',
+            'website_url',
+            'twitter_url',
+            'language',
+            'notifications_enabled',
+            'timezone',
             'is_profile_completed',
             'created_at',
             'updated_at',
         )
         read_only_fields = ('id', 'created_at', 'updated_at')
+
+    def validate_skills(self, value):
+        return validate_skills_list(value)
+
+    def validate_language(self, value):
+        return validate_language_code(value)
+
+    def validate_timezone(self, value):
+        return validate_iana_timezone(value)
 
