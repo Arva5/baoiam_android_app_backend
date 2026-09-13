@@ -18,6 +18,8 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
+ADMIN_SETUP_KEY = os.getenv('ADMIN_SETUP_KEY', 'baoiam_admin_secret_2026')
+
 
 # Application definition
 

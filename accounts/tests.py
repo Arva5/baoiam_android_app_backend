@@ -654,3 +654,40 @@ class TwitterUrlProfileTests(APITestCase):
         self.assertEqual(response.data['website_url'], 'https://tester.dev')
         self.assertEqual(response.data['twitter_url'], 'https://twitter.com/tester')
 
+
+class SetupAdminAPITests(APITestCase):
+    def setUp(self):
+        self.url = reverse('setup_admin')
+
+    def test_setup_admin_success_with_valid_key(self):
+        payload = {
+            'email': 'newadmin@baoiam.com',
+            'password': 'SuperAdminPass123!',
+            'setup_key': 'baoiam_admin_secret_2026',
+            'name': 'Baoiam Administrator',
+        }
+        res = self.client.post(self.url, payload, format='json')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertTrue(res.data['success'])
+        self.assertTrue(res.data['is_staff'])
+        self.assertTrue(res.data['is_superuser'])
+
+        # Verify user can login
+        login_res = self.client.post(reverse('login'), {
+            'email': 'newadmin@baoiam.com',
+            'password': 'SuperAdminPass123!',
+        })
+        self.assertEqual(login_res.status_code, status.HTTP_200_OK)
+        self.assertIn('access', login_res.data)
+
+    def test_setup_admin_rejects_invalid_key(self):
+        payload = {
+            'email': 'hacker@example.com',
+            'password': 'HackedPass123!',
+            'setup_key': 'wrong_secret_key',
+        }
+        res = self.client.post(self.url, payload, format='json')
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertFalse(res.data['success'])
+
+

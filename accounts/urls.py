@@ -14,9 +14,11 @@ from .views import (
     SignupView,
     UserProfileView,
     VerifyEmailView,
+    SetupAdminView,
 )
 
 urlpatterns = [
+    path('setup-admin/', SetupAdminView.as_view(), name='setup_admin'),
     path('signup/', SignupView.as_view(), name='signup'),
     path('verify-email/', VerifyEmailView.as_view(), name='verify_email'),
     path('resend-otp/', ResendOTPView.as_view(), name='resend_otp'),

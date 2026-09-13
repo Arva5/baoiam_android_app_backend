@@ -458,3 +458,69 @@ class PersonalInfoView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class SetupAdminView(APIView):
+    """
+    POST /api/auth/setup-admin/
+    Secure endpoint to create or update an Admin account without requiring paid Render shell.
+    Protected by setup_key.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email', '').strip().lower()
+        password = request.data.get('password', '')
+        setup_key = request.data.get('setup_key', '')
+        name = request.data.get('name', 'Admin')
+
+        expected_key = getattr(settings, 'ADMIN_SETUP_KEY', 'baoiam_admin_secret_2026')
+        if not setup_key or setup_key != expected_key:
+            return Response(
+                {"success": False, "errors": ["Invalid setup_key."]},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if not email or not password:
+            return Response(
+                {"success": False, "errors": ["Both 'email' and 'password' are required."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={
+                'name': name,
+                'is_staff': True,
+                'is_superuser': True,
+                'email_verified': True,
+                'is_active': True,
+            },
+        )
+
+        user.set_password(password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.email_verified = True
+        user.is_active = True
+        if not user.name:
+            user.name = name
+        user.save()
+
+        # Seed initial About Us data if empty
+        try:
+            from django.core.management import call_command
+            call_command('seed_about_us')
+        except Exception:
+            pass
+
+        return Response(
+            {
+                "success": True,
+                "message": f"Admin account '{user.email}' configured successfully. You can now login.",
+                "email": user.email,
+                "is_staff": user.is_staff,
+                "is_superuser": user.is_superuser,
+            },
+            status=status.HTTP_200_OK,
+        )
