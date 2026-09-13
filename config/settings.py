@@ -31,23 +31,17 @@ INSTALLED_APPS = [
 
     # Third party apps
     'rest_framework',
-    'drf_spectacular',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'anymail',
 
     # Local apps
     'accounts',
     'courses',
-    'enrollments',
     'assessments',
     'certificates',
     'home',
     'legal',
-    'feedback',
-    'contact',
 ]
-
 
 
 MIDDLEWARE = [
@@ -126,20 +120,12 @@ AUTH_USER_MODEL = 'accounts.User'
 
 # Django REST Framework Configuration
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
-}
-
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'BAOIAM Android App Backend API',
-    'DESCRIPTION': 'API documentation for the BAOIAM Android app backend.',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 
@@ -201,12 +187,14 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 
-# Email Configuration (Resend HTTP API via Anymail)
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'anymail.backends.resend.EmailBackend')
-ANYMAIL = {
-    'RESEND_API_KEY': os.getenv('RESEND_API_KEY', ''),
-}
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@baoiam.com')
+# Email Configuration (Gmail SMTP)
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'noreply@baoiam.com')
 
 # Google OAuth Configuration
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
