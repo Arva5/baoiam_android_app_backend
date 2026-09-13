@@ -233,6 +233,10 @@ class UserMyContactMessagesView(APIView):
         )
 
 
+# Alias to support both naming styles
+MyContactMessagesView = UserMyContactMessagesView
+
+
 class ContactMessageDetailView(APIView):
     """
     GET /api/contact/messages/<int:pk>/

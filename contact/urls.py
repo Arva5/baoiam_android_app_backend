@@ -16,6 +16,7 @@ urlpatterns = [
     path('messages/', ContactMessageListView.as_view(), name='contact-messages-list'),
     path('messages/my/', UserMyContactMessagesView.as_view(), name='contact-messages-my'),
     path('messages/<int:pk>/', ContactMessageDetailView.as_view(), name='contact-messages-detail'),
+    path('messages/<int:pk>/', ContactMessageDetailView.as_view(), name='contact-message-detail'),
     path('questions/', PopularQuestionListView.as_view(), name='popular-questions-list'),
     path('questions/<int:pk>/', PopularQuestionDetailView.as_view(), name='popular-question-detail'),
 ]
