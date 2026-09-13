@@ -1,7 +1,7 @@
 import logging
 from django.db.models import Q
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -167,7 +167,10 @@ class ContactMessageListView(APIView):
     POST /api/contact/messages/
     Submit a new contact message (same payload as /message/).
     """
-    permission_classes = [AllowAny]
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [AllowAny()]
+        return [IsAdminUser()]
 
     def get(self, request):
         queryset = ContactMessage.objects.all().order_by('-created_at')
@@ -210,26 +213,14 @@ class ContactMessageListView(APIView):
 class UserMyContactMessagesView(APIView):
     """
     GET /api/contact/messages/my/
-    Returns inquiries sent by the current authenticated user (or by ?email= for guests).
+    Returns inquiries sent by the current authenticated user.
     """
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        if request.user.is_authenticated:
-            queryset = ContactMessage.objects.filter(
-                Q(user=request.user) | Q(email__iexact=request.user.email)
-            ).order_by('-created_at')
-        else:
-            email = request.query_params.get('email')
-            if not email:
-                return Response(
-                    {
-                        "success": False,
-                        "errors": ["Please log in or provide '?email=' parameter to view your messages."],
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            queryset = ContactMessage.objects.filter(email__iexact=email.strip()).order_by('-created_at')
+        queryset = ContactMessage.objects.filter(
+            Q(user=request.user) | Q(email__iexact=request.user.email)
+        ).order_by('-created_at')
 
         serializer = ContactMessageListSerializer(queryset, many=True)
         return Response(
@@ -245,15 +236,15 @@ class UserMyContactMessagesView(APIView):
 class ContactMessageDetailView(APIView):
     """
     GET /api/contact/messages/<int:pk>/
-    Retrieve single inquiry details.
+    Retrieve single inquiry details (Admin only).
 
     PATCH /api/contact/messages/<int:pk>/
-    Update inquiry status ('pending', 'in_progress', 'resolved', 'closed') or admin_notes.
+    Update inquiry status ('pending', 'in_progress', 'resolved', 'closed') or admin_notes (Admin only).
 
     DELETE /api/contact/messages/<int:pk>/
-    Delete inquiry record.
+    Delete inquiry record (Admin only).
     """
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
 
     def get_object(self, pk):
         try:

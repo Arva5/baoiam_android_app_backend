@@ -16,6 +16,13 @@ class ContactApiTests(APITestCase):
             password='TestPassword123!',
             email_verified=True,
         )
+        self.admin_user = User.objects.create_user(
+            email='admin@example.com',
+            name='Admin User',
+            password='AdminPassword123!',
+            is_staff=True,
+            email_verified=True,
+        )
 
         self.channel = ContactSupportChannel.objects.create(
             channel_type='live_chat',
@@ -130,6 +137,13 @@ class ContactApiTests(APITestCase):
         )
 
         messages_url = reverse('contact-messages-list')
+
+        # Unauthenticated request should be forbidden
+        unauth_res = self.client.get(messages_url)
+        self.assertIn(unauth_res.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+
+        # Admin request should succeed
+        self.client.force_authenticate(user=self.admin_user)
         response = self.client.get(messages_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['count'], 2)
@@ -161,12 +175,17 @@ class ContactApiTests(APITestCase):
         )
         detail_url = reverse('contact-messages-detail', kwargs={'pk': msg.id})
 
-        # GET detail
+        # Unauthenticated request should be forbidden
+        unauth_res = self.client.get(detail_url)
+        self.assertIn(unauth_res.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
+
+        # Admin GET detail
+        self.client.force_authenticate(user=self.admin_user)
         res = self.client.get(detail_url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data['data']['name'], 'Charlie')
 
-        # PATCH update status to in_progress with admin_notes
+        # Admin PATCH update status to in_progress with admin_notes
         patch_res = self.client.patch(
             detail_url,
             {'status': 'in_progress', 'admin_notes': 'Called customer, investigating.'},
@@ -201,16 +220,14 @@ class ContactApiTests(APITestCase):
 
         my_url = reverse('contact-messages-my')
 
-        # Authenticated user
+        # Authenticated user can view own messages
         self.client.force_authenticate(user=self.user)
         res = self.client.get(my_url)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data['count'], 1)
         self.assertEqual(res.data['data'][0]['subject'], 'My Inquiry')
 
-        # Guest with email query param
+        # Unauthenticated guest is blocked with 401
         self.client.force_authenticate(user=None)
-        guest_res = self.client.get(my_url, {'email': 'other@example.com'})
-        self.assertEqual(guest_res.status_code, status.HTTP_200_OK)
-        self.assertEqual(guest_res.data['count'], 1)
-        self.assertEqual(guest_res.data['data'][0]['name'], 'Other')
+        guest_res = self.client.get(my_url)
+        self.assertIn(guest_res.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
