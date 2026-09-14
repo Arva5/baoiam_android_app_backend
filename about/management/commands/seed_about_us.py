@@ -70,17 +70,20 @@ class Command(BaseCommand):
             if created:
                 self.stdout.write(self.style.SUCCESS(f"[OK] Created Offer: {obj.title}"))
 
-        # 4. Success Stories
+        # 4. Success Stories (Indian dummy names)
+        # Clean up old English placeholder records if present
+        SuccessStory.objects.filter(name__in=["Peter Jones", "Mia Morris"]).delete()
+
         stories = [
             {
-                "name": "Peter Jones",
+                "name": "Aarav Sharma",
                 "role": "UNIV Business School",
                 "rating": 5,
                 "story": "The interactive learning app took my skills to the next level. I landed my dream job right after completing the program.",
                 "display_order": 1,
             },
             {
-                "name": "Mia Morris",
+                "name": "Priya Patel",
                 "role": "Web Developer",
                 "rating": 5,
                 "story": "The practical projects and mentor support were invaluable in helping me transition into web development.",
@@ -88,34 +91,35 @@ class Command(BaseCommand):
             },
         ]
         for st in stories:
-            obj, created = SuccessStory.objects.get_or_create(
-                name=st["name"],
+            obj, _ = SuccessStory.objects.update_or_create(
+                display_order=st["display_order"],
                 defaults={
+                    "name": st["name"],
                     "role": st["role"],
                     "rating": st["rating"],
                     "story": st["story"],
-                    "display_order": st["display_order"],
                     "is_active": True,
                 },
             )
-            if created:
-                self.stdout.write(self.style.SUCCESS(f"[OK] Created Story: {obj.name}"))
+            self.stdout.write(self.style.SUCCESS(f"[OK] Story: {obj.name} ({obj.role})"))
 
-        # 5. Team Members
+        # 5. Team Members (Indian dummy names)
+        # Clean up old English placeholder records if present
+        TeamMember.objects.filter(name__in=["James Perkins", "Emma Wilson"]).delete()
+
         team = [
-            {"name": "James Perkins", "role": "CEO & Founder", "display_order": 1},
-            {"name": "Emma Wilson", "role": "Head of Education", "display_order": 2},
+            {"name": "Vikram Sharma", "role": "CEO & Founder", "display_order": 1},
+            {"name": "Dr. Neha Verma", "role": "Head of Education", "display_order": 2},
         ]
         for t in team:
-            obj, created = TeamMember.objects.get_or_create(
-                name=t["name"],
+            obj, _ = TeamMember.objects.update_or_create(
+                display_order=t["display_order"],
                 defaults={
+                    "name": t["name"],
                     "role": t["role"],
-                    "display_order": t["display_order"],
                     "is_active": True,
                 },
             )
-            if created:
-                self.stdout.write(self.style.SUCCESS(f"[OK] Created Team Member: {obj.name} ({obj.role})"))
+            self.stdout.write(self.style.SUCCESS(f"[OK] Team Member: {obj.name} ({obj.role})"))
 
         self.stdout.write(self.style.SUCCESS("All About Us initial data seeded successfully!"))

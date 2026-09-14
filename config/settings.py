@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'feedback',
     'contact',
     'about',
+    'issues',
 ]
 
 
