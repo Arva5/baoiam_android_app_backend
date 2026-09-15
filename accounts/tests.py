@@ -691,3 +691,109 @@ class SetupAdminAPITests(APITestCase):
         self.assertFalse(res.data['success'])
 
 
+
+class ChangePasswordAPITests(APITestCase):
+    def setUp(self):
+        self.change_password_url = '/api/auth/change-password/'
+        self.login_url = reverse('login')
+        self.password = 'JanePassword123!'
+        self.user = User.objects.create_user(
+            name='Jane Doe',
+            email='jane_change_pwd@example.com',
+            password=self.password,
+            email_verified=True
+        )
+
+        # Login to get JWT access token
+        login_res = self.client.post(self.login_url, {
+            'email': self.user.email,
+            'password': self.password
+        })
+        self.access_token = login_res.data['access']
+        self.auth_headers = {'HTTP_AUTHORIZATION': f'Bearer {self.access_token}'}
+
+    def test_change_password_success(self):
+        payload = {
+            'current_password': self.password,
+            'new_password': 'NewSecurePassword123!',
+            'confirm_password': 'NewSecurePassword123!'
+        }
+        self.client.credentials(**self.auth_headers)
+        response = self.client.post(self.change_password_url, payload)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('detail'), 'Password changed successfully.')
+
+        # Verify password updated in DB
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('NewSecurePassword123!'))
+        self.assertFalse(self.user.check_password(self.password))
+
+        # Verify login works with new password
+        self.client.credentials()  # Clear auth headers
+        login_res = self.client.post(self.login_url, {
+            'email': self.user.email,
+            'password': 'NewSecurePassword123!'
+        })
+        self.assertEqual(login_res.status_code, status.HTTP_200_OK)
+
+    def test_change_password_unauthenticated(self):
+        payload = {
+            'current_password': self.password,
+            'new_password': 'NewSecurePassword123!',
+            'confirm_password': 'NewSecurePassword123!'
+        }
+        # No credentials set
+        response = self.client.post(self.change_password_url, payload)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_change_password_incorrect_current_password(self):
+        payload = {
+            'current_password': 'WrongPassword123!',
+            'new_password': 'NewSecurePassword123!',
+            'confirm_password': 'NewSecurePassword123!'
+        }
+        self.client.credentials(**self.auth_headers)
+        response = self.client.post(self.change_password_url, payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('current_password', response.data)
+
+        # Ensure password did not change
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password(self.password))
+
+    def test_change_password_mismatch(self):
+        payload = {
+            'current_password': self.password,
+            'new_password': 'NewSecurePassword123!',
+            'confirm_password': 'DifferentPassword123!'
+        }
+        self.client.credentials(**self.auth_headers)
+        response = self.client.post(self.change_password_url, payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('confirm_password', response.data)
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password(self.password))
+
+    def test_change_password_django_validation_failure(self):
+        # Too short (< 8 characters) or all numeric
+        payload = {
+            'current_password': self.password,
+            'new_password': 'short',
+            'confirm_password': 'short'
+        }
+        self.client.credentials(**self.auth_headers)
+        response = self.client.post(self.change_password_url, payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('new_password', response.data)
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password(self.password))
+
+    def test_change_password_missing_fields(self):
+        self.client.credentials(**self.auth_headers)
+        response = self.client.post(self.change_password_url, {})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('current_password', response.data)
+        self.assertIn('new_password', response.data)
+        self.assertIn('confirm_password', response.data)

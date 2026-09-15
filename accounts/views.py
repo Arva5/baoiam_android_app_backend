@@ -14,6 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import UserProfile, OAuthAccount
 from .serializers import (
+    ChangePasswordSerializer,
     DeleteAccountSerializer,
     ForgotPasswordSerializer,
     GoogleAuthSerializer,
@@ -524,3 +525,16 @@ class SetupAdminView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+
+        request.user.set_password(serializer.validated_data['new_password'])
+        request.user.save(update_fields=['password'])
+
+        return Response({
+            'detail': 'Password changed successfully.'
+        }, status=status.HTTP_200_OK)
