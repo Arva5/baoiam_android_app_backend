@@ -1,5 +1,14 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import SimpleRouter
 
+from .admin_api import (
+    AdminContentItemViewSet,
+    AdminCourseViewSet,
+    AdminEnrollmentViewSet,
+    AdminLessonViewSet,
+    AdminModuleViewSet,
+    AdminStatsView,
+)
 from .views import (
     CategoryListView,
     ContentPlayView,
@@ -12,7 +21,17 @@ from .views import (
     WhyChooseUsListView,
 )
 
+# Staff-only management APIs: /api/courses/manage/...
+manage_router = SimpleRouter()
+manage_router.register('courses', AdminCourseViewSet, basename='manage-course')
+manage_router.register('modules', AdminModuleViewSet, basename='manage-module')
+manage_router.register('lessons', AdminLessonViewSet, basename='manage-lesson')
+manage_router.register('content-items', AdminContentItemViewSet, basename='manage-content-item')
+manage_router.register('enrollments', AdminEnrollmentViewSet, basename='manage-enrollment')
+
 urlpatterns = [
+    path('manage/stats/', AdminStatsView.as_view(), name='manage-stats'),
+    path('manage/', include(manage_router.urls)),
     path('', CourseListView.as_view(), name='course-list'),
     path('content/<int:id>/play/', ContentPlayView.as_view(), name='content-play'),
     path('categories/', CategoryListView.as_view(), name='category-list'),
