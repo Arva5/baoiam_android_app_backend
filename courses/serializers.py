@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from .storage import resolve_playback_url
 from .models import (
     Category,
     ContentItem,
@@ -15,14 +16,22 @@ from .models import (
 
 class ContentItemSerializer(serializers.ModelSerializer):
     duration_display = serializers.ReadOnlyField()
+    url = serializers.SerializerMethodField()
+    play_url = serializers.SerializerMethodField()
 
     class Meta:
         model = ContentItem
         fields = [
-            "id", "content_type", "title", "url",
+            "id", "content_type", "title", "url", "play_url",
             "duration_seconds", "duration_display",
             "file_size_bytes", "order",
         ]
+
+    def get_url(self, obj):
+        return resolve_playback_url(obj)
+
+    def get_play_url(self, obj):
+        return resolve_playback_url(obj)
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -112,7 +121,41 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 
-CourseListSerializer = CourseSerializer
+def user_has_course_access(request, course):
+    """Same access rule jo CourseDetailSerializer pehle use karta tha (ab shared)."""
+    user = request.user if request else None
+    if not user or not user.is_authenticated:
+        return False
+    if course.course_enrollments.filter(user=user).exists():
+        return True
+    if hasattr(course, 'enrollments') and course.enrollments.filter(user=user).exists():
+        enrollment = course.enrollments.filter(user=user).first()
+        return bool(getattr(enrollment, 'has_active_access', True))
+    return False
+
+
+class CourseListSerializer(CourseSerializer):
+    """
+    GET /courses/ ke liye: CourseSerializer + modules -> lessons -> content_items (video links).
+    Content sirf enrolled user ko milta hai, baaki ko lessons `locked: true` aur content_items [] aate hain.
+    `?include_modules=false` se modules hataye ja sakte hain (halka payload).
+    """
+
+    modules = serializers.SerializerMethodField()
+
+    class Meta(CourseSerializer.Meta):
+        fields = CourseSerializer.Meta.fields + ('has_active_access', 'modules')
+
+    has_active_access = serializers.SerializerMethodField()
+
+    def get_has_active_access(self, obj):
+        return user_has_course_access(self.context.get("request"), obj)
+
+    def get_modules(self, obj):
+        if self.context.get("include_modules", True) is False:
+            return []
+        ctx = {"has_access": self.get_has_active_access(obj)}
+        return CourseModuleSerializer(obj.modules.all(), many=True, context=ctx).data
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):
@@ -157,16 +200,7 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         )
 
     def _has_access(self, obj):
-        request = self.context.get("request")
-        user = request.user if request else None
-        if not user or not user.is_authenticated:
-            return False
-        if obj.course_enrollments.filter(user=user).exists():
-            return True
-        if hasattr(obj, 'enrollments') and obj.enrollments.filter(user=user).exists():
-            enrollment = obj.enrollments.filter(user=user).first()
-            return bool(getattr(enrollment, 'has_active_access', True))
-        return False
+        return user_has_course_access(self.context.get("request"), obj)
 
     def get_is_enrolled(self, obj):
         return self._has_access(obj)

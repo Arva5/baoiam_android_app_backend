@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 
 from .models import (
     Category,
+    ContentItem,
     Course,
     CourseEnrollment,
     PromotionalBanner,
@@ -19,11 +20,12 @@ from .serializers import (
     CourseDetailSerializer,
     CourseEnrollmentSerializer,
     CourseListSerializer,
-    CourseSerializer,
     PromotionalBannerSerializer,
     TipOfTheDaySerializer,
     WhyChooseUsItemSerializer,
+    user_has_course_access,
 )
+from .storage import mime_type_for, resolve_playback_url
 
 
 class CategoryListView(generics.ListAPIView):
@@ -33,8 +35,18 @@ class CategoryListView(generics.ListAPIView):
 
 
 class CourseListView(generics.ListAPIView):
-    serializer_class = CourseSerializer
+    """
+    GET /courses/  -> courses + modules/lessons/content_items (video url) .
+    Video links sirf enrolled user ko; `?include_modules=false` se halka list.
+    """
+    serializer_class = CourseListSerializer
     permission_classes = [AllowAny]
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        flag = self.request.query_params.get('include_modules', 'true').lower()
+        ctx['include_modules'] = flag not in ('false', '0', 'no')
+        return ctx
 
     def get_queryset(self):
         user = self.request.user
@@ -73,7 +85,79 @@ class CourseListView(generics.ListAPIView):
         if level:
             queryset = queryset.filter(level=level)
 
-        return queryset.select_related('category', 'instructor')
+        return queryset.select_related('category', 'instructor').prefetch_related(
+            'modules__lessons__content_items'
+        )
+
+
+class ContentPlayView(APIView):
+    """
+    GET /api/courses/content/<id>/play/
+    Enrolled user ko playable Cloudflare/sample video URL deta hai.
+    Android isi `url` ko player me lagata hai.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id):
+        item = get_object_or_404(
+            ContentItem.objects.select_related("lesson__module__course"),
+            id=id,
+        )
+        course = item.lesson.module.course
+        if not user_has_course_access(request, course):
+            return Response(
+                {"detail": "Enroll in this course to play this content."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        url = resolve_playback_url(item)
+        if not url:
+            return Response(
+                {"detail": "No playback URL configured for this item."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return Response(
+            {
+                "content_id": item.id,
+                "lesson_id": item.lesson_id,
+                "course_id": course.id,
+                "course_slug": course.slug,
+                "content_type": item.content_type,
+                "title": item.title,
+                "url": url,
+                "play_url": url,
+                "mime_type": mime_type_for(item),
+                "duration_seconds": item.duration_seconds,
+                "duration_display": item.duration_display,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class CourseEnrollView(APIView):
+    """
+    POST /courses/<id or slug>/enroll/   (body nahi chahiye, Bearer token chahiye)
+    FREE course me enroll karta hai. Paid course pe 402 (payment flow alag se banega).
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        lookup = kwargs.get('slug') or kwargs.get('id')
+        qs = Course.objects.filter(is_published=True)
+        course = get_object_or_404(qs, id=int(lookup)) if str(lookup).isdigit() else get_object_or_404(qs, slug=lookup)
+
+        effective_price = course.discounted_price if course.discounted_price is not None else course.price
+        if effective_price and effective_price > 0:
+            return Response(
+                {"detail": "Payment required for this course."},
+                status=status.HTTP_402_PAYMENT_REQUIRED,
+            )
+
+        enrollment, created = CourseEnrollment.objects.get_or_create(
+            user=request.user, course=course,
+            defaults={'total_lessons': course.total_lectures},
+        )
+        data = CourseEnrollmentSerializer(enrollment, context={"request": request}).data
+        return Response(data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
 class CourseDetailView(APIView):

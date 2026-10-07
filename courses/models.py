@@ -153,7 +153,16 @@ class ContentItem(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name="content_items")
     content_type = models.CharField(max_length=20, choices=ContentType.choices)
     title = models.CharField(max_length=255)
-    url = models.URLField(blank=True)
+    url = models.URLField(
+        max_length=1000,
+        blank=True,
+        help_text="Playback URL returned to Android (Cloudflare R2 public URL or sample MP4).",
+    )
+    storage_key = models.CharField(
+        max_length=500,
+        blank=True,
+        help_text="Cloudflare R2 object key, e.g. videos/python/welcome.mp4",
+    )
     duration_seconds = models.PositiveIntegerField(
         null=True, blank=True,
         help_text="For VIDEO items — used to show '45:20' style durations in the app."
