@@ -4,6 +4,7 @@ from .models import (
     Category,
     ContentItem,
     Course,
+    CourseBookmark,
     CourseEnrollment,
     CourseModule,
     Lesson,
@@ -93,6 +94,13 @@ class CourseEnrollmentAdmin(admin.ModelAdmin):
         'last_accessed_at',
     )
     list_filter = ('is_completed', 'enrolled_at')
+    search_fields = ('user__email', 'course__title')
+
+
+@admin.register(CourseBookmark)
+class CourseBookmarkAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'course', 'created_at')
+    list_filter = ('created_at',)
     search_fields = ('user__email', 'course__title')
 
 

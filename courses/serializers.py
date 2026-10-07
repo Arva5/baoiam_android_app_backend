@@ -5,6 +5,7 @@ from .models import (
     Category,
     ContentItem,
     Course,
+    CourseBookmark,
     CourseEnrollment,
     CourseModule,
     Lesson,
@@ -36,33 +37,61 @@ class ContentItemSerializer(serializers.ModelSerializer):
 
 class LessonSerializer(serializers.ModelSerializer):
     """
-    Nested inside CourseModuleSerializer. content_items is only populated
-    when the requesting user has active access to the course (see
-    CourseDetailView) - otherwise lessons show as locked previews.
+    Nested inside CourseModuleSerializer. Provides lecture info including
+    video_url for preview or enrolled users, duration formatted, and content items.
     """
-
-    content_items = serializers.SerializerMethodField()
+    duration = serializers.CharField(source='duration_display', read_only=True)
+    video_url = serializers.SerializerMethodField()
     locked = serializers.SerializerMethodField()
+    content_items = serializers.SerializerMethodField()
 
     class Meta:
         model = Lesson
-        fields = ["id", "title", "order", "published_at", "locked", "content_items"]
+        fields = [
+            "id",
+            "title",
+            "description",
+            "order",
+            "duration",
+            "duration_seconds",
+            "video_url",
+            "thumbnail_url",
+            "is_preview",
+            "locked",
+            "published_at",
+            "content_items",
+        ]
 
     def get_locked(self, obj):
-        return not self.context.get("has_access", False)
+        has_access = self.context.get("has_access", False)
+        if has_access:
+            return False
+        return not obj.is_preview
+
+    def get_video_url(self, obj):
+        has_access = self.context.get("has_access", False)
+        if has_access or obj.is_preview:
+            return obj.get_playback_url()
+        return None
 
     def get_content_items(self, obj):
-        if not self.context.get("has_access", False):
+        has_access = self.context.get("has_access", False)
+        if not has_access and not obj.is_preview:
             return []
         return ContentItemSerializer(obj.content_items.all(), many=True).data
 
 
 class CourseModuleSerializer(serializers.ModelSerializer):
-    lessons = LessonSerializer(many=True, read_only=True)
+    lectures = serializers.SerializerMethodField()
+    
 
     class Meta:
         model = CourseModule
-        fields = ["id", "title", "order", "lessons"]
+        fields = ["id", "title", "order", "lectures", "lessons"]
+
+    def get_lectures(self, obj):
+        return LessonSerializer(obj.lessons.all(), many=True, context=self.context).data
+
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -76,6 +105,7 @@ class CourseSerializer(serializers.ModelSerializer):
     instructor_name = serializers.CharField(read_only=True)
     total_lectures = serializers.ReadOnlyField()
     is_enrolled = serializers.SerializerMethodField()
+    is_saved = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
@@ -104,6 +134,9 @@ class CourseSerializer(serializers.ModelSerializer):
             'is_popular',
             'is_published',
             'is_enrolled',
+            'is_saved',
+            'what_you_learn',
+            'key_features',
             'created_at',
             'updated_at',
         )
@@ -119,6 +152,12 @@ class CourseSerializer(serializers.ModelSerializer):
             return True
         return False
 
+    def get_is_saved(self, obj):
+        request = self.context.get("request")
+        user = request.user if request else None
+        if not user or not user.is_authenticated:
+            return False
+        return obj.bookmarks.filter(user=user).exists()
 
 
 def user_has_course_access(request, course):
@@ -165,6 +204,7 @@ class CourseDetailSerializer(serializers.ModelSerializer):
     modules = serializers.SerializerMethodField()
     has_active_access = serializers.SerializerMethodField()
     is_enrolled = serializers.SerializerMethodField()
+    is_saved = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
@@ -193,6 +233,9 @@ class CourseDetailSerializer(serializers.ModelSerializer):
             'is_popular',
             'is_published',
             'is_enrolled',
+            'is_saved',
+            'what_you_learn',
+            'key_features',
             'has_active_access',
             'modules',
             'created_at',
@@ -205,6 +248,13 @@ class CourseDetailSerializer(serializers.ModelSerializer):
     def get_is_enrolled(self, obj):
         return self._has_access(obj)
 
+    def get_is_saved(self, obj):
+        request = self.context.get("request")
+        user = request.user if request else None
+        if not user or not user.is_authenticated:
+            return False
+        return obj.bookmarks.filter(user=user).exists()
+
     def get_has_active_access(self, obj):
         return self._has_access(obj)
 
@@ -213,6 +263,14 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         return CourseModuleSerializer(
             obj.modules.all(), many=True, context=ctx
         ).data
+
+
+class CourseBookmarkSerializer(serializers.ModelSerializer):
+    course = CourseSerializer(read_only=True)
+
+    class Meta:
+        model = CourseBookmark
+        fields = ('id', 'course', 'created_at')
 
 
 class CourseEnrollmentSerializer(serializers.ModelSerializer):

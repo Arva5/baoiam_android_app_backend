@@ -49,51 +49,79 @@ Locked lesson: `locked: true`, `content_items: []`. Video URL tabhi aati hai jab
 
 ---
 
-## Courses (list, details, video)
+## Courses (list, details, video, bookmark)
 
 | Method | Path | Auth | Notes |
 |--------|------|------|--------|
-| GET | `/api/courses/` | No | Query: `search`, `category`, `is_featured`, `level`, `include_modules=false` |
-| GET | `/api/courses/{id}/` | No | Detail by id |
+| GET | `/api/courses/` | No | Query: `search`, `category`, `is_featured`, `level`, `include_drafts=true` |
+| GET | `/api/courses/{id}/` | No | Detail by id (e.g. `/api/courses/9/`) |
 | GET | `/api/courses/{slug}/` | No | Detail by slug |
 | POST | `/api/courses/{id}/enroll/` | Yes | Free course enroll. Paid → 402 |
-| POST | `/api/courses/{slug}/enroll/` | Yes | |
-| GET | `/api/courses/content/{content_id}/play/` | Yes | **Video/PDF URL.** 403 if not enrolled |
-| GET | `/api/courses/categories/` | No | |
-| GET | `/api/courses/promotions/` | No | |
-| GET | `/api/courses/tip-of-the-day/` | No | |
-| GET | `/api/courses/why-choose-us/` | No | |
-| GET | `/api/courses/my-enrollments/` | Yes | |
+| POST | `/api/courses/{id}/save/` | Yes | Bookmark/Save course for current user |
+| DELETE | `/api/courses/{id}/save/` | Yes | Remove bookmark/save |
+| GET | `/api/courses/saved/` | Yes | List all bookmarked courses |
+| GET | `/api/courses/lessons/{id}/play/` | Optional | Play lecture video URL. Previews are free (no auth required)! |
+| GET | `/api/courses/content/{content_id}/play/` | Yes | **Legacy ContentItem play URL.** 403 if not enrolled |
+| GET | `/api/courses/categories/` | No | List of course categories |
+| GET | `/api/courses/promotions/` | No | Promotional banners |
+| GET | `/api/courses/tip-of-the-day/` | No | Daily tip |
+| GET | `/api/courses/why-choose-us/` | No | Value propositions |
+| GET | `/api/courses/my-enrollments/` | Yes | Current user's enrollments |
 
-### Course list item (important fields)
-
-`id`, `title`, `slug`, `short_code`, `subtitle`, `description`, `thumbnail_url`, `cover_image_url`, `instructor_name`, `category`, `category_name`, `level`, `rating`, `duration_hours`, `lessons_count`, `total_lectures`, `price`, `discounted_price`, `is_featured`, `is_popular`, `is_enrolled`, `has_active_access`, `modules`
-
-### Nested (enrolled)
+### Course detail response (`GET /api/courses/9/`)
 
 ```json
 {
+  "id": 9,
+  "title": "Full Stack JavaScript",
+  "subtitle": "MERN stack development",
+  "description": "Master MongoDB, Express, React, and Node.js. Build complete full-stack web applications from scratch with modern best practices, state management, and cloud deployment.",
+  "thumbnail_url": "https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?auto=format&fit=crop&w=800&q=80",
+  "cover_image_url": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80",
+  "instructor": 1,
+  "instructor_name": "Sarah Johnson",
+  "category": 3,
+  "category_name": "Technology",
+  "level": "intermediate",
+  "rating": "4.50",
+  "reviews_count": 342,
+  "duration_hours": "60.0",
+  "lessons_count": 150,
+  "total_lectures": 150,
+  "price": "129.99",
+  "discounted_price": "89.99",
+  "is_enrolled": false,
+  "is_saved": false,
+  "what_you_learn": [
+    "Build full-stack web applications with React, Node.js, Express, and MongoDB",
+    "Design RESTful APIs, implement authentication with JWT and role-based authorization",
+    "State management with Redux Toolkit and React Query",
+    "Deploy applications with CI/CD on Cloudflare and AWS"
+  ],
+  "key_features": [
+    "60.0 hours on-demand high-definition video",
+    "150 comprehensive lectures and code repositories",
+    "Industry-recognized Certificate of Completion",
+    "Direct access to mentor Q&A forum",
+    "Full lifetime access on mobile and web"
+  ],
   "modules": [
     {
       "id": 1,
-      "title": "Introduction",
+      "title": "Module 1: Modern JavaScript & ES6+ Mastery",
       "order": 1,
-      "lessons": [
+      "lectures": [
         {
-          "id": 10,
-          "title": "Welcome to the course",
-          "locked": false,
-          "content_items": [
-            {
-              "id": 100,
-              "content_type": "VIDEO",
-              "title": "Welcome Video",
-              "url": "https://....mp4",
-              "play_url": "https://....mp4",
-              "duration_seconds": 596,
-              "duration_display": "9:56"
-            }
-          ]
+          "id": 23,
+          "title": "Welcome to Full Stack JavaScript",
+          "description": "Course overview, roadmap, and local development environment setup.",
+          "order": 1,
+          "duration": "10:30",
+          "duration_seconds": 630,
+          "video_url": "https://pub-xxxxxxxx.r2.dev/videos/javascript/welcome.mp4",
+          "thumbnail_url": "https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?auto=format&fit=crop&w=640&q=80",
+          "is_preview": true,
+          "locked": false
         }
       ]
     }
@@ -101,25 +129,19 @@ Locked lesson: `locked: true`, `content_items: []`. Video URL tabhi aati hai jab
 }
 ```
 
-### Play response
+### Android ExoPlayer Video Playback (Kotlin)
 
-```json
-{
-  "content_id": 100,
-  "lesson_id": 10,
-  "course_id": 1,
-  "course_slug": "python-for-beginners",
-  "content_type": "VIDEO",
-  "title": "Welcome Video",
-  "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-  "play_url": "https://....mp4",
-  "mime_type": "video/mp4",
-  "duration_seconds": 596,
-  "duration_display": "9:56"
-}
+```kotlin
+// Video playback code for Android Developer:
+val player = ExoPlayer.Builder(context).build()
+playerView.player = player
+
+// Play from lecture.video_url directly or from /api/courses/lessons/{id}/play/
+val mediaItem = MediaItem.fromUri(lecture.videoUrl)
+player.setMediaItem(mediaItem)
+player.prepare()
+player.playWhenReady = true
 ```
-
-Android: `ExoPlayer` me `MediaItem.fromUri(url)` use karo.
 
 ---
 

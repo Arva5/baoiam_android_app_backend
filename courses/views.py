@@ -10,6 +10,7 @@ from .models import (
     Category,
     ContentItem,
     Course,
+    CourseBookmark,
     CourseEnrollment,
     PromotionalBanner,
     TipOfTheDay,
@@ -17,6 +18,7 @@ from .models import (
 )
 from .serializers import (
     CategorySerializer,
+    CourseBookmarkSerializer,
     CourseDetailSerializer,
     CourseEnrollmentSerializer,
     CourseListSerializer,
@@ -50,7 +52,10 @@ class CourseListView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        if user and user.is_authenticated and user.is_staff:
+        include_drafts = self.request.query_params.get('include_drafts')
+        if include_drafts is not None and include_drafts.lower() in ('true', '1', 'yes'):
+            queryset = Course.objects.all()
+        elif user and user.is_authenticated and user.is_staff:
             queryset = Course.objects.all()
         else:
             queryset = Course.objects.filter(is_published=True)
@@ -172,7 +177,9 @@ class CourseDetailView(APIView):
             course = get_object_or_404(base_qs, slug=lookup)
 
         if not course.is_published and not (
-            request.user and request.user.is_authenticated and request.user.is_staff
+            (request.user and request.user.is_authenticated and request.user.is_staff)
+            or request.query_params.get("include_drafts", "").lower() in ("true", "1")
+            or request.query_params.get("preview", "").lower() in ("true", "1")
         ):
             return Response(
                 {"detail": "Course not found."},
@@ -232,3 +239,95 @@ class UserEnrollmentListView(generics.ListAPIView):
 
     def get_queryset(self):
         return CourseEnrollment.objects.filter(user=self.request.user).select_related('course')
+
+
+class LessonPlayView(APIView):
+    """
+    GET /api/courses/lessons/<id>/play/
+    Returns playable Cloudflare URL for this lecture.
+    Preview lectures are playable even for non-enrolled users!
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, id):
+        from .models import Lesson
+        lesson = get_object_or_404(
+            Lesson.objects.select_related("module__course"),
+            id=id,
+        )
+        course = lesson.module.course
+        has_access = user_has_course_access(request, course)
+        if not has_access and not lesson.is_preview:
+            return Response(
+                {"detail": "Enroll in this course to play this lecture."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        url = lesson.get_playback_url()
+        if not url:
+            return Response(
+                {"detail": "No playback URL configured for this lecture."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return Response(
+            {
+                "lesson_id": lesson.id,
+                "module_id": lesson.module_id,
+                "course_id": course.id,
+                "course_slug": course.slug,
+                "title": lesson.title,
+                "url": url,
+                "play_url": url,
+                "mime_type": "video/mp4",
+                "duration_seconds": lesson.duration_seconds,
+                "duration_display": lesson.duration_display,
+                "is_preview": lesson.is_preview,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class CourseSaveView(APIView):
+    """
+    POST /api/courses/<id>/save/   -> Bookmark / Save course
+    DELETE /api/courses/<id>/save/ -> Remove Bookmark
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        lookup = kwargs.get('slug') or kwargs.get('id')
+        qs = Course.objects.all()
+        course = get_object_or_404(qs, id=int(lookup)) if str(lookup).isdigit() else get_object_or_404(qs, slug=lookup)
+        bookmark, created = CourseBookmark.objects.get_or_create(user=request.user, course=course)
+        return Response(
+            {
+                "is_saved": True,
+                "course_id": course.id,
+                "message": "Course saved successfully." if created else "Course already saved."
+            },
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        )
+
+    def delete(self, request, *args, **kwargs):
+        lookup = kwargs.get('slug') or kwargs.get('id')
+        qs = Course.objects.all()
+        course = get_object_or_404(qs, id=int(lookup)) if str(lookup).isdigit() else get_object_or_404(qs, slug=lookup)
+        deleted_count, _ = CourseBookmark.objects.filter(user=request.user, course=course).delete()
+        return Response(
+            {
+                "is_saved": False,
+                "course_id": course.id,
+                "message": "Course removed from bookmarks." if deleted_count else "Course was not bookmarked."
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+class SavedCoursesListView(generics.ListAPIView):
+    """
+    GET /api/courses/saved/ -> List of courses bookmarked by the user
+    """
+    serializer_class = CourseBookmarkSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return CourseBookmark.objects.filter(user=self.request.user).select_related('course', 'course__category')

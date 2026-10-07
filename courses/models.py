@@ -71,6 +71,8 @@ class Course(models.Model):
     is_featured = models.BooleanField(default=False)
     is_popular = models.BooleanField(default=False)
     is_published = models.BooleanField(default=True)
+    what_you_learn = models.JSONField(default=list, blank=True, help_text="List of learning objectives")
+    key_features = models.JSONField(default=list, blank=True, help_text="List of key features")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -116,7 +118,13 @@ class Lesson(models.Model):
 
     module = models.ForeignKey(CourseModule, on_delete=models.CASCADE, related_name="lessons")
     title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0, help_text="Lecture number within the module (Lecture 1, 2, 3...).")
+    thumbnail_url = models.URLField(max_length=500, blank=True, null=True)
+    is_preview = models.BooleanField(default=False, help_text="Allow free preview without enrollment")
+    video_url = models.URLField(max_length=1000, blank=True, null=True, help_text="Playback URL returned to Android player")
+    storage_key = models.CharField(max_length=500, blank=True, help_text="Cloudflare R2 object key")
+    duration_seconds = models.PositiveIntegerField(null=True, blank=True, help_text="Duration in seconds")
     published_at = models.DateField(
         null=True, blank=True,
         help_text="Date shown in the app, e.g. '12 May 2025'."
@@ -133,6 +141,29 @@ class Lesson(models.Model):
     @property
     def course(self):
         return self.module.course
+
+    @property
+    def duration_display(self):
+        sec = self.duration_seconds
+        if sec is None:
+            vid = self.content_items.filter(content_type="VIDEO").first()
+            if vid and vid.duration_seconds:
+                sec = vid.duration_seconds
+        if sec is None:
+            return "00:00"
+        m, s = divmod(sec, 60)
+        return f"{m}:{s:02d}"
+
+    def get_playback_url(self):
+        from .storage import resolve_playback_url
+        if self.storage_key:
+            return resolve_playback_url(self)
+        if self.video_url:
+            return self.video_url
+        vid = self.content_items.filter(content_type="VIDEO").first()
+        if vid:
+            return resolve_playback_url(vid)
+        return ""
 
 
 class ContentItem(models.Model):
@@ -213,6 +244,27 @@ class CourseEnrollment(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.course.title} ({self.progress_percentage}%)"
+
+
+class CourseBookmark(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='bookmarked_courses'
+    )
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='bookmarks'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'course')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user} - {self.course.title}"
 
 
 class PromotionalBanner(models.Model):

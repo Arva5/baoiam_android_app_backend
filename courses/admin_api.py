@@ -130,6 +130,7 @@ class AdminCourseSerializer(serializers.ModelSerializer):
             "rating", "reviews_count", "duration_hours", "lessons_count",
             "price", "discounted_price",
             "is_featured", "is_popular", "is_published",
+            "what_you_learn", "key_features",
             "enrollments_count", "is_free",
             "created_at", "updated_at",
         )
@@ -149,7 +150,11 @@ class AdminModuleSerializer(serializers.ModelSerializer):
 class AdminLessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields = ("id", "module", "title", "order", "published_at", "created_at")
+        fields = (
+            "id", "module", "title", "description", "order",
+            "thumbnail_url", "is_preview", "video_url", "storage_key",
+            "duration_seconds", "published_at", "created_at",
+        )
         read_only_fields = ("created_at",)
 
 
