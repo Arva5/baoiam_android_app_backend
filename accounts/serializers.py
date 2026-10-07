@@ -2,6 +2,8 @@ from datetime import timedelta
 import re
 from zoneinfo import available_timezones
 from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -148,6 +150,32 @@ class ResetPasswordSerializer(serializers.Serializer):
 
 class DeleteAccountSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True, required=True)
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(write_only=True, required=True)
+    new_password = serializers.CharField(write_only=True, required=True)
+    confirm_password = serializers.CharField(write_only=True, required=True)
+
+    def validate_current_password(self, value):
+        request = self.context.get('request')
+        user = getattr(request, 'user', None) if (request and getattr(request.user, 'is_authenticated', False)) else self.context.get('user')
+        if user and not user.check_password(value):
+            raise serializers.ValidationError("Incorrect current password.")
+        return value
+
+    def validate(self, attrs):
+        if attrs['new_password'] != attrs['confirm_password']:
+            raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
+
+        request = self.context.get('request')
+        user = getattr(request, 'user', None) if (request and getattr(request.user, 'is_authenticated', False)) else self.context.get('user')
+        try:
+            validate_password(attrs['new_password'], user=user)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError({"new_password": list(e.messages)})
+
+        return attrs
 
 
 class ResendOTPSerializer(serializers.Serializer):
