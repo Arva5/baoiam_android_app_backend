@@ -46,7 +46,7 @@ class AboutUsApiTests(APITestCase):
             is_active=True,
         )
         self.story = SuccessStory.objects.create(
-            name="Peter Jones",
+            name="Aarav Sharma",
             role="Alumni",
             rating=5,
             story="Amazing program!",
@@ -54,7 +54,7 @@ class AboutUsApiTests(APITestCase):
             is_active=True,
         )
         self.team = TeamMember.objects.create(
-            name="James Perkins",
+            name="Vikram Sharma",
             role="CEO",
             display_order=1,
             is_active=True,

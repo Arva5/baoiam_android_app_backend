@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'feedback',
     'contact',
     'about',
+    'issues',
 ]
 
 
@@ -92,6 +93,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 import dj_database_url
 
 DATABASE_URL = os.getenv('DATABASE_URL')
+
+DATABASES = {
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+    )
+}
 
 if DATABASE_URL:
     DATABASES = {
@@ -201,6 +209,17 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER or 'noreply@baoiam.com')
+
+# Cloudflare R2 — dummy/course videos. Public base URL is what Android plays.
+R2_ACCOUNT_ID = os.getenv('R2_ACCOUNT_ID', '')
+R2_ACCESS_KEY_ID = os.getenv('R2_ACCESS_KEY_ID', '')
+R2_SECRET_ACCESS_KEY = os.getenv('R2_SECRET_ACCESS_KEY', '')
+R2_BUCKET_NAME = os.getenv('R2_BUCKET_NAME', 'baoiam-course-videos')
+R2_PUBLIC_BASE_URL = os.getenv('R2_PUBLIC_BASE_URL', '').rstrip('/')
+R2_ENDPOINT_URL = os.getenv(
+    'R2_ENDPOINT_URL',
+    f'https://{R2_ACCOUNT_ID}.r2.cloudflarestorage.com' if R2_ACCOUNT_ID else '',
+)
 
 # Google OAuth Configuration
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')

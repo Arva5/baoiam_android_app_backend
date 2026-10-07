@@ -39,14 +39,14 @@ FALLBACK_WHAT_WE_OFFER = [
 FALLBACK_SUCCESS_STORIES = [
     {
         "id": "1",
-        "name": "Peter Jones",
+        "name": "Aarav Sharma",
         "role": "UNIV Business School",
         "rating": 5,
         "story": "The interactive learning app took my skills to the next level. I landed my dream job right after completing the program.",
     },
     {
         "id": "2",
-        "name": "Mia Morris",
+        "name": "Priya Patel",
         "role": "Web Developer",
         "rating": 5,
         "story": "The practical projects and mentor support were invaluable in helping me transition into web development.",
@@ -54,8 +54,8 @@ FALLBACK_SUCCESS_STORIES = [
 ]
 
 FALLBACK_TEAM_MEMBERS = [
-    {"id": "1", "name": "James Perkins", "role": "CEO & Founder"},
-    {"id": "2", "name": "Emma Wilson", "role": "Head of Education"},
+    {"id": "1", "name": "Vikram Sharma", "role": "CEO & Founder"},
+    {"id": "2", "name": "Dr. Neha Verma", "role": "Head of Education"},
 ]
 
 FALLBACK_TRUSTED_BY = ["TechCorp", "EduPlus", "SkillHub", "LearnCo"]
