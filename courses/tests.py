@@ -155,6 +155,23 @@ class CoursesAppTests(APITestCase):
         self.assertEqual(response.data['category'], self.category.id)
         self.assertEqual(response.data['category_name'], 'Design')
 
+    def test_content_play_url_requires_enrollment(self):
+        play_url = reverse('content-play', kwargs={'id': self.content.id})
+        unauth = self.client.get(play_url)
+        self.assertEqual(unauth.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        self.client.force_authenticate(user=self.user)
+        forbidden = self.client.get(play_url)
+        self.assertEqual(forbidden.status_code, status.HTTP_403_FORBIDDEN)
+
+        CourseEnrollment.objects.create(user=self.user, course=self.course)
+        ok = self.client.get(play_url)
+        self.assertEqual(ok.status_code, status.HTTP_200_OK)
+        self.assertEqual(ok.data['url'], 'https://example.com/video.mp4')
+        self.assertEqual(ok.data['play_url'], 'https://example.com/video.mp4')
+        self.assertEqual(ok.data['mime_type'], 'video/mp4')
+        self.assertEqual(ok.data['content_id'], self.content.id)
+
     def test_course_player_unlocked_with_enrollment(self):
         self.client.force_authenticate(user=self.user)
         CourseEnrollment.objects.create(
