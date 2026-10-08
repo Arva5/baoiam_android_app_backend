@@ -53,6 +53,14 @@ class CourseListView(generics.ListAPIView):
         return ctx
 
     def get_queryset(self):
+        from .models import CourseModule
+        if CourseModule.objects.count() == 0:
+            try:
+                from django.core.management import call_command
+                call_command('seed_dummy_courses')
+            except Exception:
+                pass
+
         user = self.request.user
         include_drafts = self.request.query_params.get('include_drafts')
         if include_drafts is not None and include_drafts.lower() in ('true', '1', 'yes'):
@@ -177,6 +185,15 @@ class CourseDetailView(APIView):
             course = get_object_or_404(base_qs, id=int(lookup))
         else:
             course = get_object_or_404(base_qs, slug=lookup)
+
+        # Auto-seed modules & lectures if missing in database
+        if not course.modules.exists():
+            try:
+                from django.core.management import call_command
+                call_command('seed_dummy_courses')
+                course = Course.objects.select_related('category', 'instructor').get(id=course.id)
+            except Exception:
+                pass
 
         if not course.is_published and not (
             (request.user and request.user.is_authenticated and request.user.is_staff)

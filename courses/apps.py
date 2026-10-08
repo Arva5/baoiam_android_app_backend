@@ -6,13 +6,17 @@ def auto_seed_courses(sender, **kwargs):
     if sender.name == 'courses':
         try:
             from django.core.management import call_command
-            from .models import Course
-            import os
-            from django.conf import settings
+            from .models import Course, CourseModule
 
-            # If course 9 is missing or total courses < 9, seed automatically
-            if not Course.objects.filter(id=9).exists() or Course.objects.count() < 9:
-                print("[AUTO-SEED] Seeding dummy courses for Render...")
+            course_9 = Course.objects.filter(id=9).first()
+            needs_seed = (
+                not course_9
+                or not course_9.modules.exists()
+                or CourseModule.objects.count() == 0
+                or Course.objects.count() < 9
+            )
+            if needs_seed:
+                print("[AUTO-SEED] Seeding dummy courses with all modules and lectures for Render...")
                 call_command('seed_dummy_courses')
                 print("[AUTO-SEED] Seeded dummy courses successfully.")
         except Exception as e:
