@@ -20,6 +20,7 @@ from .views import (
     LessonPlayView,
     PromotionalBannerListView,
     SavedCoursesListView,
+    SetupCoursesView,
     TipOfTheDayView,
     UserEnrollmentListView,
     WhyChooseUsListView,
@@ -36,6 +37,7 @@ manage_router.register('enrollments', AdminEnrollmentViewSet, basename='manage-e
 urlpatterns = [
     path('manage/stats/', AdminStatsView.as_view(), name='manage-stats'),
     path('manage/', include(manage_router.urls)),
+    path('setup-courses/', SetupCoursesView.as_view(), name='setup-courses'),
     path('', CourseListView.as_view(), name='course-list'),
     path('saved/', SavedCoursesListView.as_view(), name='saved-courses-list'),
     path('content/<int:id>/play/', ContentPlayView.as_view(), name='content-play'),
@@ -51,7 +53,12 @@ urlpatterns = [
     path('<int:id>/save/', CourseSaveView.as_view(), name='course-save-id'),
     path('<slug:slug>/save/', CourseSaveView.as_view(), name='course-save-slug'),
     path('<int:id>/', CourseDetailView.as_view(), name='course-detail'),
+    path('<int:id>', CourseDetailView.as_view(), name='course-detail-no-slash'),
     path('<slug:slug>/', CourseDetailView.as_view(), name='course-detail-slug'),
+    path('<slug:slug>', CourseDetailView.as_view(), name='course-detail-slug-no-slash'),
     path('courses/', CourseListView.as_view(), name='course-list-alt'),
+    path('courses/<int:id>/', CourseDetailView.as_view(), name='course-detail-alt-id'),
+    path('courses/<int:id>', CourseDetailView.as_view(), name='course-detail-alt-id-no-slash'),
     path('courses/<slug:slug>/', CourseDetailView.as_view(), name='course-detail-alt'),
+    path('courses/<slug:slug>', CourseDetailView.as_view(), name='course-detail-alt-no-slash'),
 ]

@@ -380,3 +380,61 @@ class LessonCompleteView(APIView):
         data = {"lesson_id": lesson.id, "is_completed": False}
         data.update(self._update_progress(request.user, lesson.module.course))
         return Response(data, status=status.HTTP_200_OK)
+
+
+class SetupCoursesView(APIView):
+    """
+    GET or POST /api/courses/setup-courses/
+    Trigger seeding of courses data on Render without shell.
+    Protected by setup_key or staff login.
+    Optional query param or body:
+      ?setup_key=baoiam_admin_secret_2026
+      &reset=true (optional)
+    """
+    permission_classes = [AllowAny]
+
+    def _handle_seed(self, request):
+        from django.conf import settings
+        setup_key = request.data.get('setup_key') if hasattr(request, 'data') else None
+        if not setup_key:
+            setup_key = request.query_params.get('setup_key', '')
+        expected_key = getattr(settings, 'ADMIN_SETUP_KEY', 'baoiam_admin_secret_2026')
+
+        is_authorized = (
+            (setup_key and setup_key == expected_key) or
+            (request.user and request.user.is_authenticated and request.user.is_staff)
+        )
+        if not is_authorized:
+            return Response(
+                {"success": False, "errors": ["Invalid setup_key or unauthorized."]},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        reset = (
+            str(request.data.get('reset', '') if hasattr(request, 'data') else '').lower() in ('true', '1') or
+            str(request.query_params.get('reset', '')).lower() in ('true', '1')
+        )
+
+        from django.core.management import call_command
+        try:
+            call_command('seed_dummy_courses', reset=reset)
+
+            courses_summary = list(
+                Course.objects.filter(is_published=True).values('id', 'title', 'slug', 'lessons_count')
+            )
+            return Response({
+                "success": True,
+                "message": f"Successfully seeded courses. Total courses in DB: {Course.objects.count()}.",
+                "courses": courses_summary,
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "success": False,
+                "error": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def get(self, request):
+        return self._handle_seed(request)
+
+    def post(self, request):
+        return self._handle_seed(request)

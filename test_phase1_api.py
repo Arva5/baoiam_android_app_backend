@@ -128,7 +128,7 @@ def run():
         d = d["data"]
     check("has_active_access False", d["has_active_access"] is False)
     check("modules outline visible", len(d["modules"]) == 1)
-    lesson_data = d["modules"][0]["lessons"][0]
+    lesson_data = d["modules"][0].get("lectures", d["modules"][0]["lessons"])[0]
     check("lesson locked True", lesson_data["locked"] is True)
     check("content_items empty when locked", lesson_data["content_items"] == [], lesson_data)
 
@@ -197,7 +197,7 @@ def run():
     resp = client.get(f"/api/courses/{course.slug}/", **auth_header)
     d = resp.json().get("data", resp.json())
     check("has_active_access True", d["has_active_access"] is True)
-    lesson_data = d["modules"][0]["lessons"][0]
+    lesson_data = d["modules"][0].get("lectures", d["modules"][0]["lessons"])[0]
     check("lesson locked False", lesson_data["locked"] is False)
     check("content_items has 2 items", len(lesson_data["content_items"]) == 2, lesson_data["content_items"])
     video = next(c for c in lesson_data["content_items"] if c["content_type"] == "VIDEO")
