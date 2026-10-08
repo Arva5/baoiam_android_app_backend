@@ -1,0 +1,1158 @@
+[
+{
+  "model": "courses.category",
+  "pk": 1,
+  "fields": {
+    "name": "Business",
+    "slug": "business",
+    "icon_url": null,
+    "description": "Courses covering entrepreneurship, management, marketing, sales, and business strategy.",
+    "order": 1,
+    "is_active": true,
+    "created_at": "2026-10-07T02:35:23.113Z"
+  }
+},
+{
+  "model": "courses.category",
+  "pk": 2,
+  "fields": {
+    "name": "Design",
+    "slug": "design",
+    "icon_url": null,
+    "description": "Courses covering UI/UX design, graphic design, design systems, and digital product design.",
+    "order": 1,
+    "is_active": true,
+    "created_at": "2026-10-07T02:35:23.116Z"
+  }
+},
+{
+  "model": "courses.category",
+  "pk": 3,
+  "fields": {
+    "name": "Technology",
+    "slug": "technology",
+    "icon_url": null,
+    "description": "Courses covering artificial intelligence, cloud computing, cybersecurity, and data science.",
+    "order": 3,
+    "is_active": true,
+    "created_at": "2026-10-07T02:35:23.116Z"
+  }
+},
+{
+  "model": "courses.category",
+  "pk": 4,
+  "fields": {
+    "name": "Development",
+    "slug": "development",
+    "icon_url": null,
+    "description": "Courses covering full-stack web development, mobile apps, DevOps, and backend engineering.",
+    "order": 4,
+    "is_active": true,
+    "created_at": "2026-10-07T02:35:23.117Z"
+  }
+},
+{
+  "model": "courses.category",
+  "pk": 5,
+  "fields": {
+    "name": "Business & Management",
+    "slug": "business-management",
+    "icon_url": null,
+    "description": "",
+    "order": 2,
+    "is_active": true,
+    "created_at": "2026-10-07T08:41:13.574Z"
+  }
+},
+{
+  "model": "courses.category",
+  "pk": 6,
+  "fields": {
+    "name": "Career Growth",
+    "slug": "career-growth",
+    "icon_url": null,
+    "description": "",
+    "order": 4,
+    "is_active": true,
+    "created_at": "2026-10-07T08:41:13.589Z"
+  }
+},
+{
+  "model": "courses.category",
+  "pk": 7,
+  "fields": {
+    "name": "Leadership & Soft Skills",
+    "slug": "leadership-soft-skills",
+    "icon_url": null,
+    "description": "",
+    "order": 5,
+    "is_active": true,
+    "created_at": "2026-10-07T08:41:13.596Z"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 1,
+  "fields": {
+    "title": "Complete Python Bootcamp",
+    "slug": "complete-python-bootcamp",
+    "short_code": "CPB",
+    "subtitle": "Zero to Hero in Python Programming",
+    "description": "Learn Python like a professional. Start from the basics and go all the way to creating your own applications, scripts, and games.",
+    "thumbnail_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80",
+    "cover_image_url": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=80",
+    "instructor": 1,
+    "instructor_name": "Sarah Johnson",
+    "category": 3,
+    "level": "beginner",
+    "rating": "4.85",
+    "reviews_count": 520,
+    "duration_hours": "28.0",
+    "lessons_count": 2,
+    "price": "59.99",
+    "discounted_price": "29.99",
+    "is_featured": true,
+    "is_popular": true,
+    "is_published": true,
+    "what_you_learn": [
+      "Python programming fundamentals: variables, loops, conditionals, and functions",
+      "Object-Oriented Programming (OOP) in Python with classes and inheritance",
+      "Working with files, external packages, and virtual environments",
+      "Building command-line utilities and automation scripts"
+    ],
+    "key_features": [
+      "28.0 hours of comprehensive video training",
+      "80 practice exercises and quizzes",
+      "Downloadable cheat sheets & source code",
+      "Certificate of Completion"
+    ],
+    "created_at": "2026-10-07T08:57:31.814Z",
+    "updated_at": "2026-10-07T08:57:31.814Z"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 2,
+  "fields": {
+    "title": "Udaan 90",
+    "slug": "udaan-90",
+    "short_code": "U90",
+    "subtitle": "Fast Track Career & Interview Bootcamp",
+    "description": "Accelerate your career readiness in 90 days with structured mentor guidance, resume enhancement, mock interviews, and industry-oriented projects.",
+    "thumbnail_url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
+    "cover_image_url": "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
+    "instructor": 1,
+    "instructor_name": "Amit Patel",
+    "category": 6,
+    "level": "all_levels",
+    "rating": "4.75",
+    "reviews_count": 185,
+    "duration_hours": "90.0",
+    "lessons_count": 1,
+    "price": "199.99",
+    "discounted_price": "149.99",
+    "is_featured": true,
+    "is_popular": true,
+    "is_published": true,
+    "what_you_learn": [
+      "Structured 90-day career roadmap for tech and product roles",
+      "Crack DSA and system design interviews with live patterns",
+      "LinkedIn profile optimization and cold outreach strategies",
+      "Real-world capstone project to highlight on your resume"
+    ],
+    "key_features": [
+      "90 Days Intensive Learning & Mentorship",
+      "1-on-1 Resume & Portfolio Review",
+      "Mock Interviews with Senior Engineers",
+      "Guaranteed Placement Referral Support"
+    ],
+    "created_at": "2026-10-07T08:57:31.876Z",
+    "updated_at": "2026-10-07T08:57:31.876Z"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 3,
+  "fields": {
+    "title": "Success Fusion",
+    "slug": "success-fusion",
+    "short_code": "SF",
+    "subtitle": "Leadership & Executive Productivity",
+    "description": "Unlock your leadership potential, executive presence, and strategic thinking to lead teams effectively and drive business transformation.",
+    "thumbnail_url": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80",
+    "cover_image_url": "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80",
+    "instructor": 1,
+    "instructor_name": "Dr. Robert Brown",
+    "category": 7,
+    "level": "intermediate",
+    "rating": "4.90",
+    "reviews_count": 210,
+    "duration_hours": "15.0",
+    "lessons_count": 1,
+    "price": "149.99",
+    "discounted_price": "99.99",
+    "is_featured": true,
+    "is_popular": false,
+    "is_published": true,
+    "what_you_learn": [
+      "Executive presence, assertive communication, and influence",
+      "High-performance team management and conflict resolution",
+      "Decision making under uncertainty and strategic thinking"
+    ],
+    "key_features": [
+      "15.0 hours of executive masterclasses",
+      "Downloadable leadership frameworks and templates",
+      "Certificate in Executive Leadership"
+    ],
+    "created_at": "2026-10-07T08:57:31.923Z",
+    "updated_at": "2026-10-07T08:57:31.923Z"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 4,
+  "fields": {
+    "title": "Business Analytics Fundamentals",
+    "slug": "business-analytics-fundamentals",
+    "short_code": "BAF",
+    "subtitle": "Data-driven Decision Making",
+    "description": "Learn how to analyze enterprise data, extract key metrics, and communicate actionable insights to stakeholders using modern business intelligence methods.",
+    "thumbnail_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
+    "cover_image_url": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80",
+    "instructor": 1,
+    "instructor_name": "Jane Smith",
+    "category": 5,
+    "level": "beginner",
+    "rating": "4.60",
+    "reviews_count": 89,
+    "duration_hours": "20.0",
+    "lessons_count": 1,
+    "price": "79.99",
+    "discounted_price": "49.99",
+    "is_featured": false,
+    "is_popular": true,
+    "is_published": true,
+    "what_you_learn": [
+      "Understand business KPIs, cohorts, and customer acquisition metrics",
+      "Transform raw Excel and SQL datasets into executive dashboards",
+      "Data storytelling and presenting to senior management"
+    ],
+    "key_features": [
+      "20.0 hours of practical business case studies",
+      "Real company dataset exercises (eCommerce & SaaS)",
+      "Certificate of Completion"
+    ],
+    "created_at": "2026-10-07T08:57:31.974Z",
+    "updated_at": "2026-10-07T08:57:31.974Z"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 5,
+  "fields": {
+    "title": "Advanced Python Web Development",
+    "slug": "advanced-python-web-development",
+    "short_code": "PWD",
+    "subtitle": "Master Django, REST APIs & Microservices",
+    "description": "A comprehensive deep dive into building scalable web architectures using Python, Django REST Framework, Celery, and Redis.",
+    "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+    "cover_image_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80",
+    "instructor": 1,
+    "instructor_name": "John Doe",
+    "category": 3,
+    "level": "advanced",
+    "rating": "4.80",
+    "reviews_count": 125,
+    "duration_hours": "45.5",
+    "lessons_count": 1,
+    "price": "99.99",
+    "discounted_price": "49.99",
+    "is_featured": true,
+    "is_popular": true,
+    "is_published": true,
+    "what_you_learn": [
+      "Architect high-throughput REST APIs with Django REST Framework",
+      "Implement asynchronous task queues with Celery and Redis",
+      "Database query optimization, indexing, and PostgreSQL connection pooling",
+      "Containerize and deploy with Docker and Kubernetes"
+    ],
+    "key_features": [
+      "45.5 hours of advanced engineering content",
+      "Production-ready codebase templates",
+      "System design and microservice architecture modules"
+    ],
+    "created_at": "2026-10-07T08:57:32.021Z",
+    "updated_at": "2026-10-07T08:57:32.021Z"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 6,
+  "fields": {
+    "title": "Business Analytics with Python",
+    "slug": "business-analytics-with-python",
+    "short_code": "BAP",
+    "subtitle": "Pandas, NumPy, and Business Intelligence",
+    "description": "Transform messy raw datasets into executive insights using Python, Pandas, Matplotlib, and automated reporting pipelines.",
+    "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+    "cover_image_url": "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=1200&q=80",
+    "instructor": 1,
+    "instructor_name": "Dr. Priya Sharma",
+    "category": 5,
+    "level": "intermediate",
+    "rating": "4.70",
+    "reviews_count": 160,
+    "duration_hours": "35.0",
+    "lessons_count": 1,
+    "price": "119.99",
+    "discounted_price": "79.99",
+    "is_featured": false,
+    "is_popular": true,
+    "is_published": true,
+    "what_you_learn": [
+      "Master Pandas and NumPy for high-speed data wrangling",
+      "Build cohort analysis, churn prediction, and revenue models",
+      "Create interactive business dashboards with Plotly and Streamlit"
+    ],
+    "key_features": [
+      "35.0 hours hands-on coding",
+      "10 real financial and product datasets",
+      "Jupyter notebooks with turnkey solution code"
+    ],
+    "created_at": "2026-10-07T08:57:32.062Z",
+    "updated_at": "2026-10-07T08:57:32.062Z"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 7,
+  "fields": {
+    "title": "UI/UX Design Fundamentals",
+    "slug": "ui-ux-design-fundamentals",
+    "short_code": "UI/UX",
+    "subtitle": "Figma, Design Systems & Wireframing",
+    "description": "Learn user research, wireframing, high-fidelity prototypes in Figma, and design systems from scratch.",
+    "thumbnail_url": "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=800&q=80",
+    "cover_image_url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80",
+    "instructor": 1,
+    "instructor_name": "Jane Instructor",
+    "category": 2,
+    "level": "beginner",
+    "rating": "4.70",
+    "reviews_count": 240,
+    "duration_hours": "18.0",
+    "lessons_count": 1,
+    "price": "89.99",
+    "discounted_price": "59.99",
+    "is_featured": false,
+    "is_popular": true,
+    "is_published": true,
+    "what_you_learn": [
+      "User-centered design methodology and usability testing",
+      "Master Figma components, autolayout, variants, and interactive prototypes",
+      "Build scalable design systems for iOS, Android, and Web apps"
+    ],
+    "key_features": [
+      "18.0 hours of step-by-step design training",
+      "Figma project UI kits and source assets included",
+      "Portfolio-ready mobile app case study"
+    ],
+    "created_at": "2026-10-07T08:57:32.100Z",
+    "updated_at": "2026-10-07T08:57:32.100Z"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 8,
+  "fields": {
+    "title": "Unpublished Draft Course",
+    "slug": "unpublished-draft-course",
+    "short_code": "DR",
+    "subtitle": "Internal Curriculum Review",
+    "description": "Internal preview curriculum in draft state for instructor review, QA, and content evaluation before public release.",
+    "thumbnail_url": "https://placehold.co/800x450/212529/ced4da?text=Draft+Course",
+    "cover_image_url": "https://placehold.co/1200x500/343a40/dee2e6?text=Draft+Course+Cover",
+    "instructor": 1,
+    "instructor_name": "Baoiam Instructor",
+    "category": 3,
+    "level": "beginner",
+    "rating": "0.00",
+    "reviews_count": 0,
+    "duration_hours": "10.0",
+    "lessons_count": 1,
+    "price": "0.00",
+    "discounted_price": null,
+    "is_featured": false,
+    "is_popular": false,
+    "is_published": false,
+    "what_you_learn": [
+      "Curriculum outline under review",
+      "Draft lecture notes and video rehearsals"
+    ],
+    "key_features": [
+      "Draft status - visible only with include_drafts=true or Admin access"
+    ],
+    "created_at": "2026-10-07T08:57:32.142Z",
+    "updated_at": "2026-10-07T08:57:32.142Z"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 9,
+  "fields": {
+    "title": "Full Stack JavaScript",
+    "slug": "full-stack-javascript",
+    "short_code": "FSJ",
+    "subtitle": "MERN stack development",
+    "description": "Master MongoDB, Express, React, and Node.js. Build complete full-stack web applications from scratch with modern best practices, state management, and cloud deployment.",
+    "thumbnail_url": "https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?auto=format&fit=crop&w=800&q=80",
+    "cover_image_url": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80",
+    "instructor": 1,
+    "instructor_name": "Sarah Johnson",
+    "category": 3,
+    "level": "intermediate",
+    "rating": "4.50",
+    "reviews_count": 342,
+    "duration_hours": "60.0",
+    "lessons_count": 150,
+    "price": "129.99",
+    "discounted_price": "89.99",
+    "is_featured": true,
+    "is_popular": true,
+    "is_published": true,
+    "what_you_learn": [
+      "Build full-stack web applications with React, Node.js, Express, and MongoDB",
+      "Design RESTful APIs, implement authentication with JWT and role-based authorization",
+      "State management with Redux Toolkit and React Query",
+      "Deploy applications with CI/CD on Cloudflare and AWS"
+    ],
+    "key_features": [
+      "60.0 hours on-demand high-definition video",
+      "150 comprehensive lectures and code repositories",
+      "Industry-recognized Certificate of Completion",
+      "Direct access to mentor Q&A forum",
+      "Full lifetime access on mobile and web"
+    ],
+    "created_at": "2026-10-07T08:57:31.558Z",
+    "updated_at": "2026-10-07T08:57:31.558Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 39,
+  "fields": {
+    "course": 9,
+    "title": "Module 1: Modern JavaScript & ES6+ Mastery",
+    "description": "",
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.575Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 40,
+  "fields": {
+    "course": 9,
+    "title": "Module 2: Backend Development with Express & MongoDB",
+    "description": "",
+    "order": 2,
+    "created_at": "2026-10-07T08:57:31.714Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 41,
+  "fields": {
+    "course": 9,
+    "title": "Module 3: Frontend Mastery with React 19",
+    "description": "",
+    "order": 3,
+    "created_at": "2026-10-07T08:57:31.760Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 42,
+  "fields": {
+    "course": 1,
+    "title": "Module 1: Python Fundamentals",
+    "description": "",
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.822Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 43,
+  "fields": {
+    "course": 2,
+    "title": "Sprint 1: Mindset & Technical Foundation",
+    "description": "",
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.885Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 44,
+  "fields": {
+    "course": 3,
+    "title": "Module 1: Principles of Modern Leadership",
+    "description": "",
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.939Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 45,
+  "fields": {
+    "course": 4,
+    "title": "Module 1: Introduction to Business Analytics",
+    "description": "",
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.982Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 46,
+  "fields": {
+    "course": 5,
+    "title": "Module 1: Production Django & DRF Architecture",
+    "description": "",
+    "order": 1,
+    "created_at": "2026-10-07T08:57:32.029Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 47,
+  "fields": {
+    "course": 6,
+    "title": "Module 1: Python for Data Manipulation",
+    "description": "",
+    "order": 1,
+    "created_at": "2026-10-07T08:57:32.070Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 48,
+  "fields": {
+    "course": 7,
+    "title": "Module 1: UX Research & Wireframing",
+    "description": "",
+    "order": 1,
+    "created_at": "2026-10-07T08:57:32.111Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 49,
+  "fields": {
+    "course": 8,
+    "title": "Draft Module 1: Pre-Release Overview",
+    "description": "",
+    "order": 1,
+    "created_at": "2026-10-07T08:57:32.157Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 55,
+  "fields": {
+    "module": 39,
+    "title": "Welcome to Full Stack JavaScript",
+    "description": "Course overview, roadmap, and local development environment setup.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/javascript/welcome.mp4",
+    "duration_seconds": 630,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:31.647Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 56,
+  "fields": {
+    "module": 39,
+    "title": "ES6+ Modern Syntax & Async JavaScript",
+    "description": "Arrow functions, destructuring, promises, and async/await in practice.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "storage_key": "videos/javascript/async-js.mp4",
+    "duration_seconds": 920,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:31.669Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 57,
+  "fields": {
+    "module": 39,
+    "title": "Node.js Event Loop & Module System",
+    "description": "Understanding Node runtime, CommonJS vs ES Modules, and NPM ecosystem.",
+    "order": 3,
+    "thumbnail_url": "https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "storage_key": "videos/javascript/nodejs-intro.mp4",
+    "duration_seconds": 840,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:31.692Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 58,
+  "fields": {
+    "module": 40,
+    "title": "Express.js Architecture & REST Routing",
+    "description": "Building clean RESTful APIs, request validation, and modular routers.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "storage_key": "videos/javascript/express-api.mp4",
+    "duration_seconds": 1150,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:31.722Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 59,
+  "fields": {
+    "module": 40,
+    "title": "MongoDB Schemas & Aggregation Pipelines",
+    "description": "Connecting Mongoose, writing efficient schemas, and data modeling.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "storage_key": "videos/javascript/mongodb-crud.mp4",
+    "duration_seconds": 1280,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:31.746Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 60,
+  "fields": {
+    "module": 41,
+    "title": "React Component Architecture & Hooks",
+    "description": "Building interactive UIs with useState, useEffect, and custom hooks.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/javascript/react-hooks.mp4",
+    "duration_seconds": 1400,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:31.766Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 61,
+  "fields": {
+    "module": 41,
+    "title": "Authentication Flow with JWT & Cookies",
+    "description": "End-to-end authentication, secure cookie storage, and protected client routes.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "storage_key": "videos/javascript/jwt-auth.mp4",
+    "duration_seconds": 1100,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:31.787Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 62,
+  "fields": {
+    "module": 42,
+    "title": "Setting Up Python & VS Code",
+    "description": "Installation, virtual environment, and running your first script.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/python/setup.mp4",
+    "duration_seconds": 540,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:31.827Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 63,
+  "fields": {
+    "module": 42,
+    "title": "Variables, Numbers & Strings",
+    "description": "Core data types, string formatting, and mathematical operations.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "storage_key": "videos/python/variables.mp4",
+    "duration_seconds": 780,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:31.849Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 64,
+  "fields": {
+    "module": 43,
+    "title": "Kickoff: The 90-Day Career Roadmap",
+    "description": "Goal setting, habit formation, and interview milestones.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "storage_key": "videos/udaan/kickoff.mp4",
+    "duration_seconds": 720,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:31.899Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 65,
+  "fields": {
+    "module": 44,
+    "title": "Defining Your Leadership Identity",
+    "description": "Authentic leadership, emotional intelligence, and values.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "storage_key": "videos/leadership/intro.mp4",
+    "duration_seconds": 600,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:31.947Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 66,
+  "fields": {
+    "module": 45,
+    "title": "The Role of Business Analytics in Modern Firms",
+    "description": "Descriptive, predictive, and prescriptive analytics overview.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "storage_key": "videos/analytics/fundamentals.mp4",
+    "duration_seconds": 650,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:31.995Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 67,
+  "fields": {
+    "module": 46,
+    "title": "DRF Serialization Deep Dive & Query Optimization",
+    "description": "Avoiding N+1 queries, select_related, and prefetch_related in real production APIs.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/python/drf-opt.mp4",
+    "duration_seconds": 890,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:32.035Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 68,
+  "fields": {
+    "module": 47,
+    "title": "Pandas DataFrames: Cleaning & Aggregation",
+    "description": "Groupby, pivot tables, and time-series resampling for business reports.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "storage_key": "videos/analytics/pandas-intro.mp4",
+    "duration_seconds": 960,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:32.079Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 69,
+  "fields": {
+    "module": 48,
+    "title": "Introduction to UX Thinking & Figma Basics",
+    "description": "Understanding user mental models and setting up Figma artboards.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/uiux/figma-intro.mp4",
+    "duration_seconds": 660,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:32.117Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 70,
+  "fields": {
+    "module": 49,
+    "title": "Draft Lecture 1",
+    "description": "Draft rehearsal recording.",
+    "order": 1,
+    "thumbnail_url": "https://placehold.co/640x360/343a40/adb5bd?text=Draft+Lecture",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/draft/test.mp4",
+    "duration_seconds": 300,
+    "published_at": "2026-10-07",
+    "created_at": "2026-10-07T08:57:32.161Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 59,
+  "fields": {
+    "lesson": 55,
+    "content_type": "VIDEO",
+    "title": "Welcome to Full Stack JavaScript (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/javascript/welcome.mp4",
+    "duration_seconds": 630,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.663Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 60,
+  "fields": {
+    "lesson": 56,
+    "content_type": "VIDEO",
+    "title": "ES6+ Modern Syntax & Async JavaScript (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "storage_key": "videos/javascript/async-js.mp4",
+    "duration_seconds": 920,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.677Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 61,
+  "fields": {
+    "lesson": 57,
+    "content_type": "VIDEO",
+    "title": "Node.js Event Loop & Module System (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "storage_key": "videos/javascript/nodejs-intro.mp4",
+    "duration_seconds": 840,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.698Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 62,
+  "fields": {
+    "lesson": 58,
+    "content_type": "VIDEO",
+    "title": "Express.js Architecture & REST Routing (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "storage_key": "videos/javascript/express-api.mp4",
+    "duration_seconds": 1150,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.731Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 63,
+  "fields": {
+    "lesson": 59,
+    "content_type": "VIDEO",
+    "title": "MongoDB Schemas & Aggregation Pipelines (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "storage_key": "videos/javascript/mongodb-crud.mp4",
+    "duration_seconds": 1280,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.755Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 64,
+  "fields": {
+    "lesson": 60,
+    "content_type": "VIDEO",
+    "title": "React Component Architecture & Hooks (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/javascript/react-hooks.mp4",
+    "duration_seconds": 1400,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.780Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 65,
+  "fields": {
+    "lesson": 61,
+    "content_type": "VIDEO",
+    "title": "Authentication Flow with JWT & Cookies (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "storage_key": "videos/javascript/jwt-auth.mp4",
+    "duration_seconds": 1100,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.795Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 66,
+  "fields": {
+    "lesson": 62,
+    "content_type": "VIDEO",
+    "title": "Setting Up Python & VS Code (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/python/setup.mp4",
+    "duration_seconds": 540,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.843Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 67,
+  "fields": {
+    "lesson": 63,
+    "content_type": "VIDEO",
+    "title": "Variables, Numbers & Strings (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "storage_key": "videos/python/variables.mp4",
+    "duration_seconds": 780,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.855Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 68,
+  "fields": {
+    "lesson": 64,
+    "content_type": "VIDEO",
+    "title": "Kickoff: The 90-Day Career Roadmap (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "storage_key": "videos/udaan/kickoff.mp4",
+    "duration_seconds": 720,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.907Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 69,
+  "fields": {
+    "lesson": 65,
+    "content_type": "VIDEO",
+    "title": "Defining Your Leadership Identity (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "storage_key": "videos/leadership/intro.mp4",
+    "duration_seconds": 600,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:31.954Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 70,
+  "fields": {
+    "lesson": 66,
+    "content_type": "VIDEO",
+    "title": "The Role of Business Analytics in Modern Firms (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "storage_key": "videos/analytics/fundamentals.mp4",
+    "duration_seconds": 650,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:32.001Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 71,
+  "fields": {
+    "lesson": 67,
+    "content_type": "VIDEO",
+    "title": "DRF Serialization Deep Dive & Query Optimization (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/python/drf-opt.mp4",
+    "duration_seconds": 890,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:32.049Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 72,
+  "fields": {
+    "lesson": 68,
+    "content_type": "VIDEO",
+    "title": "Pandas DataFrames: Cleaning & Aggregation (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "storage_key": "videos/analytics/pandas-intro.mp4",
+    "duration_seconds": 960,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:32.086Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 73,
+  "fields": {
+    "lesson": 69,
+    "content_type": "VIDEO",
+    "title": "Introduction to UX Thinking & Figma Basics (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/uiux/figma-intro.mp4",
+    "duration_seconds": 660,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:32.122Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 74,
+  "fields": {
+    "lesson": 70,
+    "content_type": "VIDEO",
+    "title": "Draft Lecture 1 (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/draft/test.mp4",
+    "duration_seconds": 300,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-07T08:57:32.166Z"
+  }
+},
+{
+  "model": "courses.promotionalbanner",
+  "pk": 1,
+  "fields": {
+    "title": "Free Courses Available",
+    "subtitle": "Aaj hi enroll karo",
+    "tagline": "",
+    "image_url": null,
+    "badge_text": "SPECIAL OFFER",
+    "discount_code": "",
+    "discount_percentage": 0,
+    "target_type": "category",
+    "target_id": "design",
+    "target_url": null,
+    "button_text": "Explore Now",
+    "start_date": null,
+    "end_date": null,
+    "order": 0,
+    "is_active": true,
+    "created_at": "2026-10-07T04:22:54.133Z",
+    "updated_at": "2026-10-07T04:22:54.133Z"
+  }
+},
+{
+  "model": "courses.tipoftheday",
+  "pk": 1,
+  "fields": {
+    "title": "Stay Consistent",
+    "content": "Roz sirf 30 minute practice karo, result zaroor milega.",
+    "category": "Learning Strategy",
+    "author_name": "Baoiam Mentor",
+    "author_avatar_url": null,
+    "icon_name": "lightbulb",
+    "publish_date": "2026-10-07",
+    "likes_count": 0,
+    "is_active": true,
+    "created_at": "2026-10-07T04:22:54.122Z",
+    "updated_at": "2026-10-07T04:22:54.122Z"
+  }
+},
+{
+  "model": "courses.whychooseusitem",
+  "pk": 1,
+  "fields": {
+    "title": "Expert Instructors",
+    "description": "Industry experts se seekho.",
+    "icon_url": "https://cdn-icons-png.flaticon.com/512/3135/3135755.png",
+    "icon_name": "school",
+    "highlight_stat": "50+ Mentors",
+    "order": 1,
+    "is_active": true,
+    "created_at": "2026-10-07T04:22:54.094Z",
+    "updated_at": "2026-10-07T04:22:54.094Z"
+  }
+},
+{
+  "model": "courses.whychooseusitem",
+  "pk": 2,
+  "fields": {
+    "title": "Learn Anytime",
+    "description": "Apni speed pe, kabhi bhi, kahin bhi.",
+    "icon_url": "https://cdn-icons-png.flaticon.com/512/2784/2784459.png",
+    "icon_name": "schedule",
+    "highlight_stat": "24/7 Access",
+    "order": 2,
+    "is_active": true,
+    "created_at": "2026-10-07T04:22:54.094Z",
+    "updated_at": "2026-10-07T04:22:54.094Z"
+  }
+},
+{
+  "model": "courses.whychooseusitem",
+  "pk": 3,
+  "fields": {
+    "title": "Project Based",
+    "description": "Real projects banao, portfolio banao.",
+    "icon_url": "https://cdn-icons-png.flaticon.com/512/1googl.png",
+    "icon_name": "work",
+    "highlight_stat": "100+ Projects",
+    "order": 3,
+    "is_active": true,
+    "created_at": "2026-10-07T04:22:54.094Z",
+    "updated_at": "2026-10-07T04:22:54.095Z"
+  }
+}
+]
