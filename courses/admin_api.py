@@ -143,7 +143,7 @@ class AdminCourseSerializer(serializers.ModelSerializer):
 class AdminModuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseModule
-        fields = ("id", "course", "title", "order", "created_at")
+        fields = ("id", "course", "title", "description", "order", "created_at")
         read_only_fields = ("created_at",)
 
 

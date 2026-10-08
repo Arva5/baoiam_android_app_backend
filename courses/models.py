@@ -99,6 +99,7 @@ class CourseModule(models.Model):
 
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="modules")
     title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0, help_text="Display order within the course (Module 1, 2, 3...).")
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -351,3 +352,42 @@ class WhyChooseUsItem(models.Model):
 
     def __str__(self):
         return self.title
+
+class WhyChooseUsItem(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    icon_url = models.URLField(max_length=500, blank=True, null=True)
+    icon_name = models.CharField(max_length=50, blank=True, default='star')
+    highlight_stat = models.CharField(max_length=50, blank=True, help_text="e.g. '98% Success Rate'")
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Why Choose Us Item'
+        verbose_name_plural = 'Why Choose Us Items'
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class LessonProgress(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='lesson_progress',
+    )
+    lesson = models.ForeignKey(
+        Lesson,
+        on_delete=models.CASCADE,
+        related_name='progress_entries',
+    )
+    completed_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('user', 'lesson')
+
+    def __str__(self):
+        return f"{self.user} - {self.lesson.title}"   

@@ -12,6 +12,8 @@ from .models import (
     Course,
     CourseBookmark,
     CourseEnrollment,
+    Lesson,
+    LessonProgress,
     PromotionalBanner,
     TipOfTheDay,
     WhyChooseUsItem,
@@ -331,3 +333,50 @@ class SavedCoursesListView(generics.ListAPIView):
 
     def get_queryset(self):
         return CourseBookmark.objects.filter(user=self.request.user).select_related('course', 'course__category')
+
+
+class LessonCompleteView(APIView):
+    """
+    POST   /api/courses/lessons/<id>/complete/  -> lecture complete mark karo
+    DELETE /api/courses/lessons/<id>/complete/  -> complete hatao
+    """
+    permission_classes = [IsAuthenticated]
+
+    def _lesson(self, id):
+        return get_object_or_404(Lesson.objects.select_related("module__course"), id=id)
+
+    def _update_progress(self, user, course):
+        total = Lesson.objects.filter(module__course=course).count()
+        done = LessonProgress.objects.filter(user=user, lesson__module__course=course).count()
+        percent = int(done * 100 / total) if total else 0
+        CourseEnrollment.objects.filter(user=user, course=course).update(
+            completed_lessons=done,
+            total_lessons=total,
+            progress_percentage=percent,
+            is_completed=(total > 0 and done == total),
+        )
+        return {
+            "completed_lessons": done,
+            "total_lessons": total,
+            "progress_percentage": percent,
+        }
+
+    def post(self, request, id):
+        lesson = self._lesson(id)
+        course = lesson.module.course
+        if not user_has_course_access(request, course):
+            return Response(
+                {"detail": "Enroll in this course first."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        LessonProgress.objects.get_or_create(user=request.user, lesson=lesson)
+        data = {"lesson_id": lesson.id, "is_completed": True}
+        data.update(self._update_progress(request.user, course))
+        return Response(data, status=status.HTTP_200_OK)
+
+    def delete(self, request, id):
+        lesson = self._lesson(id)
+        LessonProgress.objects.filter(user=request.user, lesson=lesson).delete()
+        data = {"lesson_id": lesson.id, "is_completed": False}
+        data.update(self._update_progress(request.user, lesson.module.course))
+        return Response(data, status=status.HTTP_200_OK)
