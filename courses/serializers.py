@@ -9,6 +9,7 @@ from .models import (
     CourseEnrollment,
     CourseModule,
     Lesson,
+    LessonProgress,
     PromotionalBanner,
     TipOfTheDay,
     WhyChooseUsItem,
@@ -43,6 +44,7 @@ class LessonSerializer(serializers.ModelSerializer):
     duration = serializers.CharField(source='duration_display', read_only=True)
     video_url = serializers.SerializerMethodField()
     locked = serializers.SerializerMethodField()
+    is_completed = serializers.SerializerMethodField()
     content_items = serializers.SerializerMethodField()
 
     class Meta:
@@ -58,6 +60,7 @@ class LessonSerializer(serializers.ModelSerializer):
             "thumbnail_url",
             "is_preview",
             "locked",
+            "is_completed",
             "published_at",
             "content_items",
         ]
@@ -67,6 +70,13 @@ class LessonSerializer(serializers.ModelSerializer):
         if has_access:
             return False
         return not obj.is_preview
+
+    def get_is_completed(self, obj):
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+        if not user or not user.is_authenticated:
+            return False
+        return LessonProgress.objects.filter(user=user, lesson=obj).exists()
 
     def get_video_url(self, obj):
         has_access = self.context.get("has_access", False)
@@ -83,15 +93,25 @@ class LessonSerializer(serializers.ModelSerializer):
 
 class CourseModuleSerializer(serializers.ModelSerializer):
     lectures = serializers.SerializerMethodField()
-    
+    lesson_count = serializers.SerializerMethodField()
+    duration_hours = serializers.SerializerMethodField()
 
     class Meta:
         model = CourseModule
-        fields = ["id", "title", "order", "lectures", "lessons"]
+        fields = [
+            "id", "title", "description", "order",
+            "lesson_count", "duration_hours", "lectures", "lessons",
+        ]
+
+    def get_lesson_count(self, obj):
+        return obj.lessons.count()
+
+    def get_duration_hours(self, obj):
+        total = sum(l.duration_seconds or 0 for l in obj.lessons.all())
+        return round(total / 3600, 1)
 
     def get_lectures(self, obj):
         return LessonSerializer(obj.lessons.all(), many=True, context=self.context).data
-
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -104,6 +124,7 @@ class CourseSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     instructor_name = serializers.CharField(read_only=True)
     total_lectures = serializers.ReadOnlyField()
+    lessons_count = serializers.ReadOnlyField(source='total_lectures')
     is_enrolled = serializers.SerializerMethodField()
     is_saved = serializers.SerializerMethodField()
 
@@ -193,7 +214,7 @@ class CourseListSerializer(CourseSerializer):
     def get_modules(self, obj):
         if self.context.get("include_modules", True) is False:
             return []
-        ctx = {"has_access": self.get_has_active_access(obj)}
+        ctx = {"has_access": self.get_has_active_access(obj), "request": self.context.get("request")}
         return CourseModuleSerializer(obj.modules.all(), many=True, context=ctx).data
 
 
@@ -201,6 +222,7 @@ class CourseDetailSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     instructor_name = serializers.CharField(read_only=True)
     total_lectures = serializers.ReadOnlyField()
+    lessons_count = serializers.ReadOnlyField(source='total_lectures')
     modules = serializers.SerializerMethodField()
     has_active_access = serializers.SerializerMethodField()
     is_enrolled = serializers.SerializerMethodField()
@@ -259,7 +281,7 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         return self._has_access(obj)
 
     def get_modules(self, obj):
-        ctx = {"has_access": self._has_access(obj)}
+        ctx = {"has_access": self._has_access(obj), "request": self.context.get("request")}
         return CourseModuleSerializer(
             obj.modules.all(), many=True, context=ctx
         ).data
