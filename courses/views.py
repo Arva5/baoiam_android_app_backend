@@ -186,8 +186,8 @@ class CourseDetailView(APIView):
         else:
             course = get_object_or_404(base_qs, slug=lookup)
 
-        # Auto-seed modules & lectures if missing in database
-        if not course.modules.exists():
+        # Auto-seed full modules & lectures if incomplete in database
+        if course.id != 8 and course.modules.count() < 3:
             try:
                 from django.core.management import call_command
                 call_command('seed_dummy_courses')

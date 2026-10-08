@@ -193,7 +193,7 @@ COURSES_DATA = [
         ],
         "modules": [
             {
-                "title": "Module 1: Python Fundamentals",
+                "title": "Module 1: Python Fundamentals & Environment Setup",
                 "order": 1,
                 "lectures": [
                     {
@@ -207,7 +207,7 @@ COURSES_DATA = [
                         "thumbnail_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=640&q=80",
                     },
                     {
-                        "title": "Variables, Numbers & Strings",
+                        "title": "Variables, Numbers & String Manipulation",
                         "description": "Core data types, string formatting, and mathematical operations.",
                         "order": 2,
                         "duration_seconds": 780,
@@ -215,6 +215,68 @@ COURSES_DATA = [
                         "storage_key": "videos/python/variables.mp4",
                         "sample_url": f"{SAMPLE_BASE}/ElephantsDream.mp4",
                         "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "Control Flow: If Statements, Loops & Range",
+                        "description": "Branching logic, while loops, for loops, and comprehension syntax.",
+                        "order": 3,
+                        "duration_seconds": 820,
+                        "is_preview": False,
+                        "storage_key": "videos/python/control-flow.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerBlazes.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 2: Data Structures & Functional Programming",
+                "order": 2,
+                "lectures": [
+                    {
+                        "title": "Lists, Tuples, Sets & Dictionaries",
+                        "description": "Deep dive into built-in collections, key lookups, and memory efficiency.",
+                        "order": 1,
+                        "duration_seconds": 920,
+                        "is_preview": False,
+                        "storage_key": "videos/python/data-structures.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerEscapes.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "Functions, Scope, *args, **kwargs & Lambdas",
+                        "description": "Writing modular code, default arguments, and first-class functions.",
+                        "order": 2,
+                        "duration_seconds": 880,
+                        "is_preview": False,
+                        "storage_key": "videos/python/functions.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerFun.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 3: Object-Oriented Programming & Real-World Projects",
+                "order": 3,
+                "lectures": [
+                    {
+                        "title": "Classes, Dunder Methods & Inheritance",
+                        "description": "Object-oriented design patterns, polymorphism, and encapsulation.",
+                        "order": 1,
+                        "duration_seconds": 1050,
+                        "is_preview": False,
+                        "storage_key": "videos/python/oop.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerJoyrides.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "Capstone: Building an Automated Web Scraper",
+                        "description": "Putting everything together to build and deploy a real Python tool.",
+                        "order": 2,
+                        "duration_seconds": 1200,
+                        "is_preview": False,
+                        "storage_key": "videos/python/capstone.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/Sintel.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=640&q=80",
                     },
                 ]
             }
@@ -255,7 +317,7 @@ COURSES_DATA = [
         ],
         "modules": [
             {
-                "title": "Sprint 1: Mindset & Technical Foundation",
+                "title": "Module 1: Mindset & Technical Foundation",
                 "order": 1,
                 "lectures": [
                     {
@@ -267,7 +329,69 @@ COURSES_DATA = [
                         "storage_key": "videos/udaan/kickoff.mp4",
                         "sample_url": f"{SAMPLE_BASE}/ForBiggerBlazes.mp4",
                         "thumbnail_url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=640&q=80",
-                    }
+                    },
+                    {
+                        "title": "Target Company Research & Skill Gap Analysis",
+                        "description": "Mapping out tiers, job requirements, and portfolio expectations.",
+                        "order": 2,
+                        "duration_seconds": 680,
+                        "is_preview": True,
+                        "storage_key": "videos/udaan/research.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerEscapes.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 2: Coding Interviews & Core Problem Solving",
+                "order": 2,
+                "lectures": [
+                    {
+                        "title": "Mastering Common DSA Interview Patterns",
+                        "description": "Sliding window, two pointers, and hash table strategies.",
+                        "order": 1,
+                        "duration_seconds": 980,
+                        "is_preview": False,
+                        "storage_key": "videos/udaan/dsa.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerFun.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "System Design Fundamentals for Mid-Level Roles",
+                        "description": "Load balancers, caching, databases, and microservices overview.",
+                        "order": 2,
+                        "duration_seconds": 1100,
+                        "is_preview": False,
+                        "storage_key": "videos/udaan/sysdesign.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerJoyrides.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 3: Resume Polish, Outreach & Placement",
+                "order": 3,
+                "lectures": [
+                    {
+                        "title": "Crafting an ATS-Proof Tech Resume & LinkedIn Profile",
+                        "description": "Keyword targeting, metric-driven bullet points, and recruiter discovery.",
+                        "order": 1,
+                        "duration_seconds": 840,
+                        "is_preview": False,
+                        "storage_key": "videos/udaan/resume.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/Sintel.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "Live Mock Interview & Salary Negotiation Strategies",
+                        "description": "Handling behavioral questions, offer letters, and counter-offers.",
+                        "order": 2,
+                        "duration_seconds": 1250,
+                        "is_preview": False,
+                        "storage_key": "videos/udaan/negotiation.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/TearsOfSteel.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=640&q=80",
+                    },
                 ]
             }
         ]
@@ -317,7 +441,69 @@ COURSES_DATA = [
                         "storage_key": "videos/leadership/intro.mp4",
                         "sample_url": f"{SAMPLE_BASE}/Sintel.mp4",
                         "thumbnail_url": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=640&q=80",
-                    }
+                    },
+                    {
+                        "title": "Emotional Intelligence & Team Psychological Safety",
+                        "description": "Fostering trust, innovation, and psychological safety in high-stakes environments.",
+                        "order": 2,
+                        "duration_seconds": 720,
+                        "is_preview": True,
+                        "storage_key": "videos/leadership/eq.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/BigBuckBunny.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 2: High-Stakes Communication & Influence",
+                "order": 2,
+                "lectures": [
+                    {
+                        "title": "Executive Storytelling & Pitching to Stakeholders",
+                        "description": "Transforming data and strategy into compelling executive narratives.",
+                        "order": 1,
+                        "duration_seconds": 810,
+                        "is_preview": False,
+                        "storage_key": "videos/leadership/storytelling.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ElephantsDream.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "Managing Conflict & Delivering Constructive Feedback",
+                        "description": "Frameworks for difficult peer discussions and performance improvement.",
+                        "order": 2,
+                        "duration_seconds": 750,
+                        "is_preview": False,
+                        "storage_key": "videos/leadership/feedback.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerBlazes.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 3: Strategic Execution & High Output Teams",
+                "order": 3,
+                "lectures": [
+                    {
+                        "title": "Time Audits, Deep Work & Prioritization Frameworks",
+                        "description": "Eliminating busywork, Eisenhower Matrix, and time blocking for leaders.",
+                        "order": 1,
+                        "duration_seconds": 690,
+                        "is_preview": False,
+                        "storage_key": "videos/leadership/productivity.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerEscapes.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "Building Autonomous & Self-Driven Teams",
+                        "description": "Effective delegation, outcome-oriented ownership, and accountability.",
+                        "order": 2,
+                        "duration_seconds": 860,
+                        "is_preview": False,
+                        "storage_key": "videos/leadership/teams.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerFun.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=640&q=80",
+                    },
                 ]
             }
         ]
@@ -367,7 +553,69 @@ COURSES_DATA = [
                         "storage_key": "videos/analytics/fundamentals.mp4",
                         "sample_url": f"{SAMPLE_BASE}/TearsOfSteel.mp4",
                         "thumbnail_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=640&q=80",
-                    }
+                    },
+                    {
+                        "title": "Key Business Metrics: CAC, LTV, Churn & Retention",
+                        "description": "Core unit economics for SaaS, eCommerce, and tech startups.",
+                        "order": 2,
+                        "duration_seconds": 780,
+                        "is_preview": True,
+                        "storage_key": "videos/analytics/kpis.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/BigBuckBunny.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 2: Data Wrangling with Excel & SQL",
+                "order": 2,
+                "lectures": [
+                    {
+                        "title": "Advanced Excel: Pivot Tables, VLOOKUP & XLOOKUP",
+                        "description": "Fast data aggregation, modeling, and automated formulas.",
+                        "order": 1,
+                        "duration_seconds": 890,
+                        "is_preview": False,
+                        "storage_key": "videos/analytics/excel.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ElephantsDream.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "SQL Querying: SELECT, JOINs, GROUP BY & Window Functions",
+                        "description": "Querying relational databases to extract business insights.",
+                        "order": 2,
+                        "duration_seconds": 1040,
+                        "is_preview": False,
+                        "storage_key": "videos/analytics/sql.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerBlazes.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 3: Business Intelligence Dashboards & Reporting",
+                "order": 3,
+                "lectures": [
+                    {
+                        "title": "Building Executive Dashboards in PowerBI & Tableau",
+                        "description": "Creating real-time interactive charts, heatmaps, and filters.",
+                        "order": 1,
+                        "duration_seconds": 980,
+                        "is_preview": False,
+                        "storage_key": "videos/analytics/dashboards.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerEscapes.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "Data Storytelling & Executive Presentation Strategy",
+                        "description": "Presenting insights clearly to stakeholders and driving decisions.",
+                        "order": 2,
+                        "duration_seconds": 830,
+                        "is_preview": False,
+                        "storage_key": "videos/analytics/storytelling.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerFun.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=640&q=80",
+                    },
                 ]
             }
         ]
@@ -418,7 +666,69 @@ COURSES_DATA = [
                         "storage_key": "videos/python/drf-opt.mp4",
                         "sample_url": f"{SAMPLE_BASE}/ForBiggerEscapes.mp4",
                         "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
-                    }
+                    },
+                    {
+                        "title": "Custom Authentication & Permission Classes in DRF",
+                        "description": "Token-based auth, JWT rotation, and object-level permissions.",
+                        "order": 2,
+                        "duration_seconds": 840,
+                        "is_preview": True,
+                        "storage_key": "videos/python/drf-auth.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerFun.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 2: Asynchronous Workflows & Caching",
+                "order": 2,
+                "lectures": [
+                    {
+                        "title": "Background Job Queues with Celery & Redis",
+                        "description": "Handling long-running tasks, email queues, and periodic cron jobs.",
+                        "order": 1,
+                        "duration_seconds": 1020,
+                        "is_preview": False,
+                        "storage_key": "videos/python/celery.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerJoyrides.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "Redis Caching Strategies & Performance Tuning",
+                        "description": "Cache invalidation patterns, view caching, and low-level cache API.",
+                        "order": 2,
+                        "duration_seconds": 930,
+                        "is_preview": False,
+                        "storage_key": "videos/python/caching.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/Sintel.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 3: Microservices, Docker & Production Cloud",
+                "order": 3,
+                "lectures": [
+                    {
+                        "title": "Containerizing Django with Multi-Stage Dockerfiles",
+                        "description": "Optimizing image size, environment variables, and Docker Compose.",
+                        "order": 1,
+                        "duration_seconds": 960,
+                        "is_preview": False,
+                        "storage_key": "videos/python/docker.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/TearsOfSteel.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "CI/CD Deployment Pipelines & Monitoring",
+                        "description": "GitHub Actions, automated migrations, health checks, and Sentry.",
+                        "order": 2,
+                        "duration_seconds": 1150,
+                        "is_preview": False,
+                        "storage_key": "videos/python/cicd.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/BigBuckBunny.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=640&q=80",
+                    },
                 ]
             }
         ]
@@ -468,7 +778,69 @@ COURSES_DATA = [
                         "storage_key": "videos/analytics/pandas-intro.mp4",
                         "sample_url": f"{SAMPLE_BASE}/ForBiggerJoyrides.mp4",
                         "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=640&q=80",
-                    }
+                    },
+                    {
+                        "title": "Handling Missing Data, Outliers & Data Imputation",
+                        "description": "Techniques to clean inconsistent records and handle noisy real-world data.",
+                        "order": 2,
+                        "duration_seconds": 840,
+                        "is_preview": True,
+                        "storage_key": "videos/analytics/cleaning.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerFun.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 2: Exploratory Analysis & Visualization",
+                "order": 2,
+                "lectures": [
+                    {
+                        "title": "Visualizing Distributions with Seaborn & Matplotlib",
+                        "description": "Heatmaps, box plots, scatter plots, and multi-variable correlations.",
+                        "order": 1,
+                        "duration_seconds": 890,
+                        "is_preview": False,
+                        "storage_key": "videos/analytics/viz.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/Sintel.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "Cohort Analysis & Customer Churn Modeling",
+                        "description": "Tracking user retention cohorts and predicting monthly churn risk.",
+                        "order": 2,
+                        "duration_seconds": 1050,
+                        "is_preview": False,
+                        "storage_key": "videos/analytics/churn.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/TearsOfSteel.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 3: Interactive Dashboards & Automated Reports",
+                "order": 3,
+                "lectures": [
+                    {
+                        "title": "Building Real-Time Dashboards with Streamlit & Plotly",
+                        "description": "Creating self-serve analytics tools for marketing and product managers.",
+                        "order": 1,
+                        "duration_seconds": 1120,
+                        "is_preview": False,
+                        "storage_key": "videos/analytics/streamlit.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/BigBuckBunny.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "Automating Executive PDF & Slack Digest Reports",
+                        "description": "Scheduled report delivery to leadership via automated Python jobs.",
+                        "order": 2,
+                        "duration_seconds": 940,
+                        "is_preview": False,
+                        "storage_key": "videos/analytics/auto-reports.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ElephantsDream.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=640&q=80",
+                    },
                 ]
             }
         ]
@@ -518,7 +890,69 @@ COURSES_DATA = [
                         "storage_key": "videos/uiux/figma-intro.mp4",
                         "sample_url": f"{SAMPLE_BASE}/BigBuckBunny.mp4",
                         "thumbnail_url": "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=640&q=80",
-                    }
+                    },
+                    {
+                        "title": "Conducting User Interviews & Journey Mapping",
+                        "description": "Empathy mapping, personas, and identifying user friction points.",
+                        "order": 2,
+                        "duration_seconds": 780,
+                        "is_preview": True,
+                        "storage_key": "videos/uiux/research.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ElephantsDream.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 2: High-Fidelity UI & Figma Prototyping",
+                "order": 2,
+                "lectures": [
+                    {
+                        "title": "Typography, Color Theory & Visual Hierarchy",
+                        "description": "Creating aesthetic layouts that are accessible and easy to scan.",
+                        "order": 1,
+                        "duration_seconds": 890,
+                        "is_preview": False,
+                        "storage_key": "videos/uiux/visual.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerBlazes.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "Auto-Layout, Component Variants & Smart Animate",
+                        "description": "Mastering interactive micro-animations and responsive card layouts.",
+                        "order": 2,
+                        "duration_seconds": 1050,
+                        "is_preview": False,
+                        "storage_key": "videos/uiux/autolayout.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerEscapes.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=640&q=80",
+                    },
+                ]
+            },
+            {
+                "title": "Module 3: Design Systems & Developer Handoff",
+                "order": 3,
+                "lectures": [
+                    {
+                        "title": "Building a Reusable Design System with Design Tokens",
+                        "description": "Color styles, typography tokens, buttons, and stateful components.",
+                        "order": 1,
+                        "duration_seconds": 940,
+                        "is_preview": False,
+                        "storage_key": "videos/uiux/tokens.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerFun.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=640&q=80",
+                    },
+                    {
+                        "title": "Conducting Usability Tests & Developer Specs Handoff",
+                        "description": "Testing with real users and generating clean CSS/Kotlin design specs.",
+                        "order": 2,
+                        "duration_seconds": 880,
+                        "is_preview": False,
+                        "storage_key": "videos/uiux/handoff.mp4",
+                        "sample_url": f"{SAMPLE_BASE}/ForBiggerJoyrides.mp4",
+                        "thumbnail_url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=640&q=80",
+                    },
                 ]
             }
         ]
@@ -718,8 +1152,7 @@ class Command(BaseCommand):
                     )
 
             # Update lessons count
-            # If specified total is higher (e.g. 150 for Full Stack JS), keep it
-            expected_count = 150 if cid == 9 else (total_lectures if total_lectures > 0 else 10)
+            expected_count = total_lectures if total_lectures > 0 else 7
             course.lessons_count = expected_count
             course.save(update_fields=["lessons_count"])
 

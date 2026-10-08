@@ -108,7 +108,7 @@
     "rating": "4.85",
     "reviews_count": 520,
     "duration_hours": "28.0",
-    "lessons_count": 2,
+    "lessons_count": 7,
     "price": "59.99",
     "discounted_price": "29.99",
     "is_featured": true,
@@ -127,7 +127,7 @@
       "Certificate of Completion"
     ],
     "created_at": "2026-10-07T08:57:31.814Z",
-    "updated_at": "2026-10-07T08:57:31.814Z"
+    "updated_at": "2026-10-08T12:15:54.549Z"
   }
 },
 {
@@ -148,7 +148,7 @@
     "rating": "4.75",
     "reviews_count": 185,
     "duration_hours": "90.0",
-    "lessons_count": 1,
+    "lessons_count": 6,
     "price": "199.99",
     "discounted_price": "149.99",
     "is_featured": true,
@@ -167,7 +167,7 @@
       "Guaranteed Placement Referral Support"
     ],
     "created_at": "2026-10-07T08:57:31.876Z",
-    "updated_at": "2026-10-07T08:57:31.876Z"
+    "updated_at": "2026-10-08T12:15:54.738Z"
   }
 },
 {
@@ -188,7 +188,7 @@
     "rating": "4.90",
     "reviews_count": 210,
     "duration_hours": "15.0",
-    "lessons_count": 1,
+    "lessons_count": 6,
     "price": "149.99",
     "discounted_price": "99.99",
     "is_featured": true,
@@ -205,7 +205,7 @@
       "Certificate in Executive Leadership"
     ],
     "created_at": "2026-10-07T08:57:31.923Z",
-    "updated_at": "2026-10-07T08:57:31.923Z"
+    "updated_at": "2026-10-08T12:15:54.937Z"
   }
 },
 {
@@ -226,7 +226,7 @@
     "rating": "4.60",
     "reviews_count": 89,
     "duration_hours": "20.0",
-    "lessons_count": 1,
+    "lessons_count": 6,
     "price": "79.99",
     "discounted_price": "49.99",
     "is_featured": false,
@@ -243,7 +243,7 @@
       "Certificate of Completion"
     ],
     "created_at": "2026-10-07T08:57:31.974Z",
-    "updated_at": "2026-10-07T08:57:31.974Z"
+    "updated_at": "2026-10-08T12:15:55.108Z"
   }
 },
 {
@@ -264,7 +264,7 @@
     "rating": "4.80",
     "reviews_count": 125,
     "duration_hours": "45.5",
-    "lessons_count": 1,
+    "lessons_count": 6,
     "price": "99.99",
     "discounted_price": "49.99",
     "is_featured": true,
@@ -282,7 +282,7 @@
       "System design and microservice architecture modules"
     ],
     "created_at": "2026-10-07T08:57:32.021Z",
-    "updated_at": "2026-10-07T08:57:32.021Z"
+    "updated_at": "2026-10-08T12:15:55.247Z"
   }
 },
 {
@@ -303,7 +303,7 @@
     "rating": "4.70",
     "reviews_count": 160,
     "duration_hours": "35.0",
-    "lessons_count": 1,
+    "lessons_count": 6,
     "price": "119.99",
     "discounted_price": "79.99",
     "is_featured": false,
@@ -320,7 +320,7 @@
       "Jupyter notebooks with turnkey solution code"
     ],
     "created_at": "2026-10-07T08:57:32.062Z",
-    "updated_at": "2026-10-07T08:57:32.062Z"
+    "updated_at": "2026-10-08T12:15:55.392Z"
   }
 },
 {
@@ -341,7 +341,7 @@
     "rating": "4.70",
     "reviews_count": 240,
     "duration_hours": "18.0",
-    "lessons_count": 1,
+    "lessons_count": 6,
     "price": "89.99",
     "discounted_price": "59.99",
     "is_featured": false,
@@ -357,8 +357,8 @@
       "Figma project UI kits and source assets included",
       "Portfolio-ready mobile app case study"
     ],
-    "created_at": "2026-10-07T08:57:32.100Z",
-    "updated_at": "2026-10-07T08:57:32.100Z"
+    "created_at": "2026-10-08T11:50:14.626Z",
+    "updated_at": "2026-10-08T12:15:55.547Z"
   }
 },
 {
@@ -392,8 +392,8 @@
     "key_features": [
       "Draft status - visible only with include_drafts=true or Admin access"
     ],
-    "created_at": "2026-10-07T08:57:32.142Z",
-    "updated_at": "2026-10-07T08:57:32.142Z"
+    "created_at": "2026-10-08T11:50:14.669Z",
+    "updated_at": "2026-10-08T12:15:55.738Z"
   }
 },
 {
@@ -414,7 +414,7 @@
     "rating": "4.50",
     "reviews_count": 342,
     "duration_hours": "60.0",
-    "lessons_count": 150,
+    "lessons_count": 7,
     "price": "129.99",
     "discounted_price": "89.99",
     "is_featured": true,
@@ -434,135 +434,347 @@
       "Full lifetime access on mobile and web"
     ],
     "created_at": "2026-10-07T08:57:31.558Z",
-    "updated_at": "2026-10-07T08:57:31.558Z"
+    "updated_at": "2026-10-08T12:15:54.387Z"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 15,
+  "fields": {
+    "title": "UI/UX Design Fundamentals",
+    "slug": "uiux-design-fundamentals",
+    "short_code": "UI/UX",
+    "subtitle": "",
+    "description": "Learn UI/UX from scratch",
+    "thumbnail_url": "https://example.com/thumb.jpg",
+    "cover_image_url": null,
+    "instructor": 10,
+    "instructor_name": "Baoiam Instructor",
+    "category": null,
+    "level": "all_levels",
+    "rating": "4.80",
+    "reviews_count": 0,
+    "duration_hours": "10.0",
+    "lessons_count": 12,
+    "price": "0.00",
+    "discounted_price": null,
+    "is_featured": false,
+    "is_popular": false,
+    "is_published": true,
+    "what_you_learn": [],
+    "key_features": [],
+    "created_at": "2026-10-08T11:49:52.577Z",
+    "updated_at": "2026-10-08T11:49:52.577Z"
   }
 },
 {
   "model": "courses.coursemodule",
-  "pk": 39,
+  "pk": 73,
+  "fields": {
+    "course": 15,
+    "title": "Ideation & Wireframing",
+    "description": "",
+    "order": 1,
+    "created_at": "2026-10-08T11:49:52.585Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 107,
   "fields": {
     "course": 9,
     "title": "Module 1: Modern JavaScript & ES6+ Mastery",
     "description": "",
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.575Z"
+    "created_at": "2026-10-08T12:15:54.406Z"
   }
 },
 {
   "model": "courses.coursemodule",
-  "pk": 40,
+  "pk": 108,
   "fields": {
     "course": 9,
     "title": "Module 2: Backend Development with Express & MongoDB",
     "description": "",
     "order": 2,
-    "created_at": "2026-10-07T08:57:31.714Z"
+    "created_at": "2026-10-08T12:15:54.460Z"
   }
 },
 {
   "model": "courses.coursemodule",
-  "pk": 41,
+  "pk": 109,
   "fields": {
     "course": 9,
     "title": "Module 3: Frontend Mastery with React 19",
     "description": "",
     "order": 3,
-    "created_at": "2026-10-07T08:57:31.760Z"
+    "created_at": "2026-10-08T12:15:54.502Z"
   }
 },
 {
   "model": "courses.coursemodule",
-  "pk": 42,
+  "pk": 110,
   "fields": {
     "course": 1,
-    "title": "Module 1: Python Fundamentals",
+    "title": "Module 1: Python Fundamentals & Environment Setup",
     "description": "",
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.822Z"
+    "created_at": "2026-10-08T12:15:54.567Z"
   }
 },
 {
   "model": "courses.coursemodule",
-  "pk": 43,
+  "pk": 111,
+  "fields": {
+    "course": 1,
+    "title": "Module 2: Data Structures & Functional Programming",
+    "description": "",
+    "order": 2,
+    "created_at": "2026-10-08T12:15:54.633Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 112,
+  "fields": {
+    "course": 1,
+    "title": "Module 3: Object-Oriented Programming & Real-World Projects",
+    "description": "",
+    "order": 3,
+    "created_at": "2026-10-08T12:15:54.689Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 113,
   "fields": {
     "course": 2,
-    "title": "Sprint 1: Mindset & Technical Foundation",
+    "title": "Module 1: Mindset & Technical Foundation",
     "description": "",
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.885Z"
+    "created_at": "2026-10-08T12:15:54.772Z"
   }
 },
 {
   "model": "courses.coursemodule",
-  "pk": 44,
+  "pk": 114,
+  "fields": {
+    "course": 2,
+    "title": "Module 2: Coding Interviews & Core Problem Solving",
+    "description": "",
+    "order": 2,
+    "created_at": "2026-10-08T12:15:54.824Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 115,
+  "fields": {
+    "course": 2,
+    "title": "Module 3: Resume Polish, Outreach & Placement",
+    "description": "",
+    "order": 3,
+    "created_at": "2026-10-08T12:15:54.872Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 116,
   "fields": {
     "course": 3,
     "title": "Module 1: Principles of Modern Leadership",
     "description": "",
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.939Z"
+    "created_at": "2026-10-08T12:15:54.965Z"
   }
 },
 {
   "model": "courses.coursemodule",
-  "pk": 45,
+  "pk": 117,
+  "fields": {
+    "course": 3,
+    "title": "Module 2: High-Stakes Communication & Influence",
+    "description": "",
+    "order": 2,
+    "created_at": "2026-10-08T12:15:55.018Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 118,
+  "fields": {
+    "course": 3,
+    "title": "Module 3: Strategic Execution & High Output Teams",
+    "description": "",
+    "order": 3,
+    "created_at": "2026-10-08T12:15:55.059Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 119,
   "fields": {
     "course": 4,
     "title": "Module 1: Introduction to Business Analytics",
     "description": "",
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.982Z"
+    "created_at": "2026-10-08T12:15:55.120Z"
   }
 },
 {
   "model": "courses.coursemodule",
-  "pk": 46,
+  "pk": 120,
+  "fields": {
+    "course": 4,
+    "title": "Module 2: Data Wrangling with Excel & SQL",
+    "description": "",
+    "order": 2,
+    "created_at": "2026-10-08T12:15:55.168Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 121,
+  "fields": {
+    "course": 4,
+    "title": "Module 3: Business Intelligence Dashboards & Reporting",
+    "description": "",
+    "order": 3,
+    "created_at": "2026-10-08T12:15:55.209Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 122,
   "fields": {
     "course": 5,
     "title": "Module 1: Production Django & DRF Architecture",
     "description": "",
     "order": 1,
-    "created_at": "2026-10-07T08:57:32.029Z"
+    "created_at": "2026-10-08T12:15:55.272Z"
   }
 },
 {
   "model": "courses.coursemodule",
-  "pk": 47,
+  "pk": 123,
+  "fields": {
+    "course": 5,
+    "title": "Module 2: Asynchronous Workflows & Caching",
+    "description": "",
+    "order": 2,
+    "created_at": "2026-10-08T12:15:55.312Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 124,
+  "fields": {
+    "course": 5,
+    "title": "Module 3: Microservices, Docker & Production Cloud",
+    "description": "",
+    "order": 3,
+    "created_at": "2026-10-08T12:15:55.342Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 125,
   "fields": {
     "course": 6,
     "title": "Module 1: Python for Data Manipulation",
     "description": "",
     "order": 1,
-    "created_at": "2026-10-07T08:57:32.070Z"
+    "created_at": "2026-10-08T12:15:55.407Z"
   }
 },
 {
   "model": "courses.coursemodule",
-  "pk": 48,
+  "pk": 126,
+  "fields": {
+    "course": 6,
+    "title": "Module 2: Exploratory Analysis & Visualization",
+    "description": "",
+    "order": 2,
+    "created_at": "2026-10-08T12:15:55.457Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 127,
+  "fields": {
+    "course": 6,
+    "title": "Module 3: Interactive Dashboards & Automated Reports",
+    "description": "",
+    "order": 3,
+    "created_at": "2026-10-08T12:15:55.491Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 128,
   "fields": {
     "course": 7,
     "title": "Module 1: UX Research & Wireframing",
     "description": "",
     "order": 1,
-    "created_at": "2026-10-07T08:57:32.111Z"
+    "created_at": "2026-10-08T12:15:55.572Z"
   }
 },
 {
   "model": "courses.coursemodule",
-  "pk": 49,
+  "pk": 129,
+  "fields": {
+    "course": 7,
+    "title": "Module 2: High-Fidelity UI & Figma Prototyping",
+    "description": "",
+    "order": 2,
+    "created_at": "2026-10-08T12:15:55.618Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 130,
+  "fields": {
+    "course": 7,
+    "title": "Module 3: Design Systems & Developer Handoff",
+    "description": "",
+    "order": 3,
+    "created_at": "2026-10-08T12:15:55.666Z"
+  }
+},
+{
+  "model": "courses.coursemodule",
+  "pk": 131,
   "fields": {
     "course": 8,
     "title": "Draft Module 1: Pre-Release Overview",
     "description": "",
     "order": 1,
-    "created_at": "2026-10-07T08:57:32.157Z"
+    "created_at": "2026-10-08T12:15:55.769Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 55,
+  "pk": 104,
   "fields": {
-    "module": 39,
+    "module": 73,
+    "title": "Wireframing Basics",
+    "description": "",
+    "order": 1,
+    "thumbnail_url": null,
+    "is_preview": false,
+    "video_url": null,
+    "storage_key": "",
+    "duration_seconds": null,
+    "published_at": "2025-05-12",
+    "created_at": "2026-10-08T11:49:52.597Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 153,
+  "fields": {
+    "module": 107,
     "title": "Welcome to Full Stack JavaScript",
     "description": "Course overview, roadmap, and local development environment setup.",
     "order": 1,
@@ -571,15 +783,15 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     "storage_key": "videos/javascript/welcome.mp4",
     "duration_seconds": 630,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:31.647Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.413Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 56,
+  "pk": 154,
   "fields": {
-    "module": 39,
+    "module": 107,
     "title": "ES6+ Modern Syntax & Async JavaScript",
     "description": "Arrow functions, destructuring, promises, and async/await in practice.",
     "order": 2,
@@ -588,15 +800,15 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
     "storage_key": "videos/javascript/async-js.mp4",
     "duration_seconds": 920,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:31.669Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.430Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 57,
+  "pk": 155,
   "fields": {
-    "module": 39,
+    "module": 107,
     "title": "Node.js Event Loop & Module System",
     "description": "Understanding Node runtime, CommonJS vs ES Modules, and NPM ecosystem.",
     "order": 3,
@@ -605,15 +817,15 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
     "storage_key": "videos/javascript/nodejs-intro.mp4",
     "duration_seconds": 840,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:31.692Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.442Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 58,
+  "pk": 156,
   "fields": {
-    "module": 40,
+    "module": 108,
     "title": "Express.js Architecture & REST Routing",
     "description": "Building clean RESTful APIs, request validation, and modular routers.",
     "order": 1,
@@ -622,15 +834,15 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
     "storage_key": "videos/javascript/express-api.mp4",
     "duration_seconds": 1150,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:31.722Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.470Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 59,
+  "pk": 157,
   "fields": {
-    "module": 40,
+    "module": 108,
     "title": "MongoDB Schemas & Aggregation Pipelines",
     "description": "Connecting Mongoose, writing efficient schemas, and data modeling.",
     "order": 2,
@@ -639,15 +851,15 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
     "storage_key": "videos/javascript/mongodb-crud.mp4",
     "duration_seconds": 1280,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:31.746Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.486Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 60,
+  "pk": 158,
   "fields": {
-    "module": 41,
+    "module": 109,
     "title": "React Component Architecture & Hooks",
     "description": "Building interactive UIs with useState, useEffect, and custom hooks.",
     "order": 1,
@@ -656,15 +868,15 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
     "storage_key": "videos/javascript/react-hooks.mp4",
     "duration_seconds": 1400,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:31.766Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.513Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 61,
+  "pk": 159,
   "fields": {
-    "module": 41,
+    "module": 109,
     "title": "Authentication Flow with JWT & Cookies",
     "description": "End-to-end authentication, secure cookie storage, and protected client routes.",
     "order": 2,
@@ -673,15 +885,15 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
     "storage_key": "videos/javascript/jwt-auth.mp4",
     "duration_seconds": 1100,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:31.787Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.534Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 62,
+  "pk": 160,
   "fields": {
-    "module": 42,
+    "module": 110,
     "title": "Setting Up Python & VS Code",
     "description": "Installation, virtual environment, and running your first script.",
     "order": 1,
@@ -690,16 +902,16 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     "storage_key": "videos/python/setup.mp4",
     "duration_seconds": 540,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:31.827Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.583Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 63,
+  "pk": 161,
   "fields": {
-    "module": 42,
-    "title": "Variables, Numbers & Strings",
+    "module": 110,
+    "title": "Variables, Numbers & String Manipulation",
     "description": "Core data types, string formatting, and mathematical operations.",
     "order": 2,
     "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
@@ -707,15 +919,100 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
     "storage_key": "videos/python/variables.mp4",
     "duration_seconds": 780,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:31.849Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.598Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 64,
+  "pk": 162,
   "fields": {
-    "module": 43,
+    "module": 110,
+    "title": "Control Flow: If Statements, Loops & Range",
+    "description": "Branching logic, while loops, for loops, and comprehension syntax.",
+    "order": 3,
+    "thumbnail_url": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "storage_key": "videos/python/control-flow.mp4",
+    "duration_seconds": 820,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.616Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 163,
+  "fields": {
+    "module": 111,
+    "title": "Lists, Tuples, Sets & Dictionaries",
+    "description": "Deep dive into built-in collections, key lookups, and memory efficiency.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/python/data-structures.mp4",
+    "duration_seconds": 920,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.647Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 164,
+  "fields": {
+    "module": 111,
+    "title": "Functions, Scope, *args, **kwargs & Lambdas",
+    "description": "Writing modular code, default arguments, and first-class functions.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/python/functions.mp4",
+    "duration_seconds": 880,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.660Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 165,
+  "fields": {
+    "module": 112,
+    "title": "Classes, Dunder Methods & Inheritance",
+    "description": "Object-oriented design patterns, polymorphism, and encapsulation.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "storage_key": "videos/python/oop.mp4",
+    "duration_seconds": 1050,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.691Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 166,
+  "fields": {
+    "module": 112,
+    "title": "Capstone: Building an Automated Web Scraper",
+    "description": "Putting everything together to build and deploy a real Python tool.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "storage_key": "videos/python/capstone.mp4",
+    "duration_seconds": 1200,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.716Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 167,
+  "fields": {
+    "module": 113,
     "title": "Kickoff: The 90-Day Career Roadmap",
     "description": "Goal setting, habit formation, and interview milestones.",
     "order": 1,
@@ -724,15 +1021,100 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
     "storage_key": "videos/udaan/kickoff.mp4",
     "duration_seconds": 720,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:31.899Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.783Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 65,
+  "pk": 168,
   "fields": {
-    "module": 44,
+    "module": 113,
+    "title": "Target Company Research & Skill Gap Analysis",
+    "description": "Mapping out tiers, job requirements, and portfolio expectations.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/udaan/research.mp4",
+    "duration_seconds": 680,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.802Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 169,
+  "fields": {
+    "module": 114,
+    "title": "Mastering Common DSA Interview Patterns",
+    "description": "Sliding window, two pointers, and hash table strategies.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/udaan/dsa.mp4",
+    "duration_seconds": 980,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.834Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 170,
+  "fields": {
+    "module": 114,
+    "title": "System Design Fundamentals for Mid-Level Roles",
+    "description": "Load balancers, caching, databases, and microservices overview.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "storage_key": "videos/udaan/sysdesign.mp4",
+    "duration_seconds": 1100,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.854Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 171,
+  "fields": {
+    "module": 115,
+    "title": "Crafting an ATS-Proof Tech Resume & LinkedIn Profile",
+    "description": "Keyword targeting, metric-driven bullet points, and recruiter discovery.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "storage_key": "videos/udaan/resume.mp4",
+    "duration_seconds": 840,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.885Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 172,
+  "fields": {
+    "module": 115,
+    "title": "Live Mock Interview & Salary Negotiation Strategies",
+    "description": "Handling behavioral questions, offer letters, and counter-offers.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "storage_key": "videos/udaan/negotiation.mp4",
+    "duration_seconds": 1250,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.905Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 173,
+  "fields": {
+    "module": 116,
     "title": "Defining Your Leadership Identity",
     "description": "Authentic leadership, emotional intelligence, and values.",
     "order": 1,
@@ -741,15 +1123,100 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
     "storage_key": "videos/leadership/intro.mp4",
     "duration_seconds": 600,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:31.947Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.975Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 66,
+  "pk": 174,
   "fields": {
-    "module": 45,
+    "module": 116,
+    "title": "Emotional Intelligence & Team Psychological Safety",
+    "description": "Fostering trust, innovation, and psychological safety in high-stakes environments.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/leadership/eq.mp4",
+    "duration_seconds": 720,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:54.995Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 175,
+  "fields": {
+    "module": 117,
+    "title": "Executive Storytelling & Pitching to Stakeholders",
+    "description": "Transforming data and strategy into compelling executive narratives.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "storage_key": "videos/leadership/storytelling.mp4",
+    "duration_seconds": 810,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.025Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 176,
+  "fields": {
+    "module": 117,
+    "title": "Managing Conflict & Delivering Constructive Feedback",
+    "description": "Frameworks for difficult peer discussions and performance improvement.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "storage_key": "videos/leadership/feedback.mp4",
+    "duration_seconds": 750,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.050Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 177,
+  "fields": {
+    "module": 118,
+    "title": "Time Audits, Deep Work & Prioritization Frameworks",
+    "description": "Eliminating busywork, Eisenhower Matrix, and time blocking for leaders.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/leadership/productivity.mp4",
+    "duration_seconds": 690,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.072Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 178,
+  "fields": {
+    "module": 118,
+    "title": "Building Autonomous & Self-Driven Teams",
+    "description": "Effective delegation, outcome-oriented ownership, and accountability.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/leadership/teams.mp4",
+    "duration_seconds": 860,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.088Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 179,
+  "fields": {
+    "module": 119,
     "title": "The Role of Business Analytics in Modern Firms",
     "description": "Descriptive, predictive, and prescriptive analytics overview.",
     "order": 1,
@@ -758,15 +1225,100 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
     "storage_key": "videos/analytics/fundamentals.mp4",
     "duration_seconds": 650,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:31.995Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.141Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 67,
+  "pk": 180,
   "fields": {
-    "module": 46,
+    "module": 119,
+    "title": "Key Business Metrics: CAC, LTV, Churn & Retention",
+    "description": "Core unit economics for SaaS, eCommerce, and tech startups.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/analytics/kpis.mp4",
+    "duration_seconds": 780,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.157Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 181,
+  "fields": {
+    "module": 120,
+    "title": "Advanced Excel: Pivot Tables, VLOOKUP & XLOOKUP",
+    "description": "Fast data aggregation, modeling, and automated formulas.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "storage_key": "videos/analytics/excel.mp4",
+    "duration_seconds": 890,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.173Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 182,
+  "fields": {
+    "module": 120,
+    "title": "SQL Querying: SELECT, JOINs, GROUP BY & Window Functions",
+    "description": "Querying relational databases to extract business insights.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "storage_key": "videos/analytics/sql.mp4",
+    "duration_seconds": 1040,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.184Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 183,
+  "fields": {
+    "module": 121,
+    "title": "Building Executive Dashboards in PowerBI & Tableau",
+    "description": "Creating real-time interactive charts, heatmaps, and filters.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/analytics/dashboards.mp4",
+    "duration_seconds": 980,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.216Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 184,
+  "fields": {
+    "module": 121,
+    "title": "Data Storytelling & Executive Presentation Strategy",
+    "description": "Presenting insights clearly to stakeholders and driving decisions.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/analytics/storytelling.mp4",
+    "duration_seconds": 830,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.231Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 185,
+  "fields": {
+    "module": 122,
     "title": "DRF Serialization Deep Dive & Query Optimization",
     "description": "Avoiding N+1 queries, select_related, and prefetch_related in real production APIs.",
     "order": 1,
@@ -775,15 +1327,100 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
     "storage_key": "videos/python/drf-opt.mp4",
     "duration_seconds": 890,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:32.035Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.282Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 68,
+  "pk": 186,
   "fields": {
-    "module": 47,
+    "module": 122,
+    "title": "Custom Authentication & Permission Classes in DRF",
+    "description": "Token-based auth, JWT rotation, and object-level permissions.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/python/drf-auth.mp4",
+    "duration_seconds": 840,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.295Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 187,
+  "fields": {
+    "module": 123,
+    "title": "Background Job Queues with Celery & Redis",
+    "description": "Handling long-running tasks, email queues, and periodic cron jobs.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "storage_key": "videos/python/celery.mp4",
+    "duration_seconds": 1020,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.317Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 188,
+  "fields": {
+    "module": 123,
+    "title": "Redis Caching Strategies & Performance Tuning",
+    "description": "Cache invalidation patterns, view caching, and low-level cache API.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "storage_key": "videos/python/caching.mp4",
+    "duration_seconds": 930,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.329Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 189,
+  "fields": {
+    "module": 124,
+    "title": "Containerizing Django with Multi-Stage Dockerfiles",
+    "description": "Optimizing image size, environment variables, and Docker Compose.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "storage_key": "videos/python/docker.mp4",
+    "duration_seconds": 960,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.342Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 190,
+  "fields": {
+    "module": 124,
+    "title": "CI/CD Deployment Pipelines & Monitoring",
+    "description": "GitHub Actions, automated migrations, health checks, and Sentry.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/python/cicd.mp4",
+    "duration_seconds": 1150,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.358Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 191,
+  "fields": {
+    "module": 125,
     "title": "Pandas DataFrames: Cleaning & Aggregation",
     "description": "Groupby, pivot tables, and time-series resampling for business reports.",
     "order": 1,
@@ -792,15 +1429,100 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
     "storage_key": "videos/analytics/pandas-intro.mp4",
     "duration_seconds": 960,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:32.079Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.422Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 69,
+  "pk": 192,
   "fields": {
-    "module": 48,
+    "module": 125,
+    "title": "Handling Missing Data, Outliers & Data Imputation",
+    "description": "Techniques to clean inconsistent records and handle noisy real-world data.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/analytics/cleaning.mp4",
+    "duration_seconds": 840,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.436Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 193,
+  "fields": {
+    "module": 126,
+    "title": "Visualizing Distributions with Seaborn & Matplotlib",
+    "description": "Heatmaps, box plots, scatter plots, and multi-variable correlations.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "storage_key": "videos/analytics/viz.mp4",
+    "duration_seconds": 890,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.457Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 194,
+  "fields": {
+    "module": 126,
+    "title": "Cohort Analysis & Customer Churn Modeling",
+    "description": "Tracking user retention cohorts and predicting monthly churn risk.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "storage_key": "videos/analytics/churn.mp4",
+    "duration_seconds": 1050,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.472Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 195,
+  "fields": {
+    "module": 127,
+    "title": "Building Real-Time Dashboards with Streamlit & Plotly",
+    "description": "Creating self-serve analytics tools for marketing and product managers.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/analytics/streamlit.mp4",
+    "duration_seconds": 1120,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.500Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 196,
+  "fields": {
+    "module": 127,
+    "title": "Automating Executive PDF & Slack Digest Reports",
+    "description": "Scheduled report delivery to leadership via automated Python jobs.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "storage_key": "videos/analytics/auto-reports.mp4",
+    "duration_seconds": 940,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.515Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 197,
+  "fields": {
+    "module": 128,
     "title": "Introduction to UX Thinking & Figma Basics",
     "description": "Understanding user mental models and setting up Figma artboards.",
     "order": 1,
@@ -809,15 +1531,100 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     "storage_key": "videos/uiux/figma-intro.mp4",
     "duration_seconds": 660,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:32.117Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.584Z"
   }
 },
 {
   "model": "courses.lesson",
-  "pk": 70,
+  "pk": 198,
   "fields": {
-    "module": 49,
+    "module": 128,
+    "title": "Conducting User Interviews & Journey Mapping",
+    "description": "Empathy mapping, personas, and identifying user friction points.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=640&q=80",
+    "is_preview": true,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "storage_key": "videos/uiux/research.mp4",
+    "duration_seconds": 780,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.602Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 199,
+  "fields": {
+    "module": 129,
+    "title": "Typography, Color Theory & Visual Hierarchy",
+    "description": "Creating aesthetic layouts that are accessible and easy to scan.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "storage_key": "videos/uiux/visual.mp4",
+    "duration_seconds": 890,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.622Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 200,
+  "fields": {
+    "module": 129,
+    "title": "Auto-Layout, Component Variants & Smart Animate",
+    "description": "Mastering interactive micro-animations and responsive card layouts.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/uiux/autolayout.mp4",
+    "duration_seconds": 1050,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.641Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 201,
+  "fields": {
+    "module": 130,
+    "title": "Building a Reusable Design System with Design Tokens",
+    "description": "Color styles, typography tokens, buttons, and stateful components.",
+    "order": 1,
+    "thumbnail_url": "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/uiux/tokens.mp4",
+    "duration_seconds": 940,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.679Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 202,
+  "fields": {
+    "module": 130,
+    "title": "Conducting Usability Tests & Developer Specs Handoff",
+    "description": "Testing with real users and generating clean CSS/Kotlin design specs.",
+    "order": 2,
+    "thumbnail_url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=640&q=80",
+    "is_preview": false,
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "storage_key": "videos/uiux/handoff.mp4",
+    "duration_seconds": 880,
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.697Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 203,
+  "fields": {
+    "module": 131,
     "title": "Draft Lecture 1",
     "description": "Draft rehearsal recording.",
     "order": 1,
@@ -826,15 +1633,45 @@
     "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     "storage_key": "videos/draft/test.mp4",
     "duration_seconds": 300,
-    "published_at": "2026-10-07",
-    "created_at": "2026-10-07T08:57:32.161Z"
+    "published_at": "2026-10-08",
+    "created_at": "2026-10-08T12:15:55.779Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 59,
+  "pk": 109,
   "fields": {
-    "lesson": 55,
+    "lesson": 104,
+    "content_type": "VIDEO",
+    "title": "Lecture 1 Recording",
+    "url": "https://example.com/video1.mp4",
+    "storage_key": "",
+    "duration_seconds": 2720,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T11:49:52.605Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 110,
+  "fields": {
+    "lesson": 104,
+    "content_type": "PDF",
+    "title": "Lecture 1 Notes",
+    "url": "https://example.com/notes1.pdf",
+    "storage_key": "",
+    "duration_seconds": null,
+    "file_size_bytes": 2516582,
+    "order": 2,
+    "created_at": "2026-10-08T11:49:52.611Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 159,
+  "fields": {
+    "lesson": 153,
     "content_type": "VIDEO",
     "title": "Welcome to Full Stack JavaScript (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
@@ -842,14 +1679,14 @@
     "duration_seconds": 630,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.663Z"
+    "created_at": "2026-10-08T12:15:54.423Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 60,
+  "pk": 160,
   "fields": {
-    "lesson": 56,
+    "lesson": 154,
     "content_type": "VIDEO",
     "title": "ES6+ Modern Syntax & Async JavaScript (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
@@ -857,14 +1694,14 @@
     "duration_seconds": 920,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.677Z"
+    "created_at": "2026-10-08T12:15:54.439Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 61,
+  "pk": 161,
   "fields": {
-    "lesson": 57,
+    "lesson": 155,
     "content_type": "VIDEO",
     "title": "Node.js Event Loop & Module System (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
@@ -872,14 +1709,14 @@
     "duration_seconds": 840,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.698Z"
+    "created_at": "2026-10-08T12:15:54.456Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 62,
+  "pk": 162,
   "fields": {
-    "lesson": 58,
+    "lesson": 156,
     "content_type": "VIDEO",
     "title": "Express.js Architecture & REST Routing (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
@@ -887,14 +1724,14 @@
     "duration_seconds": 1150,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.731Z"
+    "created_at": "2026-10-08T12:15:54.474Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 63,
+  "pk": 163,
   "fields": {
-    "lesson": 59,
+    "lesson": 157,
     "content_type": "VIDEO",
     "title": "MongoDB Schemas & Aggregation Pipelines (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
@@ -902,14 +1739,14 @@
     "duration_seconds": 1280,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.755Z"
+    "created_at": "2026-10-08T12:15:54.486Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 64,
+  "pk": 164,
   "fields": {
-    "lesson": 60,
+    "lesson": 158,
     "content_type": "VIDEO",
     "title": "React Component Architecture & Hooks (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
@@ -917,14 +1754,14 @@
     "duration_seconds": 1400,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.780Z"
+    "created_at": "2026-10-08T12:15:54.519Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 65,
+  "pk": 165,
   "fields": {
-    "lesson": 61,
+    "lesson": 159,
     "content_type": "VIDEO",
     "title": "Authentication Flow with JWT & Cookies (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
@@ -932,14 +1769,14 @@
     "duration_seconds": 1100,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.795Z"
+    "created_at": "2026-10-08T12:15:54.534Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 66,
+  "pk": 166,
   "fields": {
-    "lesson": 62,
+    "lesson": 160,
     "content_type": "VIDEO",
     "title": "Setting Up Python & VS Code (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
@@ -947,29 +1784,104 @@
     "duration_seconds": 540,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.843Z"
+    "created_at": "2026-10-08T12:15:54.583Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 67,
+  "pk": 167,
   "fields": {
-    "lesson": 63,
+    "lesson": 161,
     "content_type": "VIDEO",
-    "title": "Variables, Numbers & Strings (Video)",
+    "title": "Variables, Numbers & String Manipulation (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
     "storage_key": "videos/python/variables.mp4",
     "duration_seconds": 780,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.855Z"
+    "created_at": "2026-10-08T12:15:54.612Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 68,
+  "pk": 168,
   "fields": {
-    "lesson": 64,
+    "lesson": 162,
+    "content_type": "VIDEO",
+    "title": "Control Flow: If Statements, Loops & Range (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "storage_key": "videos/python/control-flow.mp4",
+    "duration_seconds": 820,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:54.628Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 169,
+  "fields": {
+    "lesson": 163,
+    "content_type": "VIDEO",
+    "title": "Lists, Tuples, Sets & Dictionaries (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/python/data-structures.mp4",
+    "duration_seconds": 920,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:54.647Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 170,
+  "fields": {
+    "lesson": 164,
+    "content_type": "VIDEO",
+    "title": "Functions, Scope, *args, **kwargs & Lambdas (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/python/functions.mp4",
+    "duration_seconds": 880,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:54.675Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 171,
+  "fields": {
+    "lesson": 165,
+    "content_type": "VIDEO",
+    "title": "Classes, Dunder Methods & Inheritance (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "storage_key": "videos/python/oop.mp4",
+    "duration_seconds": 1050,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:54.691Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 172,
+  "fields": {
+    "lesson": 166,
+    "content_type": "VIDEO",
+    "title": "Capstone: Building an Automated Web Scraper (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "storage_key": "videos/python/capstone.mp4",
+    "duration_seconds": 1200,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:54.722Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 173,
+  "fields": {
+    "lesson": 167,
     "content_type": "VIDEO",
     "title": "Kickoff: The 90-Day Career Roadmap (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
@@ -977,14 +1889,89 @@
     "duration_seconds": 720,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.907Z"
+    "created_at": "2026-10-08T12:15:54.791Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 69,
+  "pk": 174,
   "fields": {
-    "lesson": 65,
+    "lesson": 168,
+    "content_type": "VIDEO",
+    "title": "Target Company Research & Skill Gap Analysis (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/udaan/research.mp4",
+    "duration_seconds": 680,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:54.815Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 175,
+  "fields": {
+    "lesson": 169,
+    "content_type": "VIDEO",
+    "title": "Mastering Common DSA Interview Patterns (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/udaan/dsa.mp4",
+    "duration_seconds": 980,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:54.851Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 176,
+  "fields": {
+    "lesson": 170,
+    "content_type": "VIDEO",
+    "title": "System Design Fundamentals for Mid-Level Roles (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "storage_key": "videos/udaan/sysdesign.mp4",
+    "duration_seconds": 1100,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:54.866Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 177,
+  "fields": {
+    "lesson": 171,
+    "content_type": "VIDEO",
+    "title": "Crafting an ATS-Proof Tech Resume & LinkedIn Profile (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "storage_key": "videos/udaan/resume.mp4",
+    "duration_seconds": 840,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:54.889Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 178,
+  "fields": {
+    "lesson": 172,
+    "content_type": "VIDEO",
+    "title": "Live Mock Interview & Salary Negotiation Strategies (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "storage_key": "videos/udaan/negotiation.mp4",
+    "duration_seconds": 1250,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:54.913Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 179,
+  "fields": {
+    "lesson": 173,
     "content_type": "VIDEO",
     "title": "Defining Your Leadership Identity (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
@@ -992,14 +1979,89 @@
     "duration_seconds": 600,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:31.954Z"
+    "created_at": "2026-10-08T12:15:54.984Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 70,
+  "pk": 180,
   "fields": {
-    "lesson": 66,
+    "lesson": 174,
+    "content_type": "VIDEO",
+    "title": "Emotional Intelligence & Team Psychological Safety (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/leadership/eq.mp4",
+    "duration_seconds": 720,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.004Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 181,
+  "fields": {
+    "lesson": 175,
+    "content_type": "VIDEO",
+    "title": "Executive Storytelling & Pitching to Stakeholders (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "storage_key": "videos/leadership/storytelling.mp4",
+    "duration_seconds": 810,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.035Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 182,
+  "fields": {
+    "lesson": 176,
+    "content_type": "VIDEO",
+    "title": "Managing Conflict & Delivering Constructive Feedback (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "storage_key": "videos/leadership/feedback.mp4",
+    "duration_seconds": 750,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.057Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 183,
+  "fields": {
+    "lesson": 177,
+    "content_type": "VIDEO",
+    "title": "Time Audits, Deep Work & Prioritization Frameworks (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/leadership/productivity.mp4",
+    "duration_seconds": 690,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.072Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 184,
+  "fields": {
+    "lesson": 178,
+    "content_type": "VIDEO",
+    "title": "Building Autonomous & Self-Driven Teams (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/leadership/teams.mp4",
+    "duration_seconds": 860,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.088Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 185,
+  "fields": {
+    "lesson": 179,
     "content_type": "VIDEO",
     "title": "The Role of Business Analytics in Modern Firms (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
@@ -1007,14 +2069,89 @@
     "duration_seconds": 650,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:32.001Z"
+    "created_at": "2026-10-08T12:15:55.141Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 71,
+  "pk": 186,
   "fields": {
-    "lesson": 67,
+    "lesson": 180,
+    "content_type": "VIDEO",
+    "title": "Key Business Metrics: CAC, LTV, Churn & Retention (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/analytics/kpis.mp4",
+    "duration_seconds": 780,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.157Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 187,
+  "fields": {
+    "lesson": 181,
+    "content_type": "VIDEO",
+    "title": "Advanced Excel: Pivot Tables, VLOOKUP & XLOOKUP (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "storage_key": "videos/analytics/excel.mp4",
+    "duration_seconds": 890,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.184Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 188,
+  "fields": {
+    "lesson": 182,
+    "content_type": "VIDEO",
+    "title": "SQL Querying: SELECT, JOINs, GROUP BY & Window Functions (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "storage_key": "videos/analytics/sql.mp4",
+    "duration_seconds": 1040,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.200Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 189,
+  "fields": {
+    "lesson": 183,
+    "content_type": "VIDEO",
+    "title": "Building Executive Dashboards in PowerBI & Tableau (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/analytics/dashboards.mp4",
+    "duration_seconds": 980,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.224Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 190,
+  "fields": {
+    "lesson": 184,
+    "content_type": "VIDEO",
+    "title": "Data Storytelling & Executive Presentation Strategy (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/analytics/storytelling.mp4",
+    "duration_seconds": 830,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.239Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 191,
+  "fields": {
+    "lesson": 185,
     "content_type": "VIDEO",
     "title": "DRF Serialization Deep Dive & Query Optimization (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
@@ -1022,14 +2159,89 @@
     "duration_seconds": 890,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:32.049Z"
+    "created_at": "2026-10-08T12:15:55.291Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 72,
+  "pk": 192,
   "fields": {
-    "lesson": 68,
+    "lesson": 186,
+    "content_type": "VIDEO",
+    "title": "Custom Authentication & Permission Classes in DRF (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/python/drf-auth.mp4",
+    "duration_seconds": 840,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.295Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 193,
+  "fields": {
+    "lesson": 187,
+    "content_type": "VIDEO",
+    "title": "Background Job Queues with Celery & Redis (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "storage_key": "videos/python/celery.mp4",
+    "duration_seconds": 1020,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.329Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 194,
+  "fields": {
+    "lesson": 188,
+    "content_type": "VIDEO",
+    "title": "Redis Caching Strategies & Performance Tuning (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "storage_key": "videos/python/caching.mp4",
+    "duration_seconds": 930,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.342Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 195,
+  "fields": {
+    "lesson": 189,
+    "content_type": "VIDEO",
+    "title": "Containerizing Django with Multi-Stage Dockerfiles (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "storage_key": "videos/python/docker.mp4",
+    "duration_seconds": 960,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.358Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 196,
+  "fields": {
+    "lesson": 190,
+    "content_type": "VIDEO",
+    "title": "CI/CD Deployment Pipelines & Monitoring (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/python/cicd.mp4",
+    "duration_seconds": 1150,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.376Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 197,
+  "fields": {
+    "lesson": 191,
     "content_type": "VIDEO",
     "title": "Pandas DataFrames: Cleaning & Aggregation (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
@@ -1037,14 +2249,89 @@
     "duration_seconds": 960,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:32.086Z"
+    "created_at": "2026-10-08T12:15:55.422Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 73,
+  "pk": 198,
   "fields": {
-    "lesson": 69,
+    "lesson": 192,
+    "content_type": "VIDEO",
+    "title": "Handling Missing Data, Outliers & Data Imputation (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/analytics/cleaning.mp4",
+    "duration_seconds": 840,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.436Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 199,
+  "fields": {
+    "lesson": 193,
+    "content_type": "VIDEO",
+    "title": "Visualizing Distributions with Seaborn & Matplotlib (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "storage_key": "videos/analytics/viz.mp4",
+    "duration_seconds": 890,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.472Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 200,
+  "fields": {
+    "lesson": 194,
+    "content_type": "VIDEO",
+    "title": "Cohort Analysis & Customer Churn Modeling (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    "storage_key": "videos/analytics/churn.mp4",
+    "duration_seconds": 1050,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.484Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 201,
+  "fields": {
+    "lesson": 195,
+    "content_type": "VIDEO",
+    "title": "Building Real-Time Dashboards with Streamlit & Plotly (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "storage_key": "videos/analytics/streamlit.mp4",
+    "duration_seconds": 1120,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.500Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 202,
+  "fields": {
+    "lesson": 196,
+    "content_type": "VIDEO",
+    "title": "Automating Executive PDF & Slack Digest Reports (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "storage_key": "videos/analytics/auto-reports.mp4",
+    "duration_seconds": 940,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.532Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 203,
+  "fields": {
+    "lesson": 197,
     "content_type": "VIDEO",
     "title": "Introduction to UX Thinking & Figma Basics (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
@@ -1052,14 +2339,89 @@
     "duration_seconds": 660,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:32.122Z"
+    "created_at": "2026-10-08T12:15:55.590Z"
   }
 },
 {
   "model": "courses.contentitem",
-  "pk": 74,
+  "pk": 204,
   "fields": {
-    "lesson": 70,
+    "lesson": 198,
+    "content_type": "VIDEO",
+    "title": "Conducting User Interviews & Journey Mapping (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "storage_key": "videos/uiux/research.mp4",
+    "duration_seconds": 780,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.606Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 205,
+  "fields": {
+    "lesson": 199,
+    "content_type": "VIDEO",
+    "title": "Typography, Color Theory & Visual Hierarchy (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "storage_key": "videos/uiux/visual.mp4",
+    "duration_seconds": 890,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.636Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 206,
+  "fields": {
+    "lesson": 200,
+    "content_type": "VIDEO",
+    "title": "Auto-Layout, Component Variants & Smart Animate (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "storage_key": "videos/uiux/autolayout.mp4",
+    "duration_seconds": 1050,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.652Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 207,
+  "fields": {
+    "lesson": 201,
+    "content_type": "VIDEO",
+    "title": "Building a Reusable Design System with Design Tokens (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "storage_key": "videos/uiux/tokens.mp4",
+    "duration_seconds": 940,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.690Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 208,
+  "fields": {
+    "lesson": 202,
+    "content_type": "VIDEO",
+    "title": "Conducting Usability Tests & Developer Specs Handoff (Video)",
+    "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    "storage_key": "videos/uiux/handoff.mp4",
+    "duration_seconds": 880,
+    "file_size_bytes": null,
+    "order": 1,
+    "created_at": "2026-10-08T12:15:55.713Z"
+  }
+},
+{
+  "model": "courses.contentitem",
+  "pk": 209,
+  "fields": {
+    "lesson": 203,
     "content_type": "VIDEO",
     "title": "Draft Lecture 1 (Video)",
     "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
@@ -1067,7 +2429,7 @@
     "duration_seconds": 300,
     "file_size_bytes": null,
     "order": 1,
-    "created_at": "2026-10-07T08:57:32.166Z"
+    "created_at": "2026-10-08T12:15:55.790Z"
   }
 },
 {

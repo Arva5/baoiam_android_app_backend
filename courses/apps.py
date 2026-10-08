@@ -12,11 +12,11 @@ def auto_seed_courses(sender, **kwargs):
             needs_seed = (
                 not course_9
                 or not course_9.modules.exists()
-                or CourseModule.objects.count() == 0
+                or CourseModule.objects.count() < 20
                 or Course.objects.count() < 9
             )
             if needs_seed:
-                print("[AUTO-SEED] Seeding dummy courses with all modules and lectures for Render...")
+                print("[AUTO-SEED] Seeding dummy courses with full multi-module curriculum for Render...")
                 call_command('seed_dummy_courses')
                 print("[AUTO-SEED] Seeded dummy courses successfully.")
         except Exception as e:
