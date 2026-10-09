@@ -24,6 +24,7 @@ from .serializers import (
     CourseDetailSerializer,
     CourseEnrollmentSerializer,
     CourseListSerializer,
+    CourseSerializer,
     PromotionalBannerSerializer,
     TipOfTheDaySerializer,
     WhyChooseUsItemSerializer,
@@ -103,6 +104,28 @@ class CourseListView(generics.ListAPIView):
         return queryset.select_related('category', 'instructor').prefetch_related(
             'modules__lessons__content_items'
         )
+
+
+class LimitedTimeOfferCourseListView(generics.ListAPIView):
+    """
+    Endpoint for the Limited Time Offer course section.
+    Returns only 3 selected existing courses from the database.
+    """
+    serializer_class = CourseSerializer
+    permission_classes = [AllowAny]
+    pagination_class = None
+
+    def get_queryset(self):
+        user = self.request.user
+        if user and user.is_authenticated and user.is_staff:
+            base_qs = Course.objects.all()
+        else:
+            base_qs = Course.objects.filter(is_published=True)
+
+        offers_qs = base_qs.filter(discounted_price__isnull=False, discounted_price__gt=0)
+        if offers_qs.count() >= 3:
+            return offers_qs.select_related('category', 'instructor')[:3]
+        return base_qs.select_related('category', 'instructor')[:3]
 
 
 class ContentPlayView(APIView):
@@ -454,4 +477,4 @@ class SetupCoursesView(APIView):
         return self._handle_seed(request)
 
     def post(self, request):
-        return self._handle_seed(request)
+        return self._handle_seed(request)

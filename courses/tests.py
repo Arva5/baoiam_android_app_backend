@@ -296,3 +296,64 @@ class CoursesAppTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 0)
 
+    def test_limited_time_offers_endpoint(self):
+        url = reverse('limited-time-offers')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(response.data, list)
+        self.assertLessEqual(len(response.data), 3)
+
+    def test_limited_time_offers_returns_exactly_3_and_serializes_fields(self):
+        # Create extra courses with discounts to ensure there are at least 5
+        Course.objects.create(
+            title='Offer Course 1',
+            slug='offer-course-1',
+            price=Decimal('100.00'),
+            discounted_price=Decimal('50.00'),
+            is_published=True,
+        )
+        Course.objects.create(
+            title='Offer Course 2',
+            slug='offer-course-2',
+            price=Decimal('120.00'),
+            discounted_price=Decimal('60.00'),
+            is_published=True,
+        )
+        Course.objects.create(
+            title='Offer Course 3',
+            slug='offer-course-3',
+            price=Decimal('150.00'),
+            discounted_price=Decimal('70.00'),
+            is_published=True,
+        )
+        Course.objects.create(
+            title='Offer Course 4',
+            slug='offer-course-4',
+            price=Decimal('200.00'),
+            discounted_price=Decimal('80.00'),
+            is_published=True,
+        )
+        # Create an unpublished course which should not be in the results
+        Course.objects.create(
+            title='Unpublished Offer Course',
+            slug='unpublished-offer-course',
+            price=Decimal('300.00'),
+            discounted_price=Decimal('90.00'),
+            is_published=False,
+        )
+
+        response = self.client.get('/api/courses/limited-time-offers/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+        # Verify serialized fields
+        first_course = response.data[0]
+        self.assertIn('id', first_course)
+        self.assertIn('title', first_course)
+        self.assertIn('slug', first_course)
+        self.assertIn('price', first_course)
+        self.assertIn('discounted_price', first_course)
+        self.assertIn('is_enrolled', first_course)
+        # Ensure unpublished course is not included
+        slugs = [c['slug'] for c in response.data]
+        self.assertNotIn('unpublished-offer-course', slugs)
+
