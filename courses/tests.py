@@ -297,9 +297,6 @@ class CoursesAppTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 0)
 
-<<<<<<< HEAD
-
-
 class CourseSaveApiTests(APITestCase):
     """Save / Unsave / Saved list: har user ke liye alag, duplicate nahi, is_saved sahi."""
 
@@ -441,7 +438,7 @@ class CourseSaveApiTests(APITestCase):
         self.assertEqual(self.client.post(f'/api/courses/{self.c1.id}/save').status_code, status.HTTP_201_CREATED)
         self.assertEqual(self.client.get('/api/courses/saved').status_code, status.HTTP_200_OK)
         self.assertEqual(self.client.delete(f'/api/courses/{self.c1.id}/save').status_code, status.HTTP_200_OK)
-=======
+
     def test_limited_time_offers_endpoint(self):
         url = reverse('limited-time-offers')
         response = self.client.get(url)
@@ -502,5 +499,3 @@ class CourseSaveApiTests(APITestCase):
         # Ensure unpublished course is not included
         slugs = [c['slug'] for c in response.data]
         self.assertNotIn('unpublished-offer-course', slugs)
-
->>>>>>> 3c303fb8c56ed3294d6afa4d535b57836172ec06
