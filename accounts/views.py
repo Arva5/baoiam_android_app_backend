@@ -360,7 +360,7 @@ class ForgotPasswordView(APIView):
             user.save(update_fields=['reset_password_token', 'reset_password_token_expires_at'])
 
             try:
-                send_mail(
+                sent_count = send_mail(
                     subject='Reset Your Password',
                     message=(
                         f"Hello {user.name},\n\n"
@@ -375,10 +375,9 @@ class ForgotPasswordView(APIView):
                     recipient_list=[user.email],
                     fail_silently=False,
                 )
-            except Exception as e:
-                error_message = f"Failed to send password reset email: {e}"
-                logger.error(error_message)
-                print(error_message)
+                logger.info("Password reset email send_mail returned: %s", sent_count)
+            except Exception:
+                logger.exception("Failed to send password reset email")
         except User.DoesNotExist:
             pass
 
