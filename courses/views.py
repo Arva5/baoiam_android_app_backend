@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import OuterRef, Q, Subquery
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics, status
@@ -20,7 +20,6 @@ from .models import (
 )
 from .serializers import (
     CategorySerializer,
-    CourseBookmarkSerializer,
     CourseDetailSerializer,
     CourseEnrollmentSerializer,
     CourseListSerializer,
@@ -307,49 +306,109 @@ class LessonPlayView(APIView):
 
 class CourseSaveView(APIView):
     """
-    POST /api/courses/<id>/save/   -> Bookmark / Save course
-    DELETE /api/courses/<id>/save/ -> Remove Bookmark
+    POST   /api/courses/<id>/save/  -> course save karo (current user ke liye)
+    DELETE /api/courses/<id>/save/  -> saved list se hatao
+
+    Auth: Bearer access token zaroori. Save har user ka alag hota hai
+    (CourseBookmark table, unique user + course), isliye ek user ka save
+    doosre user ko nahi dikhta aur ek hi course do baar save nahi hota.
+
+    Response hamesha: {"success", "message", "course_id", "is_saved"}
     """
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
-        lookup = kwargs.get('slug') or kwargs.get('id')
+    @staticmethod
+    def _payload(course_id, is_saved, message, success=True):
+        return {
+            "success": success,
+            "message": message,
+            "course_id": course_id,
+            "is_saved": is_saved,
+        }
+
+    def _course_or_none(self, request, lookup, only_published):
         qs = Course.objects.all()
-        course = get_object_or_404(qs, id=int(lookup)) if str(lookup).isdigit() else get_object_or_404(qs, slug=lookup)
-        bookmark, created = CourseBookmark.objects.get_or_create(user=request.user, course=course)
+        # Unpublished (draft) course normal user save nahi kar sakta; staff kar sakta hai.
+        if only_published and not request.user.is_staff:
+            qs = qs.filter(is_published=True)
+        if str(lookup).isdigit():
+            return qs.filter(id=int(lookup)).first()
+        return qs.filter(slug=lookup).first()
+
+    def _not_found(self, lookup):
+        course_id = int(lookup) if str(lookup).isdigit() else None
         return Response(
-            {
-                "is_saved": True,
-                "course_id": course.id,
-                "message": "Course saved successfully." if created else "Course already saved."
-            },
-            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
+            self._payload(course_id, False, "Course not found.", success=False),
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    def post(self, request, *args, **kwargs):
+        lookup = kwargs.get('id', kwargs.get('slug'))
+        course = self._course_or_none(request, lookup, only_published=True)
+        if course is None:
+            return self._not_found(lookup)
+
+        # unique(user, course) ki wajah se duplicate row kabhi nahi banegi,
+        # double-tap / race condition me bhi nahi.
+        _, created = CourseBookmark.objects.get_or_create(user=request.user, course=course)
+        return Response(
+            self._payload(
+                course.id, True,
+                "Course saved successfully." if created else "Course is already saved.",
+            ),
+            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
         )
 
     def delete(self, request, *args, **kwargs):
-        lookup = kwargs.get('slug') or kwargs.get('id')
-        qs = Course.objects.all()
-        course = get_object_or_404(qs, id=int(lookup)) if str(lookup).isdigit() else get_object_or_404(qs, slug=lookup)
+        lookup = kwargs.get('id', kwargs.get('slug'))
+        # Unpublished ho chuka course bhi saved list se hataya ja sakta hai.
+        course = self._course_or_none(request, lookup, only_published=False)
+        if course is None:
+            return self._not_found(lookup)
+
         deleted_count, _ = CourseBookmark.objects.filter(user=request.user, course=course).delete()
         return Response(
-            {
-                "is_saved": False,
-                "course_id": course.id,
-                "message": "Course removed from bookmarks." if deleted_count else "Course was not bookmarked."
-            },
-            status=status.HTTP_200_OK
+            self._payload(
+                course.id, False,
+                "Course removed from saved courses." if deleted_count else "Course was not in your saved courses.",
+            ),
+            status=status.HTTP_200_OK,
         )
 
 
 class SavedCoursesListView(generics.ListAPIView):
     """
-    GET /api/courses/saved/ -> List of courses bookmarked by the user
+    GET /api/courses/saved/ -> current user ke saved courses.
+
+    Structure bilkul GET /api/courses/ jaisa hai (CourseListSerializer), taaki
+    Android wahi DTO reuse kare. Sabse naya saved course pehle aata hai.
+    `?include_modules=false` yahan bhi chalta hai.
     """
-    serializer_class = CourseBookmarkSerializer
+    serializer_class = CourseListSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        flag = self.request.query_params.get('include_modules', 'true').lower()
+        ctx['include_modules'] = flag not in ('false', '0', 'no')
+        return ctx
+
     def get_queryset(self):
-        return CourseBookmark.objects.filter(user=self.request.user).select_related('course', 'course__category')
+        user = self.request.user
+        saved = CourseBookmark.objects.filter(user=user, course=OuterRef('pk'))
+        queryset = (
+            Course.objects
+            .annotate(saved_at=Subquery(saved.values('created_at')[:1]))
+            .filter(saved_at__isnull=False)
+        )
+        if not user.is_staff:
+            queryset = queryset.filter(is_published=True)
+        return (
+            queryset
+            .select_related('category', 'instructor')
+            .prefetch_related('modules__lessons__content_items')
+            .order_by('-saved_at', '-id')
+        )
 
 
 class LessonCompleteView(APIView):
@@ -454,4 +513,4 @@ class SetupCoursesView(APIView):
         return self._handle_seed(request)
 
     def post(self, request):
-        return self._handle_seed(request)
+        return self._handle_seed(request)

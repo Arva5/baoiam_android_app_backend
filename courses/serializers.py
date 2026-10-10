@@ -16,6 +16,27 @@ from .models import (
 )
 
 
+def is_course_saved_by_request_user(serializer, course):
+    """
+    True agar current (Bearer token wale) user ne ye course save kiya hai.
+    Anonymous user ke liye hamesha False.
+
+    List API me har course ke liye alag query na chale, isliye user ke saved
+    course ids ek hi baar nikaal ke serializer context me rakh diye jaate hain.
+    """
+    request = serializer.context.get("request")
+    user = getattr(request, "user", None)
+    if not user or not user.is_authenticated:
+        return False
+    saved_ids = serializer.context.get("saved_course_ids")
+    if saved_ids is None:
+        saved_ids = set(
+            CourseBookmark.objects.filter(user=user).values_list("course_id", flat=True)
+        )
+        serializer.context["saved_course_ids"] = saved_ids
+    return course.id in saved_ids
+
+
 class ContentItemSerializer(serializers.ModelSerializer):
     duration_display = serializers.ReadOnlyField()
     url = serializers.SerializerMethodField()
@@ -174,11 +195,7 @@ class CourseSerializer(serializers.ModelSerializer):
         return False
 
     def get_is_saved(self, obj):
-        request = self.context.get("request")
-        user = request.user if request else None
-        if not user or not user.is_authenticated:
-            return False
-        return obj.bookmarks.filter(user=user).exists()
+        return is_course_saved_by_request_user(self, obj)
 
 
 def user_has_course_access(request, course):
@@ -271,11 +288,7 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         return self._has_access(obj)
 
     def get_is_saved(self, obj):
-        request = self.context.get("request")
-        user = request.user if request else None
-        if not user or not user.is_authenticated:
-            return False
-        return obj.bookmarks.filter(user=user).exists()
+        return is_course_saved_by_request_user(self, obj)
 
     def get_has_active_access(self, obj):
         return self._has_access(obj)

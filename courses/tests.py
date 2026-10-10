@@ -8,6 +8,7 @@ from courses.models import (
     Category,
     ContentItem,
     Course,
+    CourseBookmark,
     CourseEnrollment,
     CourseModule,
     Lesson,
@@ -296,3 +297,146 @@ class CoursesAppTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 0)
 
+
+
+class CourseSaveApiTests(APITestCase):
+    """Save / Unsave / Saved list: har user ke liye alag, duplicate nahi, is_saved sahi."""
+
+    def setUp(self):
+        self.user = User.objects.create_user(email='a@example.com', name='A', password='Password123!')
+        self.other = User.objects.create_user(email='b@example.com', name='B', password='Password123!')
+        self.c1 = Course.objects.create(title='Course One', slug='course-one', is_published=True)
+        self.c2 = Course.objects.create(title='Course Two', slug='course-two', is_published=True)
+        self.draft = Course.objects.create(title='Draft Course', slug='draft-course', is_published=False)
+
+    def _save_url(self, course):
+        return reverse('course-save-id', kwargs={'id': course.id})
+
+    def test_all_three_endpoints_need_auth(self):
+        self.assertEqual(self.client.post(self._save_url(self.c1)).status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(self.client.delete(self._save_url(self.c1)).status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(self.client.get(reverse('saved-courses-list')).status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_save_returns_clear_response(self):
+        self.client.force_authenticate(user=self.user)
+        res = self.client.post(self._save_url(self.c1))
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.data, {
+            'success': True,
+            'message': 'Course saved successfully.',
+            'course_id': self.c1.id,
+            'is_saved': True,
+        })
+
+    def test_same_user_cannot_save_same_course_twice(self):
+        self.client.force_authenticate(user=self.user)
+        first = self.client.post(self._save_url(self.c1))
+        second = self.client.post(self._save_url(self.c1))
+        self.assertEqual(first.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(second.status_code, status.HTTP_200_OK)
+        self.assertTrue(second.data['success'])
+        self.assertTrue(second.data['is_saved'])
+        self.assertEqual(CourseBookmark.objects.filter(user=self.user, course=self.c1).count(), 1)
+
+    def test_unsave_and_unsave_again(self):
+        self.client.force_authenticate(user=self.user)
+        self.client.post(self._save_url(self.c1))
+        res = self.client.delete(self._save_url(self.c1))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, {
+            'success': True,
+            'message': 'Course removed from saved courses.',
+            'course_id': self.c1.id,
+            'is_saved': False,
+        })
+        again = self.client.delete(self._save_url(self.c1))
+        self.assertEqual(again.status_code, status.HTTP_200_OK)
+        self.assertFalse(again.data['is_saved'])
+        self.assertEqual(again.data['message'], 'Course was not in your saved courses.')
+
+    def test_unknown_course_gives_404_with_same_shape(self):
+        self.client.force_authenticate(user=self.user)
+        for method in (self.client.post, self.client.delete):
+            res = method(reverse('course-save-id', kwargs={'id': 99999}))
+            self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+            self.assertEqual(res.data, {
+                'success': False,
+                'message': 'Course not found.',
+                'course_id': 99999,
+                'is_saved': False,
+            })
+
+    def test_draft_course_cannot_be_saved_by_normal_user(self):
+        self.client.force_authenticate(user=self.user)
+        res = self.client.post(self._save_url(self.draft))
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertFalse(CourseBookmark.objects.filter(course=self.draft).exists())
+
+    def test_save_by_slug(self):
+        self.client.force_authenticate(user=self.user)
+        res = self.client.post(reverse('course-save-slug', kwargs={'slug': 'course-one'}))
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.data['course_id'], self.c1.id)
+
+    def test_save_is_per_user(self):
+        self.client.force_authenticate(user=self.user)
+        self.client.post(self._save_url(self.c1))
+
+        self.client.force_authenticate(user=self.other)
+        detail = self.client.get(reverse('course-detail', kwargs={'id': self.c1.id}))
+        self.assertFalse(detail.data['is_saved'])
+        self.assertEqual(self.client.get(reverse('saved-courses-list')).data, [])
+
+        self.client.force_authenticate(user=self.user)
+        detail = self.client.get(reverse('course-detail', kwargs={'id': self.c1.id}))
+        self.assertTrue(detail.data['is_saved'])
+
+    def test_is_saved_in_list_and_detail(self):
+        self.client.force_authenticate(user=self.user)
+        self.client.post(self._save_url(self.c1))
+
+        listing = self.client.get(reverse('course-list'))
+        flags = {c['id']: c['is_saved'] for c in listing.data}
+        self.assertTrue(flags[self.c1.id])
+        self.assertFalse(flags[self.c2.id])
+
+        detail = self.client.get(reverse('course-detail-slug', kwargs={'slug': 'course-one'}))
+        self.assertTrue(detail.data['is_saved'])
+
+        self.client.delete(self._save_url(self.c1))
+        detail = self.client.get(reverse('course-detail', kwargs={'id': self.c1.id}))
+        self.assertFalse(detail.data['is_saved'])
+
+    def test_is_saved_false_for_anonymous(self):
+        listing = self.client.get(reverse('course-list'))
+        self.assertTrue(all(c['is_saved'] is False for c in listing.data))
+
+    def test_saved_list_same_structure_as_course_list_and_newest_first(self):
+        self.client.force_authenticate(user=self.user)
+        self.client.post(self._save_url(self.c1))
+        self.client.post(self._save_url(self.c2))
+
+        saved = self.client.get(reverse('saved-courses-list'))
+        self.assertEqual(saved.status_code, status.HTTP_200_OK)
+        self.assertEqual([c['id'] for c in saved.data], [self.c2.id, self.c1.id])
+        self.assertTrue(all(c['is_saved'] is True for c in saved.data))
+
+        listing = self.client.get(reverse('course-list'))
+        from_list = next(c for c in listing.data if c['id'] == self.c1.id)
+        from_saved = next(c for c in saved.data if c['id'] == self.c1.id)
+        self.assertEqual(set(from_saved.keys()), set(from_list.keys()))
+
+    def test_saved_list_hides_course_that_was_unpublished_later(self):
+        self.client.force_authenticate(user=self.user)
+        self.client.post(self._save_url(self.c1))
+        Course.objects.filter(pk=self.c1.pk).update(is_published=False)
+        self.assertEqual(self.client.get(reverse('saved-courses-list')).data, [])
+        # par user use hata sakta hai
+        res = self.client.delete(self._save_url(self.c1))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_urls_work_without_trailing_slash(self):
+        self.client.force_authenticate(user=self.user)
+        self.assertEqual(self.client.post(f'/api/courses/{self.c1.id}/save').status_code, status.HTTP_201_CREATED)
+        self.assertEqual(self.client.get('/api/courses/saved').status_code, status.HTTP_200_OK)
+        self.assertEqual(self.client.delete(f'/api/courses/{self.c1.id}/save').status_code, status.HTTP_200_OK)
