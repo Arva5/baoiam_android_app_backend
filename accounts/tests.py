@@ -1,4 +1,5 @@
 from datetime import timedelta
+from unittest.mock import patch
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.urls import reverse
@@ -184,16 +185,35 @@ class AuthenticationAPITests(APITestCase):
         response = self.client.get(self.me_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_forgot_password_generates_token(self):
+    @patch('accounts.views.send_mail')
+    def test_forgot_password_generates_token(self, mock_send_mail):
+        mock_send_mail.return_value = 1
         response = self.client.post(self.forgot_password_url, {'email': 'jane@example.com'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.user.refresh_from_db()
         self.assertIsNotNone(self.user.reset_password_token)
         self.assertIsNotNone(self.user.reset_password_token_expires_at)
+        mock_send_mail.assert_called_once()
+        _, kwargs = mock_send_mail.call_args
+        self.assertEqual(kwargs['recipient_list'], [self.user.email])
+        self.assertIn(self.user.reset_password_token, kwargs['message'])
 
-    def test_forgot_password_nonexistent_email_generic_response(self):
+    @patch('accounts.views.send_mail')
+    def test_forgot_password_nonexistent_email_generic_response(self, mock_send_mail):
         response = self.client.post(self.forgot_password_url, {'email': 'unknown@example.com'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        mock_send_mail.assert_not_called()
+
+    @patch('accounts.views.send_mail')
+    def test_forgot_password_send_mail_exception_returns_generic_200(self, mock_send_mail):
+        mock_send_mail.side_effect = Exception("Resend API communication error")
+        response = self.client.post(self.forgot_password_url, {'email': 'jane@example.com'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data.get('detail'),
+            'If the email is registered, password reset instructions have been generated.'
+        )
+        mock_send_mail.assert_called_once()
 
     def test_reset_password_success(self):
         # Generate token
