@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 from django.db.models import OuterRef, Q, Subquery
-=======
-from django.db.models import Q
->>>>>>> 3c303fb8c56ed3294d6afa4d535b57836172ec06
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics, status
@@ -24,17 +20,10 @@ from .models import (
 )
 from .serializers import (
     CategorySerializer,
-<<<<<<< HEAD
-    CourseDetailSerializer,
-    CourseEnrollmentSerializer,
-    CourseListSerializer,
-=======
-    CourseBookmarkSerializer,
     CourseDetailSerializer,
     CourseEnrollmentSerializer,
     CourseListSerializer,
     CourseSerializer,
->>>>>>> 3c303fb8c56ed3294d6afa4d535b57836172ec06
     PromotionalBannerSerializer,
     TipOfTheDaySerializer,
     WhyChooseUsItemSerializer,
@@ -116,8 +105,6 @@ class CourseListView(generics.ListAPIView):
         )
 
 
-<<<<<<< HEAD
-=======
 class LimitedTimeOfferCourseListView(generics.ListAPIView):
     """
     Endpoint for the Limited Time Offer course section.
@@ -140,7 +127,6 @@ class LimitedTimeOfferCourseListView(generics.ListAPIView):
         return base_qs.select_related('category', 'instructor')[:3]
 
 
->>>>>>> 3c303fb8c56ed3294d6afa4d535b57836172ec06
 class ContentPlayView(APIView):
     """
     GET /api/courses/content/<id>/play/
@@ -343,7 +329,6 @@ class LessonPlayView(APIView):
 
 class CourseSaveView(APIView):
     """
-<<<<<<< HEAD
     POST   /api/courses/<id>/save/  -> course save karo (current user ke liye)
     DELETE /api/courses/<id>/save/  -> saved list se hatao
 
@@ -411,45 +396,11 @@ class CourseSaveView(APIView):
                 "Course removed from saved courses." if deleted_count else "Course was not in your saved courses.",
             ),
             status=status.HTTP_200_OK,
-=======
-    POST /api/courses/<id>/save/   -> Bookmark / Save course
-    DELETE /api/courses/<id>/save/ -> Remove Bookmark
-    """
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        lookup = kwargs.get('slug') or kwargs.get('id')
-        qs = Course.objects.all()
-        course = get_object_or_404(qs, id=int(lookup)) if str(lookup).isdigit() else get_object_or_404(qs, slug=lookup)
-        bookmark, created = CourseBookmark.objects.get_or_create(user=request.user, course=course)
-        return Response(
-            {
-                "is_saved": True,
-                "course_id": course.id,
-                "message": "Course saved successfully." if created else "Course already saved."
-            },
-            status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
-        )
-
-    def delete(self, request, *args, **kwargs):
-        lookup = kwargs.get('slug') or kwargs.get('id')
-        qs = Course.objects.all()
-        course = get_object_or_404(qs, id=int(lookup)) if str(lookup).isdigit() else get_object_or_404(qs, slug=lookup)
-        deleted_count, _ = CourseBookmark.objects.filter(user=request.user, course=course).delete()
-        return Response(
-            {
-                "is_saved": False,
-                "course_id": course.id,
-                "message": "Course removed from bookmarks." if deleted_count else "Course was not bookmarked."
-            },
-            status=status.HTTP_200_OK
->>>>>>> 3c303fb8c56ed3294d6afa4d535b57836172ec06
         )
 
 
 class SavedCoursesListView(generics.ListAPIView):
     """
-<<<<<<< HEAD
     GET /api/courses/saved/ -> current user ke saved courses.
 
     Structure bilkul GET /api/courses/ jaisa hai (CourseListSerializer), taaki
@@ -481,15 +432,6 @@ class SavedCoursesListView(generics.ListAPIView):
             .prefetch_related('modules__lessons__content_items')
             .order_by('-saved_at', '-id')
         )
-=======
-    GET /api/courses/saved/ -> List of courses bookmarked by the user
-    """
-    serializer_class = CourseBookmarkSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return CourseBookmark.objects.filter(user=self.request.user).select_related('course', 'course__category')
->>>>>>> 3c303fb8c56ed3294d6afa4d535b57836172ec06
 
 
 class LessonCompleteView(APIView):
@@ -594,8 +536,4 @@ class SetupCoursesView(APIView):
         return self._handle_seed(request)
 
     def post(self, request):
-<<<<<<< HEAD
         return self._handle_seed(request)
-=======
-        return self._handle_seed(request)
->>>>>>> 3c303fb8c56ed3294d6afa4d535b57836172ec06
