@@ -395,3 +395,90 @@ class NotificationAPITests(APITestCase):
         self.client.post(reverse('notification-mark-all-read'))
         self.other_notif.refresh_from_db()
         self.assertFalse(self.other_notif.is_read)
+
+    def test_mark_all_read_via_read_all_alias(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(reverse('notification-read-all'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.notif_unread.refresh_from_db()
+        self.assertTrue(self.notif_unread.is_read)
+
+    def test_notification_detail_get(self):
+        self.client.force_authenticate(user=self.user)
+        url = reverse('notification-detail', kwargs={'pk': self.notif_unread.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['id'], self.notif_unread.id)
+        self.assertEqual(response.data['title'], self.notif_unread.title)
+
+    def test_notification_detail_delete(self):
+        self.client.force_authenticate(user=self.user)
+        url = reverse('notification-detail', kwargs={'pk': self.notif_unread.id})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(self.Notification.objects.filter(id=self.notif_unread.id).exists())
+
+    def test_mark_notification_read_via_post(self):
+        self.client.force_authenticate(user=self.user)
+        url = reverse('notification-mark-read', kwargs={'pk': self.notif_unread.id})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['is_read'])
+
+    def test_home_notifications_alias_prefix(self):
+        self.client.force_authenticate(user=self.user)
+        res_list = self.client.get('/api/home/notifications/')
+        self.assertEqual(res_list.status_code, status.HTTP_200_OK)
+        res_count = self.client.get('/api/home/notifications/unread-count/')
+        self.assertEqual(res_count.status_code, status.HTTP_200_OK)
+        res_read_all = self.client.post('/api/home/notifications/read-all/')
+        self.assertEqual(res_read_all.status_code, status.HTTP_200_OK)
+
+    def test_notification_services(self):
+        from home.services import (
+            create_notification,
+            get_user_notifications,
+            get_unread_notification_count,
+            mark_all_user_notifications_read,
+        )
+        from accounts.models import UserProfile
+
+        profile, _ = UserProfile.objects.get_or_create(user=self.user)
+        profile.notifications_enabled = True
+        profile.save()
+
+        notif = create_notification(
+            user=self.user,
+            title='Service Title',
+            message='Service Message',
+            notification_type='announcement',
+        )
+        self.assertIsNotNone(notif)
+        self.assertEqual(notif.notification_type, 'announcement')
+
+        # Test user preference: notifications_enabled = False
+        profile.notifications_enabled = False
+        profile.save()
+        disabled_notif = create_notification(
+            user=self.user,
+            title='Disabled Title',
+            message='Disabled Message',
+        )
+        self.assertIsNone(disabled_notif)
+
+        # Force bypass
+        forced_notif = create_notification(
+            user=self.user,
+            title='Forced Title',
+            message='Forced Message',
+            force=True,
+        )
+        self.assertIsNotNone(forced_notif)
+
+        count = get_unread_notification_count(self.user)
+        self.assertGreaterEqual(count, 1)
+
+        updated = mark_all_user_notifications_read(self.user)
+        self.assertGreaterEqual(updated, 1)
+        self.assertEqual(get_unread_notification_count(self.user), 0)
+

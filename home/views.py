@@ -169,12 +169,18 @@ class NotificationMarkReadView(APIView):
     """
     Marks a single notification as read for the authenticated user.
     Accessible via POST or PATCH /api/home/notifications/<pk>/read/ (or /api/home/notifications/<pk>/).
+    Also supports GET to retrieve notification details and DELETE to delete it.
     """
     permission_classes = [IsAuthenticated]
 
     def _mark_read(self, request, pk):
         notification = get_object_or_404(Notification, id=pk, user=request.user)
         notification.mark_as_read()
+        serializer = NotificationSerializer(notification)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get(self, request, pk, *args, **kwargs):
+        notification = get_object_or_404(Notification, id=pk, user=request.user)
         serializer = NotificationSerializer(notification)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -186,6 +192,14 @@ class NotificationMarkReadView(APIView):
 
     def put(self, request, pk, *args, **kwargs):
         return self._mark_read(request, pk)
+
+    def delete(self, request, pk, *args, **kwargs):
+        notification = get_object_or_404(Notification, id=pk, user=request.user)
+        notification.delete()
+        return Response(
+            {"detail": "Notification deleted successfully."},
+            status=status.HTTP_200_OK
+        )
 
 
 class NotificationMarkAllReadView(APIView):

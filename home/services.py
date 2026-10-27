@@ -359,3 +359,61 @@ def get_home_screen_1_engagement(user):
         "tip_of_the_day": get_tip_of_the_day_data(),
         "start_your_journey": get_start_your_journey_data(user),
     }
+
+
+def create_notification(user, title, message, notification_type='general', action_url=None, force=False):
+    """
+    Creates a Notification for the specified user.
+    Respects user.profile.notifications_enabled unless force=True.
+    Returns the created Notification instance, or None if notifications are disabled.
+    """
+    from home.models import Notification
+
+    if not force:
+        profile = getattr(user, 'profile', None)
+        if profile and not getattr(profile, 'notifications_enabled', True):
+            return None
+
+    return Notification.objects.create(
+        user=user,
+        title=title,
+        message=message,
+        notification_type=notification_type,
+        action_url=action_url,
+    )
+
+
+def get_user_notifications(user, unread_only=False, notification_type=None):
+    """
+    Returns queryset of notifications for a user, optionally filtered by unread status and type.
+    """
+    from home.models import Notification
+
+    qs = Notification.objects.filter(user=user)
+    if unread_only:
+        qs = qs.filter(is_read=False)
+    if notification_type:
+        qs = qs.filter(notification_type__iexact=notification_type)
+    return qs
+
+
+def get_unread_notification_count(user):
+    """
+    Returns the count of unread notifications for a user.
+    """
+    from home.models import Notification
+    return Notification.objects.filter(user=user, is_read=False).count()
+
+
+def mark_all_user_notifications_read(user):
+    """
+    Marks all unread notifications as read for a user.
+    Returns the count of updated notifications.
+    """
+    from home.models import Notification
+    now = timezone.now()
+    return Notification.objects.filter(user=user, is_read=False).update(
+        is_read=True,
+        read_at=now,
+        updated_at=now,
+    )

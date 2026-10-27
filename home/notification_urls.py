@@ -23,7 +23,11 @@ urlpatterns = [
 
     # POST /api/notifications/mark-all-read/ — mark all as read
     path("mark-all-read/", NotificationMarkAllReadView.as_view(), name="notification-mark-all-read"),
+    path("read-all/", NotificationMarkAllReadView.as_view(), name="notification-read-all"),
 
-    # PATCH /api/notifications/<pk>/read/   — mark single notification as read
+    # PATCH / POST /api/notifications/<pk>/read/   — mark single notification as read
     path("<int:pk>/read/", NotificationMarkReadView.as_view(), name="notification-mark-read"),
+
+    # GET / PATCH / DELETE /api/notifications/<pk>/ — notification detail / mark read / delete
+    path("<int:pk>/", NotificationMarkReadView.as_view(), name="notification-detail"),
 ]
